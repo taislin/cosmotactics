@@ -20,11 +20,35 @@
 	src: url(../fonts/ARCADE_N.TTF) format("truetype");
 }
 
+@font-face {
+	font-family: "Space Mono";
+	src: url(../fonts/SpaceMono-Regular.ttf) format("truetype");
+}
+@font-face {
+	font-family: "Space Mono";
+	src: url(fonts/SpaceMono-Bold.ttf) format("truetype");
+	font-weight: bold;
+}
+@font-face {
+	font-family: "Space Mono";
+	src: url(fonts/SpaceMono-Italic.ttf) format("truetype");
+	font-style: italic, oblique;
+}
+@font-face {
+	font-family: "Space Mono";
+	src: url(fonts/SpaceMono-BoldItalic.ttf) format("truetype");
+	font-weight: bold;
+	font-style: italic, oblique;
+}
+@font-face {
+	font-family: "Nova Mono";
+	src: url(../fonts/NovaMono-Regular.ttf) format("truetype");
+}
 /* ==== GENERAL BODY & LAYOUT ==== */
 body {
 	background-color: #000000;
 	color: #ccc;
-	font-family: "Noto Sans Mono", Tahoma, Geneva, Verdana, sans-serif;
+	font-family: "Space Mono", Tahoma, Geneva, Verdana, sans-serif;
 	font-size: 1em;
 	line-height: 1.6;
 	margin: 0;
@@ -54,7 +78,7 @@ h1,
 h2,
 h3 {
 	color: #ffa500;
-	font-family: "Alien Encounters Solid", serif;
+	font-family: "Nova Mono", serif;
 	font-weight: normal;
 	border-bottom: 1px solid #444;
 	padding-bottom: 8px;
@@ -75,6 +99,7 @@ nav ul {
 nav li {
 	display: inline-block;
 	margin-right: 20px;
+	font-family: "Nova Mono", serif;
 }
 
 /* ==== TABLE STYLING ==== */

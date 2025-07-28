@@ -15,10 +15,18 @@
 	font-family: "IBM VGA";
 	src: url(fonts/Mx437_IBM_VGA_9x16.woff2) format("truetype");
 }
+@font-face {
+	font-family: "Space Mono";
+	src: url(fonts/SpaceMono-Regular.ttf) format("truetype");
+}
+@font-face {
+	font-family: "Nova Mono";
+	src: url(fonts/NovaMono-Regular.ttf) format("truetype");
+}
 body {
 	background-color: #000000;
 	color: #ccc;
-	font-family: "Noto Sans Mono", monospace;
+	font-family: "Space Mono", monospace;
 	font-size: 1em;
 	margin: 0;
 	padding: 0;
