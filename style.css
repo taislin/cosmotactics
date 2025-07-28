@@ -1,0 +1,76 @@
+@font-face {
+	font-family: "Noto Sans Mono";
+	src: url(fonts/NotoSansMono-Regular.ttf) format("truetype");
+}
+@font-face {
+	font-family: "Alien Encounters";
+	src: url(fonts/Alien-Encounters-Regular.ttf) format("truetype");
+}
+@font-face {
+	font-family: "Arcade";
+	src: url(fonts/ARCADE_I.TTF) format("truetype");
+}
+
+@font-face {
+	font-family: "IBM VGA";
+	src: url(fonts/Mx437_IBM_VGA_9x16.woff2) format("truetype");
+}
+body {
+	background-color: #000000;
+	color: #ccc;
+	font-family: "Noto Sans Mono", monospace;
+	font-size: 1em;
+	margin: 0;
+	padding: 0;
+}
+
+table,
+th,
+td {
+	border: #ccc 1px solid;
+	text-align: center;
+	padding: 5px;
+}
+/* unvisited link */
+a:link {
+	color: rgb(103 103 255);
+}
+
+/* visited link */
+a:visited {
+	color: rgb(103 103 255);
+}
+
+/* mouse over link */
+a:hover {
+	color: rgb(0 183 83);
+}
+
+/* selected link */
+a:active {
+	color: blue;
+}
+
+img {
+	max-width: 50%;
+}
+
+th,
+td {
+	max-width: 300px;
+}
+
+#terminal,
+#msg {
+	display: inline-block;
+}
+
+#msg {
+	margin-left: -12px;
+	vertical-align: top;
+}
+
+#log {
+	overflow-y: auto;
+	max-height: 100px;
+}

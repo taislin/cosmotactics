@@ -1,0 +1,196 @@
+{
+	"widowmaker": {
+		"name": "Widowmaker Revolver",
+		"desc": "A classic, high-caliber revolver, favored by independent contractors for its stopping power. Fires heavy projectile cartridges with a satisfying kick.",
+		"itemtype": "projectile pistol",
+		"icon": "pistol",
+		"stats": {
+			"attack": 20,
+			"range": 8,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 6,
+			"reload": 3,
+			"accuracy": 0.85
+		},
+		"slot": "ranged"
+	},
+	"p11a": {
+		"name": "P11A Plasma Pistol",
+		"desc": "A compact plasma gun emitting superheated bolts. Devastating at close range but drains its small energy cell quickly.",
+		"itemtype": "plasma pistol",
+		"icon": "pistol2",
+		"stats": {
+			"attack": 35,
+			"range": 5,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 4,
+			"reload": 2,
+			"accuracy": 0.9
+		},
+		"slot": "ranged"
+	},
+	"lasco25": {
+		"name": "LasCo-25 Laser Pistol",
+		"desc": "The ubiquitous sidearm for SEF personnel. Fires precision laser bursts, offering high accuracy and a rapid fire rate for sustained engagements.",
+		"itemtype": "laser pistol",
+		"icon": "pistol",
+		"stats": {
+			"attack": 20,
+			"range": 7,
+			"delay": 0.5,
+			"ammo": 0,
+			"max_ammo": 20,
+			"reload": 2,
+			"accuracy": 0.95
+		},
+		"slot": "ranged"
+	},
+	"harrison76": {
+		"name": "Harrison m.76 'Pocket Cannon'",
+		"desc": "A unique, heavily modified single-shot pistol chambered for 12-gauge shells. Unreliable beyond arm's reach, but delivers immense kinetic force point-blank.",
+		"itemtype": "projectile pistol",
+		"icon": "pistol2",
+		"stats": {
+			"attack": 60,
+			"range": 4,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 1,
+			"reload": 1,
+			"accuracy": 0.65
+		},
+		"slot": "ranged"
+	},
+	"mansfield-3": {
+		"name": "Mansfield Mk.III Laser Rifle",
+		"desc": "A robust and long-reaching laser rifle. Favored for its immense range, though its bulk can lead to slight inaccuracies in rapid deployment.",
+		"itemtype": "laser rifle",
+		"icon": "rifle",
+		"stats": {
+			"attack": 36,
+			"range": 11,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 10,
+			"reload": 3,
+			"accuracy": 0.75
+		},
+		"slot": "ranged"
+	},
+	"mansfield-6": {
+		"name": "Mansfield Mk.VI Laser Carbine",
+		"desc": "A lighter, more maneuverable variant of the Mansfield rifle. Excels in medium-range engagements, balancing power with ease of handling.",
+		"itemtype": "laser carbine",
+		"icon": "smg",
+		"stats": {
+			"attack": 32,
+			"range": 9,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 10,
+			"reload": 3,
+			"accuracy": 0.8
+		},
+		"slot": "ranged"
+	},
+	"m51": {
+		"name": "M51 Coil Carbine",
+		"desc": "A military-grade coil gun that propels caseless projectiles at extreme velocities. Offers impressive stopping power at medium range, but its complex mechanism requires careful reloading.",
+		"itemtype": "coil carbine",
+		"icon": "smg",
+		"stats": {
+			"attack": 40,
+			"range": 9,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 15,
+			"reload": 4,
+			"accuracy": 0.8
+		},
+		"slot": "ranged"
+	},
+	"knife_army": {
+		"name": "SEF Army Knife",
+		"desc": "The standard issue combat knife of the Space Expeditionary Force. Reliable and always ready for close-quarters engagements.",
+		"itemtype": "bladed weapon",
+		"icon": "knife",
+		"stats": {
+			"attack": 22,
+			"range": 1,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 0,
+			"reload": 0,
+			"accuracy": 0.8
+		},
+		"slot": "melee"
+	},
+	"sword_army": {
+		"name": "SEF Officer's Sword",
+		"desc": "A ceremonial yet functional bladed weapon issued to SEF Non-Commissioned Officers. Heavier than a knife, delivering more forceful strikes.",
+		"itemtype": "bladed weapon",
+		"icon": "knife",
+		"stats": {
+			"attack": 32,
+			"range": 1,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 0,
+			"reload": 0,
+			"accuracy": 0.75
+		},
+		"slot": "melee"
+	},
+	"grey_pulser": {
+		"name": "Grey Pulser Rifle",
+		"desc": "An alien energy rifle, standard issue for Grey soldiers. Fires rapid, focused laser pulses. Surprisingly accurate and quick to recharge.",
+		"itemtype": "laser carbine",
+		"icon": "smg",
+		"stats": {
+			"attack": 35,
+			"range": 7,
+			"delay": 1,
+			"ammo": 0,
+			"max_ammo": 15,
+			"reload": 1,
+			"accuracy": 0.95
+		},
+		"slot": "ranged"
+	},
+	"blastcaster": {
+		"name": "Blastcaster Shotgun",
+		"desc": "A heavy-duty combat shotgun, designed for close-quarters engagements. Unleashes a devastating spread of kinetic rounds.",
+		"itemtype": "projectile shotgun",
+		"icon": "rifle",
+		"stats": {
+			"attack": 50,
+			"range": 3,
+			"delay": 1.5,
+			"ammo": 0,
+			"max_ammo": 4,
+			"reload": 3,
+			"accuracy": 0.7,
+			"aoe": 1
+		},
+		"slot": "ranged"
+	},
+	"vortexer": {
+		"name": "Vortexer E1 Energy Rifle",
+		"desc": "An experimental energy weapon that fires unstable plasma charges, capable of briefly disrupting enemy systems.",
+		"itemtype": "plasma rifle",
+		"icon": "rifle",
+		"stats": {
+			"attack": 30,
+			"range": 8,
+			"delay": 2,
+			"ammo": 0,
+			"max_ammo": 8,
+			"reload": 4,
+			"accuracy": 0.75
+		},
+		"slot": "ranged",
+		"effect": "stun_chance_10"
+	}
+}

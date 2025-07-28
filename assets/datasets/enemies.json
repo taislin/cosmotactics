@@ -1,0 +1,186 @@
+{
+	"shambler": {
+		"name": "Shambler",
+		"desc": "A grotesque, reanimated husk. Slow and predictable, but its mutated flesh can absorb surprising amounts of punishment.",
+		"type": "mob",
+		"icon": "shambler",
+		"ai": "basic",
+		"stats": {
+			"health": 150,
+			"attack": 10,
+			"defence": 0,
+			"range": 1,
+			"speed": 0.5,
+			"delay": 1,
+			"morale": 300
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
+	},
+	"grey_soldier": {
+		"name": "Grey Soldier",
+		"desc": "A standard infantry unit of the Grey Collective. Agile and equipped with advanced energy weapons, they represent a common threat.",
+		"type": "mob",
+		"icon": "grey",
+		"ai": "ranged",
+		"stats": {
+			"health": 75,
+			"attack": 9,
+			"defence": 0,
+			"range": 1,
+			"speed": 1,
+			"delay": 1,
+			"morale": 150
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": "grey_pulser",
+			"melee": null,
+			"extra": null
+		}
+	},
+	"wurrie_blaster": {
+		"name": "Wurrie Scavenger",
+		"desc": "Small, swift, and cunning, Wurries often operate in packs, using their blaster pistols to harass larger targets before closing in.",
+		"type": "mob",
+		"icon": "wurrie",
+		"ai": "ranged",
+		"stats": {
+			"health": 50,
+			"attack": 9,
+			"defence": 0,
+			"range": 1,
+			"speed": 2,
+			"delay": 1,
+			"morale": 100
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": "grey_pulser",
+			"melee": null,
+			"extra": null
+		}
+	},
+	"space_lamprey": {
+		"name": "Space Lamprey",
+		"desc": "A terrifying land-dwelling parasite with rows of razor-sharp teeth. Extremely fast and relentless once it detects prey.",
+		"type": "mob",
+		"icon": "space_lamprey",
+		"ai": "melee_agressive",
+		"stats": {
+			"health": 80,
+			"attack": 15,
+			"defence": 0,
+			"range": 1,
+			"speed": 1.5,
+			"delay": 1,
+			"morale": 100
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
+	},
+	"arakno": {
+		"name": "Arakno",
+		"desc": "A cat-sized arachnid, known for its lightning-fast movements and a potent neurotoxin delivered through its elongated stinger. Highly aggressive.",
+		"type": "mob",
+		"icon": "arakno",
+		"ai": "melee_agressive",
+		"stats": {
+			"health": 60,
+			"attack": 25,
+			"defence": 0,
+			"range": 1,
+			"speed": 2,
+			"delay": 1,
+			"morale": 300
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
+	},
+	"turret_laser": {
+		"name": "Laser Turret",
+		"desc": "A fixed-position automated defense system. Heavily armored and equipped with a high-calibre laser cannon, it's a formidable obstacle.",
+		"type": "mob",
+		"icon": "turret",
+		"ai": "basic",
+		"stats": {
+			"health": 300,
+			"attack": 0,
+			"defence": 15,
+			"range": 1,
+			"speed": 0,
+			"delay": 1,
+			"morale": 300
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": "grey_pulser",
+			"melee": null,
+			"extra": null
+		}
+	},
+	"licker": {
+		"name": "Licker",
+		"desc": "A sessile ambush predator that clings to cavern ceilings. It uses powerful, adhesive tendrils to ensnare and paralyze any unwary prey.",
+		"type": "mob",
+		"icon": "licker",
+		"ai": "basic",
+		"stats": {
+			"health": 100,
+			"attack": 15,
+			"defence": 0,
+			"range": 1,
+			"speed": 0,
+			"delay": 1,
+			"morale": 300
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
+	},
+	"shell": {
+		"name": "Shell",
+		"desc": "An alien with a thick, chitinous exoskeleton, providing innate resilience against energy-based attacks. Best engaged with kinetic or melee weapons.",
+		"type": "mob",
+		"icon": "shell",
+		"ai": "melee_agressive",
+		"stats": {
+			"health": 60,
+			"attack": 18,
+			"defence": 0,
+			"range": 1,
+			"speed": 1.5,
+			"delay": 1,
+			"morale": 100
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
+	}
+}

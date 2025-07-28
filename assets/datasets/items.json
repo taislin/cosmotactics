@@ -1,0 +1,41 @@
+{
+	"potassium_iodide_pills": {
+		"name": "Potassium Iodide Pills",
+		"desc": "Small, emergency pills that help flush radioactive isotopes from the system, mitigating the effects of radiation exposure.",
+		"icon": "item",
+		"stats": {
+			"radiation": -10
+		},
+		"slot": "extra"
+	},
+	"medkit_small": {
+		"name": "Small Medkit",
+		"desc": "A compact emergency medical kit containing basic trauma dressings, disinfectant, and a powerful analgesic. Suitable for minor wounds.",
+		"icon": "medkit",
+		"stats": {
+			"health": 10
+		},
+		"slot": "extra",
+		"itemtype": "healing"
+	},
+	"medkit_large": {
+		"name": "Large Medkit",
+		"desc": "A comprehensive field medic kit equipped for severe injuries. Contains advanced coagulants, sutures, and a broad-spectrum antibiotic.",
+		"icon": "medkit",
+		"stats": {
+			"health": 30
+		},
+		"slot": "extra",
+		"itemtype": "healing"
+	},
+	"oxygen_tank": {
+		"name": "Oxygen Tank",
+		"desc": "A compact, high-pressure oxygen canister designed for personal rebreather systems. Essential for prolonged operations in hostile atmospheres.",
+		"icon": "oxygen",
+		"stats": {
+			"oxygen": 30
+		},
+		"slot": "extra",
+		"itemtype": "oxygen"
+	}
+}

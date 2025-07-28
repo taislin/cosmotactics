@@ -1,0 +1,140 @@
+{
+	"gunslinger": {
+		"name": "Gunslinger",
+		"desc": "A seasoned independent operator, preferring the open void to planetary garrisons. Known for their quick draw and resourceful combat style.",
+		"type": "mob",
+		"icon": "gunslinger",
+		"ai": "basic",
+		"stats": {
+			"health": 120,
+			"attack": 12,
+			"defence": 0,
+			"range": 1,
+			"speed": 1,
+			"delay": 1,
+			"morale": 100
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
+	},
+	"sef_trooper": {
+		"name": "SEF Trooper",
+		"desc": "The ubiquitous backbone of the Space Expeditionary Forces. Troopers are reliable, adaptable, and form the core of any SEF expeditionary squad.",
+		"type": "mob",
+		"icon": "player_pistol",
+		"ai": "player",
+		"stats": {
+			"health": 100,
+			"attack": 12,
+			"defence": 0,
+			"range": 1,
+			"speed": 1,
+			"delay": 1,
+			"morale": 100
+		},
+		"slots": {
+			"head": "exohelmet",
+			"suit": "exosuit",
+			"ranged": "lasco25",
+			"melee": "knife_army",
+			"extra": null
+		}
+	},
+	"sef_squadleader": {
+		"name": "SEF Squad Leader",
+		"desc": "A Non-Commissioned Officer (NCO) with extensive combat experience. Squad Leaders are equipped to lead from the front, inspiring their team and engaging threats directly.",
+		"type": "mob",
+		"icon": "player_pistol2",
+		"ai": "player",
+		"stats": {
+			"health": 100,
+			"attack": 12,
+			"defence": 0,
+			"range": 1,
+			"speed": 1,
+			"delay": 1,
+			"morale": 200
+		},
+		"slots": {
+			"head": "exohelmet",
+			"suit": "exosuit",
+			"ranged": "p11a",
+			"melee": "sword_army",
+			"extra": null
+		}
+	},
+	"sef_marksman": {
+		"name": "SEF Marksman",
+		"desc": "A specialist trained in precision long-range engagements. Marksmen provide critical suppressing fire and eliminate high-value targets from afar.",
+		"type": "mob",
+		"icon": "player_rifle",
+		"ai": "player",
+		"stats": {
+			"health": 100,
+			"attack": 12,
+			"defence": 0,
+			"range": 1,
+			"speed": 1,
+			"delay": 1,
+			"morale": 125
+		},
+		"slots": {
+			"head": "exohelmet",
+			"suit": "exosuit",
+			"ranged": "mansfield-3",
+			"melee": "knife_army",
+			"extra": null
+		}
+	},
+	"sef_heavygunner": {
+		"name": "SEF Heavy Gunner",
+		"desc": "An armored powerhouse, equipped with heavy weapons for sustained firepower. Slow to move, but devastating once in position.",
+		"type": "mob",
+		"icon": "player_heavy",
+		"ai": "player",
+		"stats": {
+			"health": 130,
+			"attack": 15,
+			"defence": 5,
+			"range": 1,
+			"speed": 0.75,
+			"delay": 1,
+			"morale": 150
+		},
+		"slots": {
+			"head": "reinforced_exohelmet",
+			"suit": "heavy_exosuit",
+			"ranged": "m51",
+			"melee": "knife_army",
+			"extra": null
+		}
+	},
+	"sef_basic": {
+		"name": "SEF Grunt",
+		"desc": "A newly deployed Space Expeditionary Force recruit. Lacks specialized gear but ready to follow orders and fight for the Corps.",
+		"type": "mob",
+		"icon": "@",
+		"ai": "player",
+		"stats": {
+			"health": 100,
+			"attack": 12,
+			"defence": 0,
+			"range": 1,
+			"speed": 1,
+			"delay": 1,
+			"morale": 100
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
+	}
+}

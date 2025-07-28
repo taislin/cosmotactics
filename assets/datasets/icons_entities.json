@@ -1,0 +1,380 @@
+{
+	"@": {
+		"name": "player",
+		"icon": [
+			"@"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				7,
+				2
+			]
+		]
+	},
+	"gunslinger": {
+		"name": "gunslinger",
+		"icon": [
+			"K"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				5,
+				0
+			]
+		]
+	},
+	"player_pistol": {
+		"name": "player",
+		"icon": [
+			"@"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				3,
+				2
+			]
+		]
+	},
+	"grey": {
+		"name": "player",
+		"icon": [
+			"g"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				5,
+				1
+			]
+		]
+	},
+	"player_heavy": {
+		"name": "player",
+		"icon": [
+			"@"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				2,
+				2
+			]
+		]
+	},
+	"player_pistol2": {
+		"name": "player",
+		"icon": [
+			"@"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				5,
+				2
+			]
+		]
+	},
+	"player_rifle": {
+		"name": "player",
+		"icon": [
+			"@"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				4,
+				2
+			]
+		]
+	},
+	"player_smg": {
+		"name": "player",
+		"icon": [
+			"@"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				6,
+				2
+			]
+		]
+	},
+	"&": {
+		"name": "gunslinger",
+		"icon": [
+			"&"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				6,
+				0
+			]
+		]
+	},
+	"shambler": {
+		"name": "shambler",
+		"icon": [
+			"s"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				6,
+				0
+			]
+		]
+	},
+	"space_lamprey": {
+		"name": "space lamprey",
+		"icon": [
+			"ś"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				5,
+				9
+			]
+		]
+	},
+	"arakno": {
+		"name": "arakno",
+		"icon": [
+			"m"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				5,
+				13
+			]
+		]
+	},
+	"wurrie": {
+		"name": "wurrie",
+		"icon": [
+			"w"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				6,
+				13
+			]
+		]
+	},
+	"licker": {
+		"name": "licker",
+		"icon": [
+			"¡"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				0,
+				8
+			]
+		]
+	},
+	"shell": {
+		"name": "shell",
+		"icon": [
+			"D"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				3,
+				10
+			]
+		]
+	},
+	"turret": {
+		"name": "turret",
+		"icon": [
+			"T"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				3,
+				14
+			]
+		]
+	},
+	"gun": {
+		"name": "gun",
+		"icon": [
+			"/"
+		],
+		"color": [
+			"#777777"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			2,
+			3
+		]
+	},
+	"dead": {
+		"name": "remains",
+		"icon": [
+			"$"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				0,
+				3
+			]
+		]
+	},
+	"horse": {
+		"name": "horse",
+		"icon": [
+			"H"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				0,
+				1
+			]
+		]
+	}
+}

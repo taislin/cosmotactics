@@ -1,0 +1,434 @@
+{
+	"?": {
+		"name": "unknown",
+		"icon": [
+			"?"
+		],
+		"color": [
+			"#FFF"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			3,
+			0
+		]
+	},
+	"hit": {
+		"name": "Hit",
+		"icon": [
+			"X"
+		],
+		"color": [
+			"#FFF"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			0,
+			0
+		]
+	},
+	"miss": {
+		"name": "Miss",
+		"icon": [
+			"X"
+		],
+		"color": [
+			"#FFF"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			0,
+			1
+		]
+	},
+	"cursor": {
+		"name": "cursor",
+		"icon": [
+			"O"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			2,
+			0
+		]
+	},
+	"cursor_square": {
+		"name": "cursor",
+		"icon": [
+			"O"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			1,
+			0
+		]
+	},
+	"overlay_selected": {
+		"name": "overlay",
+		"icon": [
+			"º"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			0,
+			3
+		]
+	},
+	"overlay_idle": {
+		"name": "idle",
+		"icon": [
+			"ᶨ"
+		],
+		"color": [
+			"#00009f"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			5,
+			0
+		]
+	},
+	"overlay_unknown": {
+		"name": "unknown",
+		"icon": [
+			"?"
+		],
+		"color": [
+			"#ffff00"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			5,
+			1
+		]
+	},
+	"overlay_attacking": {
+		"name": "attacking",
+		"icon": [
+			"!"
+		],
+		"color": [
+			"#9f0000"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			5,
+			2
+		]
+	},
+	"overlay_hunting": {
+		"name": "hunting",
+		"icon": [
+			"ᵸ"
+		],
+		"color": [
+			"#ffaa00"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			5,
+			3
+		]
+	},
+	"overlay_1": {
+		"name": "one",
+		"icon": [
+			"¹"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			1,
+			3
+		]
+	},
+	"overlay_2": {
+		"name": "two",
+		"icon": [
+			"²"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			2,
+			3
+		]
+	},
+	"overlay_3": {
+		"name": "three",
+		"icon": [
+			"³"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			3,
+			3
+		]
+	},
+	"overlay_4": {
+		"name": "four",
+		"icon": [
+			"⁴"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			0,
+			4
+		]
+	},
+	"overlay_5": {
+		"name": "five",
+		"icon": [
+			"⁵"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			1,
+			4
+		]
+	},
+	"overlay_6": {
+		"name": "six",
+		"icon": [
+			"⁶"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			2,
+			4
+		]
+	},
+	"overlay_7": {
+		"name": "seven",
+		"icon": [
+			"⁷"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			3,
+			4
+		]
+	},
+	"target": {
+		"name": "target",
+		"icon": [
+			"X"
+		],
+		"color": [
+			"#9f0000"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			1,
+			1
+		]
+	},
+	"cursor_interact": {
+		"name": "interact",
+		"icon": [
+			"!"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			2,
+			1
+		]
+	},
+	"cursor_look": {
+		"name": "inspect",
+		"icon": [
+			"?"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			3,
+			2
+		]
+	},
+	"projectile_0": {
+		"name": "projectile",
+		"icon": [
+			"|"
+		],
+		"color": [
+			"#ff0000"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			0,
+			6
+		]
+	},
+	"projectile_1": {
+		"name": "projectile",
+		"icon": [
+			"-"
+		],
+		"color": [
+			"#ff0000"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			1,
+			6
+		]
+	},
+	"projectile_2": {
+		"name": "projectile",
+		"icon": [
+			"\\"
+		],
+		"color": [
+			"#ff0000"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			2,
+			6
+		]
+	},
+	"projectile_3": {
+		"name": "projectile",
+		"icon": [
+			"/"
+		],
+		"color": [
+			"#ff0000"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			3,
+			6
+		]
+	}
+}

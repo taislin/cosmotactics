@@ -1,0 +1,162 @@
+{
+    "item": {
+        "name": "item",
+        "icon": [
+            "?"
+        ],
+        "color": [
+            "#CCCCCC"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "tileset": "./icons/gui.png",
+        "tcoords": [
+            [
+                3,
+                0
+            ]
+        ]
+    },
+    "helmet": {
+        "name": "helmet",
+        "icon": [
+            "H"
+        ],
+        "color": [
+            "#AAAAAA"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                2,
+                0
+            ]
+        ]
+    },
+    "suit": {
+        "name": "suit",
+        "icon": [
+            "S"
+        ],
+        "color": [
+            "#8888FF"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                2,
+                0
+            ]
+        ]
+    },
+    "pistol": {
+        "name": "pistol",
+        "icon": [
+            "P"
+        ],
+        "color": [
+            "#FFD700"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                0,
+                1
+            ]
+        ]
+    },
+    "pistol2": {
+        "name": "pistol2",
+        "icon": [
+            "P"
+        ],
+        "color": [
+            "#FFA500"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                1,
+                1
+            ]
+        ]
+    },
+    "rifle": {
+        "name": "rifle",
+        "icon": [
+            "R"
+        ],
+        "color": [
+            "#00FF00"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                5,
+                1
+            ]
+        ]
+    },
+    "smg": {
+        "name": "smg",
+        "icon": [
+            "S"
+        ],
+        "color": [
+            "#FF00FF"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                4,
+                1
+            ]
+        ]
+    },
+    "knife": {
+        "name": "knife",
+        "icon": [
+            "K"
+        ],
+        "color": [
+            "#FFFFFF"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                1,
+                2
+            ]
+        ]
+    }
+}

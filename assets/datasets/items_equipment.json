@@ -1,0 +1,49 @@
+{
+	"exohelmet": {
+		"name": "Standard EXO-Helmet",
+		"desc": "A general purpose EXO-Helmet. Suitable for planetary exploration in adverse atmospheric conditions.",
+		"icon": "helmet",
+		"stats": {
+			"defence": 2
+		},
+		"slot": "head"
+	},
+	"exosuit": {
+		"name": "Standard EXO-Suit",
+		"desc": "A general purpose EXO-Suit. Suitable for planetary exploration in adverse atmospheric conditions.",
+		"icon": "suit",
+		"stats": {
+			"oxygen": 1,
+			"defence": 5
+		},
+		"slot": "suit"
+	},
+	"heavy_exosuit": {
+		"name": "Heavy EXO-Suit",
+		"desc": "A heavily armored EXO-Suit designed for extreme combat zones. Provides superior ballistic and energy protection.",
+		"icon": "suit",
+		"stats": {
+			"defence": 10,
+			"oxygen": 0
+		},
+		"slot": "suit"
+	},
+	"reinforced_exohelmet": {
+		"name": "Reinforced EXO-Helmet",
+		"desc": "A sturdy helmet with additional plating for enhanced cranial protection.",
+		"icon": "helmet",
+		"stats": {
+			"defence": 4
+		},
+		"slot": "head"
+	},
+	"tactical_visor": {
+		"name": "Tactical Visor",
+		"desc": "A lightweight visor with integrated targeting optics and comms. Offers minimal physical protection but enhances situational awareness.",
+		"icon": "helmet",
+		"stats": {
+			"defence": 1
+		},
+		"slot": "head"
+	}
+}
