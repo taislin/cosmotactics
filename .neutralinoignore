@@ -1,0 +1,9 @@
+/dist
+
+/.tmp
+
+/.github
+
+.gitignore
+.git
+node_modules
