@@ -1,4 +1,4 @@
-import { world_grid, loadWorld_maze, world } from "./map.js";
+import { world_grid, loadLevel, world } from "./map.js";
 import { goToLostMenu, sleep } from "./controls.js";
 import { setSeed } from "../index.js";
 // Import from new utils file for shared logic
@@ -245,8 +245,8 @@ export function resetGame(_seed = null) {
 	world_items = [];
 	if (_seed) {
 		setSeed(_seed);
-		loadWorld_maze(0);
+		loadLevel(0);
 	}
 	setSeed(Math.random());
-	loadWorld_maze(0);
+	loadLevel(0);
 }
