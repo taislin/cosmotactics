@@ -25,6 +25,10 @@ jobs:
         # Don't run this workflow on commits made by the workflow itself
         if: "!contains(github.event.head_commit.message, 'chore(release):')"
         runs-on: ubuntu-latest
+        # --- ADD THIS PERMISSIONS BLOCK ---
+        permissions:
+            contents: write
+        # ------------------------------------
         outputs:
             new_version: ${{ steps.get_version.outputs.version }}
 
@@ -54,7 +58,6 @@ jobs:
             - name: Bump Version and Create Tag
               run: |
                   # The `npm version` command increments the version, commits, and tags.
-                  # We use --no-git-tag-version for dev suffixing, but here we want the commit and tag.
                   npm version ${{ env.BUMP_LEVEL }} -m "chore(release): bump version to %s"
 
             - name: Push Changes and Tags
@@ -74,6 +77,10 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
         runs-on: ${{ matrix.os }}
+        # --- Also add permissions here for creating the release ---
+        permissions:
+            contents: write
+        # --------------------------------------------------------
 
         steps:
             - name: Check out repository
