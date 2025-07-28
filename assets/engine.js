@@ -43,7 +43,7 @@ const initial_vars = {
 	GAMEWINDOW: "MENU",
 	MENU_ITEM: 1,
 	MENU_LENGTH: 0,
-	VERSION: "0.2.0",
+	VERSION: "0.2.1-dev",
 	SUBMENU: "EQUIPMENT",
 	GAMELOG: [],
 	TARGET: [-1, -1],
