@@ -28,12 +28,6 @@ jobs:
               with:
                   node-version: "20"
 
-            - name: Install project dependencies
-              run: npm install
-
-            - name: Create bundled JS for the app
-              run: npm run build # This runs your browserify script from package.json
-
             - name: Prepare Neutralino HTML entry point
               # This is the key step: It renames the Neutralino-specific HTML
               # to the one Neutralino expects, leaving your original index.html alone.
