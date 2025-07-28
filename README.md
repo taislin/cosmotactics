@@ -1,10 +1,14 @@
 # CosmoTactics
 
-![CosmoTactics Logo](icons/icon.png)
+<p align="center">
+<img src="https://github.com/taislin/cosmotactics/raw/master/icons/icon.png" alt="logo" height="128"/>
+</p>
 
-A squad-based tactical roguelike game set in a gritty sci-fi universe. **_Lead your Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
+A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your **_Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
 
-<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="500"/>
+<p align="center">
+<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="350"/>
+</p>
 
 ## 📜 Features
 

@@ -133,3 +133,15 @@ dist
 extras/
 *.psd
 cosmotactics.code-workspace
+
+bundle.js
+
+.neutralino/
+bin/
+dist/
+*.res.neu
+
+/assets/neutralino.js
+
+.DS_Store
+Thumbs.db

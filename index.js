@@ -1,7 +1,7 @@
 // Import modules and functions
 import { setControls } from "./assets/controls.js";
 import { loadIcons, _tileMap } from "./assets/classes/icons.js";
-import { loadWorld_maze } from "./assets/map.js";
+import { loadLevel } from "./assets/map.js";
 import { loadItems } from "./assets/classes/items.js";
 import { drawMainMenu } from "./assets/mainmenu.js";
 import { icons } from "./assets/engine.js";
@@ -80,7 +80,7 @@ function initializeGame() {
 	loadIcons();
 	loadItems();
 	ROT.RNG.setSeed(seed);
-	loadWorld_maze(0);
+	loadLevel(0);
 	setControls();
 	drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 }

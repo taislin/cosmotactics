@@ -1,4 +1,4 @@
-import { world_grid, loadWorld_maze, world } from "./map.js";
+import { world_grid, loadLevel, world } from "./map.js";
 import { goToLostMenu, sleep } from "./controls.js";
 import { setSeed } from "../index.js";
 // Import from new utils file for shared logic
@@ -6,6 +6,7 @@ import { isTilePassableForMovement, checkFire } from "./utils/gameUtils.js";
 // Import for player squad AI logic
 import { processPlayerSquadAI } from "./ai/mobAI.js";
 
+export { log };
 /**
  * @type {Object} Holds all icon data.
  */
@@ -43,7 +44,7 @@ const initial_vars = {
 	GAMEWINDOW: "MENU",
 	MENU_ITEM: 1,
 	MENU_LENGTH: 0,
-	VERSION: "0.2.0",
+	VERSION: "0.2.1-dev",
 	SUBMENU: "EQUIPMENT",
 	GAMELOG: [],
 	TARGET: [-1, -1],
@@ -186,6 +187,84 @@ function checkLose() {
 }
 
 /**
+ * Central logging function using Unicode symbols for clarity and conciseness.
+ * Creates formatted, atmospheric log messages from event objects.
+ * @param {object} event - A structured object describing the game event.
+ * e.g., { type: 'damage', source: entity, target: entity, amount: 10, weapon: item }
+ * e.g., { type: 'action', source: entity, action: 'reloads', weapon: item }
+ */
+function log(event) {
+	let message = `${VARS.TURN}: `;
+	const sourceName = event.source
+		? event.source.owner === "player"
+			? `%c{#009f00}${event.source.name}%c{}`
+			: `%c{#ffa500}${event.source.name}%c{}`
+		: "A blast";
+	const targetName = event.target
+		? event.target.owner === "player"
+			? `%c{#009f00}${event.target.name}%c{}`
+			: `%c{#ffa500}${event.target.name}%c{}`
+		: "";
+
+	switch (event.type) {
+		case "damage":
+			const damageText = `%c{red}${event.amount} HP%c{}`;
+			let verb = "hits";
+			if (event.weapon) {
+				if (event.weapon.itemtype.includes("laser")) verb = "sears";
+				if (event.weapon.itemtype.includes("plasma")) verb = "blasts";
+				if (event.weapon.itemtype.includes("projectile"))
+					verb = "shoots";
+				if (event.weapon.itemtype.includes("bladed")) verb = "slashes";
+			}
+
+			// Critical: Highlight when the player is the target
+			if (event.target && event.target.owner === "player") {
+				message += `%b{#401010}%c{red}▼%c{}%b{} ${sourceName} ${verb} ${targetName} for ${damageText}!`;
+			} else {
+				// Damage to enemies
+				message += `%c{green}※%c{} ${sourceName} ${verb} ${targetName} for ${damageText}.`;
+			}
+			break;
+
+		case "miss":
+			message += `%c{gray}~%c{} ${sourceName}'s shot misses ${targetName}.`;
+			break;
+
+		case "block":
+			message += `%c{blue}/%c{} ${targetName} blocks ${sourceName}'s attack.`;
+			break;
+		case "action":
+			let weaponName = event.weapon ? ` their ${event.weapon.name}` : "";
+			message += `%c{cyan}⚙%c{} ${sourceName} ${event.action}${weaponName}.`;
+			break;
+
+		case "death":
+			let deathSymbol =
+				event.source.owner === "player"
+					? `%c{orange}☠%c{}`
+					: `%c{red}☠%c{}`;
+
+			if (event.source.mob && event.source.mob.death_message) {
+				message += `${deathSymbol} ${event.source.mob.death_message}`;
+			} else {
+				message += `${deathSymbol} ${sourceName} dies!`;
+			}
+			break;
+
+		case "info":
+			message += `%c{yellow}»%c{} ${event.text}`;
+			break;
+
+		default:
+			message += event.text; // Fallback for simple messages
+			break;
+	}
+
+	VARS.GAMELOG.unshift(message);
+}
+
+/**
  * Logs a debug message to the console and the in-game debug log.
  * @param {string|Object} text - The message to log.
  * @param {string} [type="log"] - The type of log message (log, error, warn, info, debug).
@@ -245,8 +324,8 @@ export function resetGame(_seed = null) {
 	world_items = [];
 	if (_seed) {
 		setSeed(_seed);
-		loadWorld_maze(0);
+		loadLevel(0);
 	}
 	setSeed(Math.random());
-	loadWorld_maze(0);
+	loadLevel(0);
 }
