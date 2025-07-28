@@ -1,0 +1,106 @@
+name: Build and Release Neutralinojs App
+
+on:
+    push:
+        branches:
+            - master # Or 'main' if that's your primary branch
+        paths:
+            - "**.js"
+            - "**.html"
+            - "**.json"
+            - "**.css"
+            - ".github/workflows/release.yml" # Also trigger on workflow changes
+
+jobs:
+    build-and-release:
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest] # Build for all 3 platforms
+
+        runs-on: ${{ matrix.os }} # Run on the OS specified in the matrix
+
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            - name: Install project dependencies
+              run: npm install
+
+            - name: Create bundled JS for the app
+              run: npm run build # This runs your browserify script from package.json
+
+            - name: Prepare Neutralino HTML entry point
+              # This is the key step: It renames the Neutralino-specific HTML
+              # to the one Neutralino expects, leaving your original index.html alone.
+              run: mv index.neutralino.html index.html
+
+            - name: Install Neutralinojs CLI
+              run: npm install -g @neutralinojs/neu
+
+            - name: Update Neutralinojs client library
+              run: neu update # This creates the neutralino.js file in your assets folder
+
+            - name: Build Neutralinojs App
+              run: neu build
+
+            - name: Determine Platform-specific Details
+              id: platform
+              shell: bash
+              run: |
+                  if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+                    echo "ASSET_NAME=cosmotactics-windows-x64.zip" >> $GITHUB_ENV
+                    echo "ASSET_PATH=./cosmotactics-win_x64.zip" >> $GITHUB_ENV
+                    echo "ARCHIVE_CMD=zip -r cosmotactics-win_x64.zip ./dist/*" >> $GITHUB_ENV
+                  elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+                    echo "ASSET_NAME=cosmotactics-macOS-x64.zip" >> $GITHUB_ENV
+                    echo "ASSET_PATH=./cosmotactics-mac_x64.zip" >> $GITHUB_ENV
+                    echo "ARCHIVE_CMD=zip -r cosmotactics-mac_x64.zip ./dist/*" >> $GITHUB_ENV
+                  else
+                    echo "ASSET_NAME=cosmotactics-linux-x64.zip" >> $GITHUB_ENV
+                    echo "ASSET_PATH=./cosmotactics-linux_x64.zip" >> $GITHUB_ENV
+                    echo "ARCHIVE_CMD=zip -r cosmotactics-linux_x64.zip ./dist/*" >> $GITHUB_ENV
+                  fi
+
+            - name: Package application for release
+              run: ${{ env.ARCHIVE_CMD }}
+
+            # This creates ONE release but the job runs 3 times. We need to upload to a single release.
+            # To do this, we'll create the release only on the Linux job and upload from all jobs.
+            - name: Create GitHub Release (only on Linux job)
+              id: create_release
+              if: matrix.os == 'ubuntu-latest' # Only run this step on one OS to avoid conflicts
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: build-${{ github.run_number }}
+                  release_name: CosmoTactics Build ${{ github.run_number }}
+                  body: "Automated multi-platform release. Triggered by commit ${{ github.sha }}."
+                  draft: false
+                  prerelease: false
+
+            # To upload from other jobs, we first need to get the URL of the release created by the Linux job.
+            - name: Get Release URL
+              id: get_release
+              if: matrix.os != 'ubuntu-latest' # Run this on all jobs that didn't create the release
+              uses: joutvhu/get-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: build-${{ github.run_number }}
+
+            - name: Upload Release Asset
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  # Use the upload_url from the creation step OR the get step
+                  upload_url: ${{ steps.create_release.outputs.upload_url || steps.get_release.outputs.upload_url }}
+                  asset_path: ${{ env.ASSET_PATH }}
+                  asset_name: ${{ env.ASSET_NAME }}
+                  asset_content_type: application/zip

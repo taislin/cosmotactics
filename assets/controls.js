@@ -9,6 +9,7 @@ import {
 	player_entities,
 	resetGame,
 	world_items,
+	log,
 } from "./engine.js";
 import {
 	gameDisplay,
@@ -354,79 +355,6 @@ export function setControls() {
 		clicks(currentLoc, draw_interval, this);
 		updateCanvas();
 	}
-
-	// This is a duplicate window.addEventListener("click") function.
-	// It should be removed as handleCLick() above covers the same functionality.
-	// For now, I'll comment it out to avoid redundancy.
-	/*
-	window.addEventListener("click", function (e) {
-		if (VARS.GAMEWINDOW == "LOST") {
-			sleep(2000);
-			goToMainMenu();
-			resetGame();
-			return;
-		}
-		if (VARS.GAMEWINDOW == "MENU") {
-			let coordsm = menuDisplay.eventToPosition(e);
-			if (coordsm[1] == 9 && coordsm[0] >= 5 && coordsm[0] <= 12) {
-				gameDisplay._options.layout = "tile";
-				VARS.GAMEWINDOW = "GAME";
-				loaded = true;
-				document
-					.getElementById("terminal")
-					.removeChild(menuDisplay.getContainer());
-				document
-					.getElementById("terminal")
-					.appendChild(gameDisplay.getContainer());
-				window._updateCanvasIntervalId = setInterval(updateCanvas, 100);
-			} else if (coordsm[1] == 11) {
-			}
-			return;
-		}
-		if (!loaded) {
-			loaded = true;
-			window._updateCanvasIntervalId = setInterval(updateCanvas, 100);
-		}
-		let coordsm = msgDisplay.eventToPosition(e);
-		if (
-			coordsm[0] < 0 ||
-			coordsm[0] >= 32 ||
-			coordsm[1] < 0 ||
-			coordsm[1] >= 40
-		) {
-			//nothing
-		} else {
-			clickGUI(coordsm);
-		}
-		let coords = gameDisplay.eventToPosition(e);
-		if (
-			coords[0] < 0 ||
-			coords[0] >= VARS.MAP_X ||
-			coords[1] < 0 ||
-			coords[1] >= VARS.MAP_Y
-		) {
-			return;
-		}
-		console.log("\x1b[94mCOORDS:\x1b[0m " + coords);
-		let draw_interval = [
-			VARS.SELECTED.x - VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
-			VARS.SELECTED.y - VARS.MAP_DISPLAY_Y / VARS.ZOOM_LEVEL,
-			VARS.SELECTED.x + VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
-			VARS.SELECTED.y + VARS.MAP_DISPLAY_Y / VARS.ZOOM_LEVEL,
-		];
-		currentLoc[0] = coords[0] + draw_interval[0];
-		currentLoc[1] = coords[1] + draw_interval[1];
-
-		if (
-			!world[currentLoc[0] + "," + currentLoc[1]] ||
-			world[currentLoc[0] + "," + currentLoc[1]].visible == false
-		) {
-			return;
-		}
-		clicks(currentLoc, draw_interval, this);
-		updateCanvas();
-	});
-	*/
 }
 
 /**
@@ -463,23 +391,20 @@ function clicks(currentLoc, draw_interval, O) {
 		) {
 			debugLog("double click");
 			drawPaths.length = 0;
-			let precol = "%c{#ffa500}";
 			if (VARS.SELECTED.owner == "player") {
-				precol = "%c{#009f00}";
 			}
 			if (VARS.SELECTED.mob.slots.ranged.stats.ammo > 0) {
-				VARS.GAMELOG.unshift(
-					VARS.TURN +
-						": " +
-						precol +
-						VARS.SELECTED.name +
-						"%c{} fires his gun!"
-				);
+				log({
+					type: "action",
+					source: VARS.SELECTED,
+					action: "fires",
+					weapon: VARS.SELECTED.mob.slots.ranged,
+				});
 				new Projectile(
 					VARS.SELECTED.x,
 					VARS.SELECTED.y,
 					VARS.SELECTED.mob.slots.ranged,
-					"player",
+					VARS.SELECTED,
 					VARS.TARGET,
 					VARS.SELECTED.mob.slots.ranged.itemtype.split(" ")[0]
 				);
@@ -493,7 +418,7 @@ function clicks(currentLoc, draw_interval, O) {
 				VARS.SELECTED.mob.slots.ranged.stats.ammo--;
 				processTurn();
 			} else {
-				VARS.GAMELOG.unshift(VARS.TURN + ": " + "No ammo!");
+				log({ type: "info", text: "No ammo!" });
 			}
 		} else {
 			VARS.TARGET[0] = currentLoc[0];
@@ -595,14 +520,12 @@ export function reload(unit) {
 				unit.mob.slots.ranged.stats.ammo =
 					unit.mob.slots.ranged.stats.max_ammo;
 			}
-			VARS.GAMELOG.unshift(
-				VARS.TURN +
-					": " +
-					unit.name +
-					" reloads the " +
-					unit.mob.slots.ranged.name +
-					"."
-			);
+			log({
+				type: "action",
+				source: unit,
+				action: "reloads",
+				weapon: unit.mob.slots.ranged,
+			});
 		}
 	}
 	processTurn();

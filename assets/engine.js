@@ -190,6 +190,8 @@ function checkLose() {
  * Central logging function using Unicode symbols for clarity and conciseness.
  * Creates formatted, atmospheric log messages from event objects.
  * @param {object} event - A structured object describing the game event.
+ * e.g., { type: 'damage', source: entity, target: entity, amount: 10, weapon: item }
+ * e.g., { type: 'action', source: entity, action: 'reloads', weapon: item }
  */
 function log(event) {
 	let message = `${VARS.TURN}: `;
@@ -229,6 +231,9 @@ function log(event) {
 			message += `%c{gray}~%c{} ${sourceName}'s shot misses ${targetName}.`;
 			break;
 
+		case "block":
+			message += `%c{blue}/%c{} ${targetName} blocks ${sourceName}'s attack.`;
+			break;
 		case "action":
 			let weaponName = event.weapon ? ` their ${event.weapon.name}` : "";
 			message += `%c{cyan}⚙%c{} ${sourceName} ${event.action}${weaponName}.`;

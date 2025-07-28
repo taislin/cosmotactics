@@ -1,0 +1,41 @@
+{
+    "applicationId": "js.neutralino.cosmotactics",
+    "version": "0.2.0",
+    "defaultMode": "window",
+    "port": 0,
+    "documentRoot": "/",
+    "url": "/",
+    "enableServer": true,
+    "enableNativeAPI": true,
+    "tokenSecurity": "one-time",
+    "logging": {
+        "enabled": true,
+        "writeToLogFile": true
+    },
+    "nativeAllowList": [
+        "app.*"
+    ],
+    "modes": {
+        "window": {
+            "title": "CosmoTactics",
+            "width": 1400,
+            "height": 800,
+            "minWidth": 1024,
+            "minHeight": 768,
+            "fullScreen": false,
+            "alwaysOnTop": false,
+            "icon": "/assets/icons/icon.png",
+            "enableInspector": true,
+            "borderless": false,
+            "maximize": false
+        }
+    },
+    "cli": {
+        "binaryName": "cosmotactics",
+        "resourcesPath": "/",
+        "extensionsPath": "/extensions/",
+        "clientLibrary": "/assets/neutralino.js",
+        "binaryVersion": "4.14.0",
+        "clientVersion": "3.12.0"
+    }
+}

@@ -1,11 +1,10 @@
-// src/classes/entity.js
-
 import {
 	icons,
 	entities, // Note: This is the global entities array
 	VARS,
 	player_entities,
 	debugLog,
+	log,
 } from "../engine.js";
 import { WIcon } from "./icons.js";
 import { effects } from "../display.js";
@@ -106,9 +105,12 @@ export class WEntity {
 			// Player unit: Reload costs a turn
 			if (this.owner === "player") {
 				ranged.stats.ammo = ranged.stats.max_ammo;
-				VARS.GAMELOG.unshift(
-					`${VARS.TURN}: ${this.name} reloads the ${ranged.name}.`
-				);
+				log({
+					type: "action",
+					source: this,
+					action: "reloads",
+					weapon: ranged,
+				});
 				debugLog(`${this.name} reloaded.`, "info");
 				return true; // Reload consumes the turn
 			} else {
@@ -116,9 +118,12 @@ export class WEntity {
 				// For now, AI simple reloads if it has a ranged weapon and is out of ammo.
 				if (ranged.stats.reload > 0) {
 					ranged.stats.ammo = ranged.stats.max_ammo;
-					VARS.GAMELOG.unshift(
-						`${VARS.TURN}: ${this.name} reloads the ${ranged.name}.`
-					);
+					log({
+						type: "action",
+						source: this,
+						action: "reloads",
+						weapon: ranged,
+					});
 					debugLog(`${this.name} AI reloaded.`, "info");
 					return true;
 				}
@@ -185,16 +190,7 @@ export class WEntity {
 				world[`${this.x},${this.y}`].icon = icons["dead"]; // Change map tile icon
 				world_grid[this.y][this.x] = 1; // Make map tile passable
 			}
-			let precol =
-				this.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
-			// Check for a custom death message
-			if (this.mob.death_message) {
-				VARS.GAMELOG.unshift(VARS.TURN + ": " + this.mob.death_message);
-			} else {
-				VARS.GAMELOG.unshift(
-					VARS.TURN + ": " + precol + this.name + "%c{} dies!"
-				);
-			}
+			log({ type: "death", source: this });
 			if (
 				this.owner === "player" &&
 				VARS.SELECTED === this &&
@@ -224,9 +220,10 @@ export class WEntity {
 			enEntity.owner !== this.owner // Ensure it's an enemy
 		) {
 			let dmg = this.mob.stats.attack; // Base melee attack
+			let meleeWeapon = this.mob.slots.melee;
 
-			if (this.mob.slots.melee && this.mob.slots.melee.stats.attack > 0) {
-				dmg = this.mob.slots.melee.stats.attack; // Use weapon attack if equipped
+			if (meleeWeapon && meleeWeapon.stats.attack > 0) {
+				dmg = meleeWeapon.stats.attack; // Use weapon attack if equipped
 			}
 
 			let finalDmg = Math.max(0, dmg - enEntity.mob.stats.defence); // Apply defence
@@ -240,20 +237,13 @@ export class WEntity {
 						enEntity.mob.stats.health
 					); // Ensure non-negative health
 
-					let precol =
-						this.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
-					let precol2 =
-						en.entity.owner === "player"
-							? "%c{#009f00}"
-							: "%c{#ffa500}";
-
-					VARS.GAMELOG.unshift(
-						`${VARS.TURN}: ${precol}${
-							this.name
-						}%c{} hits ${precol2}${
-							en.entity.name
-						}%c{} for %c{red}${Math.round(finalDmg)} HP%c{}!`
-					);
+					log({
+						type: "damage",
+						source: this,
+						target: en.entity,
+						amount: Math.round(finalDmg),
+						weapon: meleeWeapon,
+					});
 					debugLog(
 						`${this.name} melees ${en.entity.name} for ${Math.round(
 							finalDmg
@@ -261,24 +251,14 @@ export class WEntity {
 						"debug"
 					);
 				} else {
-					let precol =
-						this.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
-					let precol2 =
-						en.entity.owner === "player"
-							? "%c{#009f00}"
-							: "%c{#ffa500}";
-					VARS.GAMELOG.unshift(
-						`${VARS.TURN}: ${precol}${this.name}%c{} misses ${precol2}${en.entity.name}%c{}!`
-					);
+					log({ type: "miss", source: this, target: en.entity });
 					debugLog(
 						`${this.name} misses melee attack on ${en.entity.name}.`,
 						"debug"
 					);
 				}
 			} else {
-				VARS.GAMELOG.unshift(
-					`${VARS.TURN}: ${en.entity.name} blocks ${this.name}'s attack!`
-				);
+				log({ type: "block", source: this, target: en.entity });
 				debugLog(
 					`${en.entity.name} blocks ${this.name}'s melee attack.`,
 					"debug"
@@ -303,14 +283,6 @@ export class WEntity {
 			en.dist <= rangedWeapon.stats.range &&
 			checkFire(this.x, this.y, en.x, en.y) === true
 		) {
-			let precol =
-				this.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
-			let precol2 =
-				en.entity.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
-
-			VARS.GAMELOG.unshift(
-				`${VARS.TURN}: ${precol}${this.name}%c{} fires at ${precol2}${en.entity.name}%c{}!`
-			);
 			debugLog(`${this.name} fires at ${en.entity.name}.`, "debug");
 
 			// Create projectile
@@ -318,7 +290,7 @@ export class WEntity {
 				this.x,
 				this.y,
 				rangedWeapon,
-				this.owner,
+				this,
 				[en.x, en.y],
 				rangedWeapon.itemtype.split(" ")[0] // e.g., "projectile", "plasma", "laser"
 			);

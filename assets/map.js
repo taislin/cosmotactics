@@ -1,5 +1,3 @@
-// src/map.js
-
 import {
 	VARS,
 	entities,
@@ -8,6 +6,7 @@ import {
 	player_entities,
 	world_items,
 	debugLog,
+	log,
 } from "./engine.js";
 import { WEntity } from "./classes/entity.js";
 import { WMob } from "./classes/mob.js";
@@ -237,7 +236,7 @@ export function loadLevel(level = 0) {
 		];
 		entryMessage = getRandomElement(forestMessages);
 	}
-	VARS.GAMELOG.unshift(`%c{yellow}${entryMessage}`);
+	log({ type: "info", text: entryMessage });
 }
 
 function findClearAreaForPlayer() {

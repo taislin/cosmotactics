@@ -1,6 +1,11 @@
-// src/classes/projectile.js
-
-import { icons, VARS, projectiles, debugLog, entities } from "../engine.js";
+import {
+	icons,
+	VARS,
+	projectiles,
+	debugLog,
+	entities,
+	log,
+} from "../engine.js";
 import { effects } from "../display.js";
 // Import findMobCoords and getDir from the new utils file
 import { findMobCoords } from "./../utils/gameUtils.js"; // getDir is not needed directly here, but checkFire is conceptually related
@@ -42,7 +47,7 @@ function calculateDamage(modif) {
  * Represents a projectile in the game.
  */
 export class Projectile {
-	constructor(x, y, modif, faction, tgt, type) {
+	constructor(x, y, modif, source_entity, tgt, type) {
 		// Initialize projectile properties
 		this.tgt = tgt;
 		this.modif = modif;
@@ -50,7 +55,8 @@ export class Projectile {
 		this.y = y;
 		this.originX = x;
 		this.originY = y;
-		this.faction = faction;
+		this.source = source_entity;
+		this.faction = source_entity.owner;
 		this.type = type;
 		this.dir = 0; // Direction for sprite (0: vertical, 1: horizontal, 2: backslash, 3: forward slash)
 		projectiles.push(this);
@@ -117,7 +123,13 @@ export class Projectile {
 			0,
 			target.mob.stats.health - Math.round(finalDamage)
 		);
-		logHit(target, finalDamage, this.faction);
+		log({
+			type: "damage",
+			source: this.source,
+			target: target,
+			amount: Math.round(finalDamage),
+			weapon: this.modif,
+		});
 		this.destroy();
 	}
 
@@ -174,7 +186,18 @@ export class Projectile {
 				if (ROT.RNG.getUniform() < this.acc) {
 					this.handleHit(targetEntity);
 				} else {
-					logMiss(targetEntity, this.faction);
+					log({
+						type: "miss",
+						source: this.source,
+						target: targetEntity,
+					});
+					effects.push({
+						x: targetEntity.x,
+						y: targetEntity.y,
+						icon: icons.miss,
+						color: "#FFFF00",
+						background: "transparent",
+					});
 					this.destroy();
 				}
 				return;
@@ -237,31 +260,4 @@ function getProjectileDirection(x, y, tx, ty) {
 		// One positive, one negative (NE or SW)
 		return 3; // '/'
 	}
-}
-
-function logHit(t, dmg, owner) {
-	let precol = owner === "player" ? "%c{#009f00}" : "%c{#ffa500}"; // Shooter's faction color
-	let targetprecol = t.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}"; // Target's faction color
-
-	VARS.GAMELOG.unshift(
-		`${VARS.TURN}: ${targetprecol}${
-			t.name
-		}%c{} was shot for %c{red}${Math.round(dmg)} HP%c{}.`
-	);
-}
-
-function logMiss(t, owner) {
-	let precol = owner === "player" ? "%c{#009f00}" : "%c{#ffa500}"; // Shooter's faction color
-	let targetprecol = t.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}"; // Target's faction color
-
-	VARS.GAMELOG.unshift(
-		`${VARS.TURN}: Shot misses ${targetprecol}${t.name}%c{}!`
-	);
-	effects.push({
-		x: t.x,
-		y: t.y,
-		icon: icons.miss,
-		color: "#FFFF00",
-		background: "transparent",
-	});
 }
