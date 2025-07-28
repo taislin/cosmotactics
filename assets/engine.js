@@ -187,11 +187,9 @@ function checkLose() {
 }
 
 /**
- * NEW: Central logging function.
+ * Central logging function using Unicode symbols for clarity and conciseness.
  * Creates formatted, atmospheric log messages from event objects.
  * @param {object} event - A structured object describing the game event.
- * e.g., { type: 'damage', source: entity, target: entity, amount: 10, weapon: item }
- * e.g., { type: 'action', source: entity, action: 'reloads', weapon: item }
  */
 function log(event) {
 	let message = `${VARS.TURN}: `;
@@ -199,7 +197,7 @@ function log(event) {
 		? event.source.owner === "player"
 			? `%c{#009f00}${event.source.name}%c{}`
 			: `%c{#ffa500}${event.source.name}%c{}`
-		: "";
+		: "A blast";
 	const targetName = event.target
 		? event.target.owner === "player"
 			? `%c{#009f00}${event.target.name}%c{}`
@@ -220,30 +218,37 @@ function log(event) {
 
 			// Critical: Highlight when the player is the target
 			if (event.target && event.target.owner === "player") {
-				message += `%b{#401010}🛡️ ${sourceName} ${verb} ${targetName} for ${damageText}!%b{}`;
+				message += `%b{#401010}%c{red}▼%c{}%b{} ${sourceName} ${verb} ${targetName} for ${damageText}!`;
 			} else {
-				message += `${sourceName} ${verb} ${targetName} for ${damageText}.`;
+				// Damage to enemies
+				message += `%c{green}※%c{} ${sourceName} ${verb} ${targetName} for ${damageText}.`;
 			}
 			break;
 
 		case "miss":
-			message += `${sourceName}'s shot misses ${targetName}.`;
+			message += `%c{gray}~%c{} ${sourceName}'s shot misses ${targetName}.`;
 			break;
 
 		case "action":
 			let weaponName = event.weapon ? ` their ${event.weapon.name}` : "";
-			message += `${sourceName} ${event.action}${weaponName}.`;
+			message += `%c{cyan}⚙%c{} ${sourceName} ${event.action}${weaponName}.`;
 			break;
 
 		case "death":
-			message += `${sourceName} dies!`;
+			let deathSymbol =
+				event.source.owner === "player"
+					? `%c{orange}☠%c{}`
+					: `%c{red}☠%c{}`;
+
 			if (event.source.mob && event.source.mob.death_message) {
-				message = `${VARS.TURN}: ${event.source.mob.death_message}`;
+				message += `${deathSymbol} ${event.source.mob.death_message}`;
+			} else {
+				message += `${deathSymbol} ${sourceName} dies!`;
 			}
 			break;
 
 		case "info":
-			message += `%c{yellow}${event.text}%c{}`;
+			message += `%c{yellow}»%c{} ${event.text}`;
 			break;
 
 		default:
