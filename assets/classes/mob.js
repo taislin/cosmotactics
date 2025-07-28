@@ -49,6 +49,11 @@ export class WMob {
 		extra: null,
 	};
 
+	static DEFAULT_PROPERTIES = {
+		death_message: null,
+		background: "unknown",
+	};
+
 	/**
 	 * Creates a new Mob instance.
 	 * @param {string} [ai="basic"] - The AI type for the mob.
@@ -64,7 +69,8 @@ export class WMob {
 		drawstacks = [],
 		slots = {},
 		traits = [],
-		background = "unknown"
+		background = "unknown",
+		death_message = null
 	) {
 		this.ai = ai;
 		this.stats = { ...WMob.DEFAULT_STATS, ...stats };
@@ -73,6 +79,7 @@ export class WMob {
 		this.slots = { ...WMob.DEFAULT_SLOTS, ...slots };
 		this.traits = traits;
 		this.background = background;
+		this.death_message = death_message;
 		this.stance = "follow";
 		this.autofire = true;
 	}

@@ -467,6 +467,15 @@ function drawMenu() {
 					let indx = "- ";
 					if (VARS.MENU_ITEM == i + 1) {
 						indx = "%c{orange}> ";
+						const selectedEntity = locEnt[i];
+						if (selectedEntity && selectedEntity.desc) {
+							msgDisplay.drawText(
+								2,
+								25,
+								"%c{grey}" + selectedEntity.desc,
+								28
+							); // Draw description at the bottom
+						}
 					}
 
 					if (locEnt[i].type == "item") {

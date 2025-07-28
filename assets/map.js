@@ -220,6 +220,24 @@ export function loadLevel(level = 0) {
 	} else {
 		addEnemiesAndItems_Cave(level);
 	}
+	let entryMessage = "";
+	if (mapType === "cave") {
+		const caveMessages = [
+			"The air grows cold and damp.",
+			"A low, chittering sound echoes from the darkness ahead.",
+			"The smell of ozone and alien decay hangs heavy in this chamber.",
+		];
+		entryMessage = getRandomElement(caveMessages);
+	} else {
+		// forest
+		const forestMessages = [
+			"You emerge into a clearing, the alien sun filtering through strange flora.",
+			"The ground is soft with moss, but the silence feels unnatural.",
+			"Twisted, alien trees loom over you like ancient sentinels.",
+		];
+		entryMessage = getRandomElement(forestMessages);
+	}
+	VARS.GAMELOG.unshift(`%c{yellow}${entryMessage}`);
 }
 
 function findClearAreaForPlayer() {
@@ -465,7 +483,15 @@ function createUnit(x, y, unitName, faction = "enemy") {
 		y,
 		faction,
 		true,
-		new WMob(unitData.ai, JSON.parse(JSON.stringify(unitData.stats))),
+		new WMob(
+			unitData.ai,
+			JSON.parse(JSON.stringify(unitData.stats)),
+			[], // drawstacks
+			{}, // slots (will be populated by equipItem)
+			[], // traits
+			unitData.background, // background
+			unitData.death_message
+		),
 		false,
 		"mob"
 	);
@@ -498,7 +524,15 @@ function createPlayerUnit(x, y, unitName) {
 		y,
 		"player",
 		true,
-		new WMob("player", JSON.parse(JSON.stringify(unitData.stats))),
+		new WMob(
+			"player",
+			JSON.parse(JSON.stringify(unitData.stats)),
+			[], // drawstacks
+			{}, // slots
+			[], // traits
+			unitData.background,
+			unitData.death_message
+		),
 		false,
 		"mob"
 	);

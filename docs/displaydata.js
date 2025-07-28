@@ -8,8 +8,8 @@ let unitstable = document.getElementById("unitstable");
 let _row = unitstable.insertRow();
 let counter1 = 0;
 const headerList = [
-	{ text: "Icon", tooltip: "" },
 	{ text: "Name", tooltip: "" },
+	{ text: "Icon", tooltip: "" },
 	{ text: "Description", tooltip: "" },
 	{ text: "Health", tooltip: "Unit's Health Points" },
 	{ text: "Attack", tooltip: "Base Melee Attack Damage" },

@@ -187,9 +187,14 @@ export class WEntity {
 			}
 			let precol =
 				this.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
-			VARS.GAMELOG.unshift(
-				VARS.TURN + ": " + precol + this.name + "%c{} dies!"
-			);
+			// Check for a custom death message
+			if (this.mob.death_message) {
+				VARS.GAMELOG.unshift(VARS.TURN + ": " + this.mob.death_message);
+			} else {
+				VARS.GAMELOG.unshift(
+					VARS.TURN + ": " + precol + this.name + "%c{} dies!"
+				);
+			}
 			if (
 				this.owner === "player" &&
 				VARS.SELECTED === this &&

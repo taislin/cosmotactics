@@ -4,6 +4,7 @@
 		"desc": "A grotesque, reanimated husk. Slow and predictable, but its mutated flesh can absorb surprising amounts of punishment.",
 		"type": "mob",
 		"icon": "shambler",
+		"death_message": "The reanimated husk collapses into a pile of gore.",
 		"ai": "basic",
 		"stats": {
 			"health": 150,
@@ -27,6 +28,7 @@
 		"desc": "A standard infantry unit of the Grey Collective. Agile and equipped with advanced energy weapons, they represent a common threat.",
 		"type": "mob",
 		"icon": "grey",
+		"death_message": "The Grey's large head explodes in a shower of psionic energy.",
 		"ai": "ranged",
 		"stats": {
 			"health": 75,
