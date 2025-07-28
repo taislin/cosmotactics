@@ -1,9 +1,6 @@
 /dist
-
 /.tmp
-
-/.github
-
-.gitignore
 .git
+.gitignore
 node_modules
+.github

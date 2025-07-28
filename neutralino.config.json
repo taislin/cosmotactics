@@ -24,7 +24,7 @@
             "minHeight": 768,
             "fullScreen": false,
             "alwaysOnTop": false,
-            "icon": "/assets/icons/icon.png",
+            "icon": "./app/icons/icon.png",
             "enableInspector": true,
             "borderless": false,
             "maximize": false
@@ -32,10 +32,10 @@
     },
     "cli": {
         "binaryName": "cosmotactics",
-        "resourcesPath": "/",
+        "resourcesPath": "./app/",
         "extensionsPath": "/extensions/",
-        "clientLibrary": "/assets/neutralino.js",
-        "binaryVersion": "4.14.0",
-        "clientVersion": "3.12.0"
+        "clientLibrary": "./app/assets/neutralino.js",
+        "binaryVersion": "6.2.0",
+        "clientVersion": "6.2.0"
     }
 }
