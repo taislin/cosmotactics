@@ -1,13 +1,18 @@
 # CosmoTactics
 
 <p align="center">
-<img src="https://github.com/taislin/cosmotactics/raw/master/icons/icon.png" alt="logo" height="128"/>
+<img src="https://github.com/taislin/cosmotactics/raw/master/app/icons/icon.png" alt="logo" height="128"/>
 </p>
+
+![GitHub package.json version](https://img.shields.io/github/package-json/v/taislin/cosmotactics)
+![GitHub Release Date](https://img.shields.io/github/release-date/taislin/cosmotactics)
+![GitHub License](https://img.shields.io/github/license/taislin/cosmotactics)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/taislin/cosmotactics)
 
 A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your **_Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
 
 <p align="center">
-<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="350"/>
+<img src="https://github.com/taislin/cosmotactics/raw/master/app/docs/screen.png" alt="gameplay screenshot" height="350"/>
 </p>
 
 ## 📜 Features

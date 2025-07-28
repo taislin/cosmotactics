@@ -1,0 +1,246 @@
+/* ==== FONT DEFINITIONS ==== */
+
+@font-face {
+	font-family: "Space Mono";
+	src: url(../app/fonts/SpaceMono-Regular.ttf) format("truetype");
+}
+@font-face {
+	font-family: "Space Mono";
+	src: url(../app/fonts/SpaceMono-Bold.ttf) format("truetype");
+	font-weight: bold;
+}
+@font-face {
+	font-family: "Space Mono";
+	src: url(../app/fonts/SpaceMono-Italic.ttf) format("truetype");
+	font-style: italic, oblique;
+}
+@font-face {
+	font-family: "Space Mono";
+	src: url(../app/fonts/SpaceMono-BoldItalic.ttf) format("truetype");
+	font-weight: bold;
+	font-style: italic, oblique;
+}
+@font-face {
+	font-family: "Nova Mono";
+	src: url(../app/fonts/NovaMono-Regular.ttf) format("truetype");
+}
+/* ==== GENERAL BODY & LAYOUT ==== */
+body {
+	background-color: #0d0d0d;
+	color: #ccc;
+	font-family: "Space Mono", Tahoma, Geneva, Verdana, sans-serif;
+	font-size: 1em;
+	line-height: 1.6;
+	margin: 0;
+	padding: 0;
+	background-image: url("./background.png");
+	background-attachment: fixed; /* Keeps background fixed during scroll */
+}
+
+main {
+	max-width: 1200px; /* Increased width to accommodate wide tables */
+	margin: 40px auto;
+	padding: 20px 40px;
+	text-align: justify;
+	background-color: rgba(
+		20,
+		20,
+		20,
+		0.95
+	); /* Semi-transparent dark background */
+	border: 1px solid #ffa500;
+	border-radius: 4px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+}
+
+/* ==== HEADERS & NAVIGATION ==== */
+h1,
+h2,
+h3 {
+	color: #ffa500;
+	font-family: "Nova Mono", serif;
+	font-weight: normal;
+	border-bottom: 1px solid #444;
+	padding-bottom: 8px;
+	margin-top: 40px;
+}
+h1 {
+	text-align: center;
+	font-size: 2.5em;
+	border-bottom: none;
+	margin-bottom: 30px;
+}
+
+nav ul {
+	list-style-type: none;
+	padding: 10px;
+	margin-bottom: 40px;
+	text-align: center;
+}
+nav li {
+	display: inline-block;
+	margin-right: 20px;
+	font-family: "Nova Mono", serif;
+}
+
+/* ==== TABLE STYLING ==== */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+	font-size: 0.85em; /* Slightly smaller font for more columns */
+	table-layout: fixed; /* Essential for controlling column widths */
+	word-wrap: break-word; /* Prevents long words from breaking layout */
+}
+th,
+td {
+	border: 1px solid #444;
+	text-align: left;
+	padding: 8px; /* Reduced padding slightly */
+	vertical-align: top; /* Align content to the top of cells */
+}
+th {
+	background-color: #332811;
+	color: #ffc04d;
+	text-align: center;
+	white-space: nowrap; /* Prevent header text from wrapping */
+	cursor: pointer; /* Indicate sortable */
+}
+th.order {
+	/* For sortable columns only */
+	cursor: pointer;
+}
+th.order:hover {
+	background-color: #4d3b1a; /* Slightly lighter on hover */
+}
+
+tr:nth-child(even) {
+	background-color: #1a1a1a; /* Table striping for readability */
+}
+
+/* --- Specific Column Widths & Alignment for Weapons Table --- */
+#weaponstable th:nth-child(1),
+#weaponstable td:nth-child(1) {
+	width: 12%;
+	font-weight: bold;
+} /* Name */
+#weaponstable th:nth-child(2),
+#weaponstable td:nth-child(2) {
+	width: 40px;
+	text-align: center;
+} /* Icon */
+#weaponstable th:nth-child(3),
+#weaponstable td:nth-child(3) {
+	width: 28%;
+} /* Description */
+#weaponstable th:nth-child(4),
+#weaponstable td:nth-child(4) {
+	width: 10%;
+	text-align: center;
+} /* Type */
+
+/* Numeric stats columns for weapons */
+#weaponstable th:nth-child(n + 5),
+#weaponstable td:nth-child(n + 5) {
+	width: 8%; /* Distribute remaining width among stats columns */
+	text-align: center;
+}
+
+/* --- Specific Column Widths & Alignment for Units Table --- */
+#unitstable th:nth-child(1),
+#unitstable td:nth-child(1) {
+	width: 10%;
+	font-weight: bold;
+} /* Name */
+#unitstable th:nth-child(2),
+#unitstable td:nth-child(2) {
+	width: 40px;
+	text-align: center;
+} /* Icon */
+#unitstable th:nth-child(3),
+#unitstable td:nth-child(3) {
+	width: 30%;
+} /* Description (adjusted for new Faction col) */
+#unitstable th:nth-child(4),
+#unitstable td:nth-child(4) {
+	width: 10%;
+	text-align: center;
+} /* Faction */
+/* Numeric stats columns for units */
+#unitstable th:nth-child(n + 5),
+#unitstable td:nth-child(n + 5) {
+	width: 7.5%; /* Distribute remaining width among stats columns */
+	text-align: center;
+}
+
+/* ==== ICON STYLING (For Canvas Elements) ==== */
+.icon-cell {
+	text-align: center !important;
+	vertical-align: middle;
+}
+.table-icon {
+	/* This class now applies to your canvas elements */
+	width: 38.4px; /* Target display width for the canvas (32 * 1.2) */
+	height: 38.4px; /* Target display height for the canvas (32 * 1.2) */
+	margin: 0 auto; /* Center the canvas within the table cell */
+	display: block; /* Ensures margin:auto works */
+}
+
+/* ==== LINKS & IMAGES ==== */
+a:link,
+a:visited {
+	color: #ffa500;
+	text-decoration: none;
+	font-weight: bold;
+}
+a:hover {
+	color: #ffc04d;
+	text-decoration: underline;
+}
+a:active {
+	color: #b37400;
+}
+
+img {
+	max-width: 100%;
+	display: block;
+	margin: 20px auto;
+	border: 1px solid #444;
+	border-radius: 4px;
+}
+#screen_img {
+	max-width: 800px;
+}
+
+/* ==== UTILITY & DECORATIVE CLASSES ==== */
+.note {
+	background-color: #303022;
+	border-left: 4px solid #ffa500;
+	padding: 15px;
+	margin: 20px 0;
+	border-radius: 0 4px 4px 0;
+}
+
+code {
+	background-color: #3e3e3e;
+	padding: 2px 5px;
+	border-radius: 4px;
+	font-family: inherit;
+	color: #ffc04d;
+}
+
+.key-char {
+	background: #ddd;
+	border-radius: 4px;
+	border: 1px solid #aaa;
+	color: #222;
+	display: inline-block;
+	font-family: sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 1;
+	margin: 0 0.1em;
+	padding: 0.3em 0.5em;
+	text-shadow: 0 1px 0 #fff;
+	vertical-align: middle;
+}

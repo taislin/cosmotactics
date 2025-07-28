@@ -1,12 +1,18 @@
+# D:\GitHub\minigame-menagerie\cosmotactics\.github\workflows\release.yml
+
 name: Build and Release
 
 on:
-    # 1. Automatic trigger for patch releases when merging to main
     push:
         branches:
             - main
             - master
-    # 2. Manual trigger for major/minor/patch releases
+        paths:
+            - "**.js"
+            - "**.html"
+            - "**.json"
+            - "**.css"
+            - ".github/workflows/release.yml"
     workflow_dispatch:
         inputs:
             bump_level:
@@ -20,9 +26,7 @@ on:
                     - major
 
 jobs:
-    # Job 1: Bump the version in package.json and create a git tag
     bump-version:
-        # Don't run this workflow on commits made by the workflow itself
         if: "!contains(github.event.head_commit.message, 'chore(release):')"
         runs-on: ubuntu-latest
         permissions:
@@ -49,7 +53,6 @@ jobs:
             - name: Determine Bump Level
               id: bump_level
               run: |
-                  # If triggered manually, use the input. Otherwise, default to patch.
                   BUMP_LEVEL=${{ github.event.inputs.bump_level || 'patch' }}
                   echo "BUMP_LEVEL=$BUMP_LEVEL" >> $GITHUB_ENV
 
@@ -64,90 +67,3 @@ jobs:
               id: get_version
               run: |
                   echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-
-    # Job 2: Build the app on all platforms and upload to the release
-    build-and-release:
-        needs: bump-version
-        strategy:
-            fail-fast: false # Add this line to let all jobs finish even if one fails
-            matrix:
-                os: [ubuntu-latest, macos-latest, windows-latest]
-        runs-on: ${{ matrix.os }}
-        permissions:
-            contents: write
-
-        steps:
-            - name: Check out repository
-              uses: actions/checkout@v4
-
-            - name: Set up Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: "20"
-
-            - name: Install Neutralinojs CLI
-              run: npm install -g @neutralinojs/neu
-
-            - name: Build Neutralinojs App
-              run: neu build
-
-            # --- NEW: Add a step to list the build output for debugging ---
-            - name: List build output
-              run: ls -R dist
-
-            - name: Determine Platform-specific Details
-              id: platform
-              shell: bash
-              run: |
-                  if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-                    echo "ASSET_NAME=cosmotactics-windows-x64.zip" >> $GITHUB_ENV
-                    echo "ASSET_PATH=./cosmotactics-win_x64.zip" >> $GITHUB_ENV
-                    # --- UPDATED COMMAND ---
-                    echo "ARCHIVE_CMD=cd dist && zip -r ../cosmotactics-win_x64.zip ." >> $GITHUB_ENV
-                  elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
-                    echo "ASSET_NAME=cosmotactics-macOS-x64.zip" >> $GITHUB_ENV
-                    echo "ASSET_PATH=./cosmotactics-mac_x64.zip" >> $GITHUB_ENV
-                    # --- UPDATED COMMAND ---
-                    echo "ARCHIVE_CMD=cd dist && zip -r ../cosmotactics-mac_x64.zip ." >> $GITHUB_ENV
-                  else
-                    echo "ASSET_NAME=cosmotactics-linux-x64.zip" >> $GITHUB_ENV
-                    echo "ASSET_PATH=./cosmotactics-linux_x64.zip" >> $GITHUB_ENV
-                    # --- UPDATED COMMAND ---
-                    echo "ARCHIVE_CMD=cd dist && zip -r ../cosmotactics-linux_x64.zip ." >> $GITHUB_ENV
-                  fi
-
-            - name: Package application for release
-              shell: bash # Ensure bash shell for all OSes for consistency
-              run: ${{ env.ARCHIVE_CMD }}
-
-            - name: Create or Get GitHub Release
-              id: release_manager
-              uses: joutvhu/get-release@v1
-              if: matrix.os != 'ubuntu-latest'
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  tag_name: v${{ needs.bump-version.outputs.new_version }}
-
-            - name: Create GitHub Release (only on Linux job)
-              id: create_release
-              if: matrix.os == 'ubuntu-latest'
-              uses: actions/create-release@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  tag_name: v${{ needs.bump-version.outputs.new_version }}
-                  release_name: CosmoTactics v${{ needs.bump-version.outputs.new_version }}
-                  body: "Automated multi-platform release. Triggered by commit ${{ github.sha }}."
-                  draft: false
-                  prerelease: false
-
-            - name: Upload Release Asset
-              uses: actions/upload-release-asset@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  upload_url: ${{ steps.create_release.outputs.upload_url || steps.release_manager.outputs.upload_url }}
-                  asset_path: ${{ env.ASSET_PATH }}
-                  asset_name: ${{ env.ASSET_NAME }}
-                  asset_content_type: application/zip
