@@ -25,10 +25,8 @@ jobs:
         # Don't run this workflow on commits made by the workflow itself
         if: "!contains(github.event.head_commit.message, 'chore(release):')"
         runs-on: ubuntu-latest
-        # --- ADD THIS PERMISSIONS BLOCK ---
         permissions:
             contents: write
-        # ------------------------------------
         outputs:
             new_version: ${{ steps.get_version.outputs.version }}
 
@@ -57,7 +55,6 @@ jobs:
 
             - name: Bump Version and Create Tag
               run: |
-                  # The `npm version` command increments the version, commits, and tags.
                   npm version ${{ env.BUMP_LEVEL }} -m "chore(release): bump version to %s"
 
             - name: Push Changes and Tags
@@ -66,21 +63,18 @@ jobs:
             - name: Get New Version
               id: get_version
               run: |
-                  # Read the newly bumped version from package.json and set it as an output
                   echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
     # Job 2: Build the app on all platforms and upload to the release
     build-and-release:
-        # This job depends on the bump-version job finishing successfully
         needs: bump-version
         strategy:
+            fail-fast: false # Add this line to let all jobs finish even if one fails
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
         runs-on: ${{ matrix.os }}
-        # --- Also add permissions here for creating the release ---
         permissions:
             contents: write
-        # --------------------------------------------------------
 
         steps:
             - name: Check out repository
@@ -91,15 +85,15 @@ jobs:
               with:
                   node-version: "20"
 
-            # This step is commented out because you have no index.neutralino.html file
-            # - name: Prepare Neutralino HTML entry point
-            #   run: mv index.neutralino.html index.html
-
             - name: Install Neutralinojs CLI
               run: npm install -g @neutralinojs/neu
 
             - name: Build Neutralinojs App
               run: neu build
+
+            # --- NEW: Add a step to list the build output for debugging ---
+            - name: List build output
+              run: ls -R dist
 
             - name: Determine Platform-specific Details
               id: platform
@@ -108,24 +102,28 @@ jobs:
                   if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
                     echo "ASSET_NAME=cosmotactics-windows-x64.zip" >> $GITHUB_ENV
                     echo "ASSET_PATH=./cosmotactics-win_x64.zip" >> $GITHUB_ENV
-                    echo "ARCHIVE_CMD=zip -r cosmotactics-win_x64.zip ./dist/*" >> $GITHUB_ENV
+                    # --- UPDATED COMMAND ---
+                    echo "ARCHIVE_CMD=cd dist && zip -r ../cosmotactics-win_x64.zip ." >> $GITHUB_ENV
                   elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
                     echo "ASSET_NAME=cosmotactics-macOS-x64.zip" >> $GITHUB_ENV
                     echo "ASSET_PATH=./cosmotactics-mac_x64.zip" >> $GITHUB_ENV
-                    echo "ARCHIVE_CMD=zip -r cosmotactics-mac_x64.zip ./dist/*" >> $GITHUB_ENV
+                    # --- UPDATED COMMAND ---
+                    echo "ARCHIVE_CMD=cd dist && zip -r ../cosmotactics-mac_x64.zip ." >> $GITHUB_ENV
                   else
                     echo "ASSET_NAME=cosmotactics-linux-x64.zip" >> $GITHUB_ENV
                     echo "ASSET_PATH=./cosmotactics-linux_x64.zip" >> $GITHUB_ENV
-                    echo "ARCHIVE_CMD=zip -r cosmotactics-linux_x64.zip ./dist/*" >> $GITHUB_ENV
+                    # --- UPDATED COMMAND ---
+                    echo "ARCHIVE_CMD=cd dist && zip -r ../cosmotactics-linux_x64.zip ." >> $GITHUB_ENV
                   fi
 
             - name: Package application for release
+              shell: bash # Ensure bash shell for all OSes for consistency
               run: ${{ env.ARCHIVE_CMD }}
 
             - name: Create or Get GitHub Release
               id: release_manager
               uses: joutvhu/get-release@v1
-              if: matrix.os != 'ubuntu-latest' # Run on all but the release creator
+              if: matrix.os != 'ubuntu-latest'
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
@@ -133,7 +131,7 @@ jobs:
 
             - name: Create GitHub Release (only on Linux job)
               id: create_release
-              if: matrix.os == 'ubuntu-latest' # Run only on one job to avoid race conditions
+              if: matrix.os == 'ubuntu-latest'
               uses: actions/create-release@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -149,7 +147,6 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  # Use the upload_url from the creation step, or the one fetched by other jobs
                   upload_url: ${{ steps.create_release.outputs.upload_url || steps.release_manager.outputs.upload_url }}
                   asset_path: ${{ env.ASSET_PATH }}
                   asset_name: ${{ env.ASSET_NAME }}
