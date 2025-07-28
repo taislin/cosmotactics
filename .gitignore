@@ -141,7 +141,7 @@ bin/
 dist/
 *.res.neu
 
-/assets/neutralino.js
 
 .DS_Store
 Thumbs.db
+assets/neutralino.d.ts
