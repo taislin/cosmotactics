@@ -1,6 +1,7 @@
 import { world_grid, loadLevel, world } from "./map.js";
 import { goToLostMenu, sleep } from "./controls.js";
 import { setSeed } from "../index.js";
+import pkg from "../../package.json" with { type: "json" };
 // Import from new utils file for shared logic
 import { isTilePassableForMovement, checkFire } from "./utils/gameUtils.js";
 // Import for player squad AI logic
@@ -44,7 +45,7 @@ const initial_vars = {
 	GAMEWINDOW: "MENU",
 	MENU_ITEM: 1,
 	MENU_LENGTH: 0,
-	VERSION: "0.2.1-dev",
+	VERSION: pkg.version,
 	SUBMENU: "EQUIPMENT",
 	GAMELOG: [],
 	TARGET: [-1, -1],

@@ -1,0 +1,63 @@
+name: Update Dev Version
+
+on:
+    push:
+        branches:
+            - dev
+
+jobs:
+    bump-dev-version:
+        # Prevent the workflow from running on its own commits
+        if: "!contains(github.event.head_commit.message, 'chore(dev):')"
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+              with:
+                  # We need to fetch all history to find the last tag
+                  fetch-depth: 0
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            - name: Configure Git
+              run: |
+                  git config --global user.name 'GitHub Actions Bot'
+                  git config --global user.email 'github-actions-bot@users.noreply.github.com'
+
+            - name: Create unique dev version
+              id: dev_version
+              run: |
+                  # Get the short hash of the current commit
+                  short_hash=$(git rev-parse --short HEAD)
+
+                  # Get the latest tag name. This is the base version for our dev build.
+                  # It ensures the dev version is always based on the latest release (e.g., v0.2.1)
+                  latest_tag=$(git describe --tags --abbrev=0)
+
+                  # Remove the 'v' prefix from the tag to get the clean version number
+                  base_version=${latest_tag#v}
+
+                  # Construct the new dev version string
+                  new_dev_version="${base_version}-dev.${short_hash}"
+
+                  echo "Base version from tag: $base_version"
+                  echo "Commit hash: $short_hash"
+                  echo "New dev version: $new_dev_version"
+
+                  # Set the new version as an output for the next step
+                  echo "version=$new_dev_version" >> $GITHUB_OUTPUT
+
+            - name: Update package.json and push
+              run: |
+                  # Use npm to set the exact version string we constructed.
+                  # --no-git-tag-version is crucial to prevent npm from creating a tag for this dev build.
+                  npm version --no-git-tag-version ${{ steps.dev_version.outputs.version }}
+
+                  # Manually commit the change to package.json
+                  git add package.json
+                  git commit -m "chore(dev): set dev version to ${{ steps.dev_version.outputs.version }}"
+                  git push

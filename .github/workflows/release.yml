@@ -1,22 +1,78 @@
-name: Build and Release Neutralinojs App
+name: Build and Release
 
 on:
+    # 1. Automatic trigger for patch releases when merging to main
     push:
         branches:
-            - master # Or 'main' if that's your primary branch
-        paths:
-            - "**.js"
-            - "**.html"
-            - "**.json"
-            - "**.css"
-            - ".github/workflows/release.yml"
+            - main
+            - master
+    # 2. Manual trigger for major/minor/patch releases
+    workflow_dispatch:
+        inputs:
+            bump_level:
+                description: "Which version number to bump?"
+                required: true
+                default: "patch"
+                type: choice
+                options:
+                    - patch
+                    - minor
+                    - major
 
 jobs:
+    # Job 1: Bump the version in package.json and create a git tag
+    bump-version:
+        # Don't run this workflow on commits made by the workflow itself
+        if: "!contains(github.event.head_commit.message, 'chore(release):')"
+        runs-on: ubuntu-latest
+        outputs:
+            new_version: ${{ steps.get_version.outputs.version }}
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+
+            - name: Configure Git
+              run: |
+                  git config --global user.name 'GitHub Actions Bot'
+                  git config --global user.email 'github-actions-bot@users.noreply.github.com'
+
+            - name: Determine Bump Level
+              id: bump_level
+              run: |
+                  # If triggered manually, use the input. Otherwise, default to patch.
+                  BUMP_LEVEL=${{ github.event.inputs.bump_level || 'patch' }}
+                  echo "BUMP_LEVEL=$BUMP_LEVEL" >> $GITHUB_ENV
+
+            - name: Bump Version and Create Tag
+              run: |
+                  # The `npm version` command increments the version, commits, and tags.
+                  # We use --no-git-tag-version for dev suffixing, but here we want the commit and tag.
+                  npm version ${{ env.BUMP_LEVEL }} -m "chore(release): bump version to %s"
+
+            - name: Push Changes and Tags
+              run: git push --follow-tags
+
+            - name: Get New Version
+              id: get_version
+              run: |
+                  # Read the newly bumped version from package.json and set it as an output
+                  echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+    # Job 2: Build the app on all platforms and upload to the release
     build-and-release:
+        # This job depends on the bump-version job finishing successfully
+        needs: bump-version
         strategy:
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
-
         runs-on: ${{ matrix.os }}
 
         steps:
@@ -28,13 +84,12 @@ jobs:
               with:
                   node-version: "20"
 
-            - name: Prepare Neutralino HTML entry point
-              run: mv index.neutralino.html index.html
+            # This step is commented out because you have no index.neutralino.html file
+            # - name: Prepare Neutralino HTML entry point
+            #   run: mv index.neutralino.html index.html
 
             - name: Install Neutralinojs CLI
               run: npm install -g @neutralinojs/neu
-
-            # REMOVED: The 'neu update' step is no longer needed as the client is in the repo.
 
             - name: Build Neutralinojs App
               run: neu build
@@ -60,34 +115,35 @@ jobs:
             - name: Package application for release
               run: ${{ env.ARCHIVE_CMD }}
 
+            - name: Create or Get GitHub Release
+              id: release_manager
+              uses: joutvhu/get-release@v1
+              if: matrix.os != 'ubuntu-latest' # Run on all but the release creator
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: v${{ needs.bump-version.outputs.new_version }}
+
             - name: Create GitHub Release (only on Linux job)
               id: create_release
-              if: matrix.os == 'ubuntu-latest'
+              if: matrix.os == 'ubuntu-latest' # Run only on one job to avoid race conditions
               uses: actions/create-release@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  tag_name: build-${{ github.run_number }}
-                  release_name: CosmoTactics Build ${{ github.run_number }}
+                  tag_name: v${{ needs.bump-version.outputs.new_version }}
+                  release_name: CosmoTactics v${{ needs.bump-version.outputs.new_version }}
                   body: "Automated multi-platform release. Triggered by commit ${{ github.sha }}."
                   draft: false
                   prerelease: false
-
-            - name: Get Release URL
-              id: get_release
-              if: matrix.os != 'ubuntu-latest'
-              uses: joutvhu/get-release@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                  tag_name: build-${{ github.run_number }}
 
             - name: Upload Release Asset
               uses: actions/upload-release-asset@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  upload_url: ${{ steps.create_release.outputs.upload_url || steps.get_release.outputs.upload_url }}
+                  # Use the upload_url from the creation step, or the one fetched by other jobs
+                  upload_url: ${{ steps.create_release.outputs.upload_url || steps.release_manager.outputs.upload_url }}
                   asset_path: ${{ env.ASSET_PATH }}
                   asset_name: ${{ env.ASSET_NAME }}
                   asset_content_type: application/zip

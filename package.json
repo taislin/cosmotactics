@@ -1,0 +1,16 @@
+{
+    "name": "cosmotactics",
+    "version": "0.2.1",
+    "description": "A squad-based tactical roguelike game set in a gritty sci-fi universe.",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/taislin/cosmotactics.git"
+    },
+    "author": "taislin",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/taislin/cosmotactics/issues"
+    },
+    "homepage": "https://github.com/taislin/cosmotactics#readme"
+}
