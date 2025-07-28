@@ -4,7 +4,7 @@
 
 A squad-based tactical roguelike game set in a gritty sci-fi universe. **_Lead your Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
 
-<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" width="400"/>
+<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="500"/>
 
 ## 📜 Features
 
