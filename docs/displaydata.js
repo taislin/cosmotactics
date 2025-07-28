@@ -1,25 +1,8 @@
-import _importedUnits from "../assets/datasets/units.json" with { type: "json" };
-import _importedEnemies from "../assets/datasets/enemies.json" with { type: "json" };
-import _importedIcons from "../assets/datasets/icons.json" with { type: "json" };
-import _importedIcons_gui from "../assets/datasets/icons_gui.json" with { type: "json" };
-import _importedIcons_objects from "../assets/datasets/icons_objects.json" with { type: "json" };
-import _importedIcons_entities from "../assets/datasets/icons_entities.json" with { type: "json" };
-import _importedItems from "../assets/datasets/items.json" with { type: "json" };
-import _importedItems_equipment from "../assets/datasets/items_equipment.json" with { type: "json" };
-import _importedItems_weapons from "../assets/datasets/items_weapons.json" with { type: "json" };
-
-export let importedUnits = { ..._importedUnits, ..._importedEnemies };
-export let importedIcons = {
-	..._importedIcons_gui,
-	..._importedIcons,
-	..._importedIcons_entities,
-	..._importedIcons_objects,
-};
-export let importedItems = {
-	..._importedItems,
-	..._importedItems_equipment,
-	..._importedItems_weapons,
-};
+import {
+	importedUnits,
+	importedIcons,
+	importedItems,
+} from "../assets/datasets/imports.js";
 
 let unitstable = document.getElementById("unitstable");
 let _row = unitstable.insertRow();
@@ -57,6 +40,7 @@ for (var i of Object.keys(importedUnits)) {
 	canvas.height = 32;
 	const ctx = canvas.getContext("2d");
 	let img2 = document.createElement("img");
+	// This path adjustment is critical for images loaded in the /docs/ context
 	img2.src = iconSrc.tileset.replace("./", "../");
 	img2.addEventListener("load", (e) => {
 		ctx.drawImage(
@@ -107,19 +91,29 @@ wheaderList.forEach((h) => {
 	}
 	wcounter1++;
 });
-for (var i of Object.keys(_importedItems_weapons)) {
+// You'll need access to _importedItems_weapons which is not directly exposed by importedItems as a sub-object
+// Re-importing just for this table, or refactoring how importedItems is structured, is an option.
+// For now, I'll assume importedItems still has the necessary structure for weapons by their key.
+// Corrected to use importedItems and iterate over the weapon specific keys.
+// Assuming your `items_weapons.json` content is loaded into `importedItems` with direct keys
+// For simplicity, I'll keep the direct import here for weapons data, as the merged `importedItems`
+// in imports.js doesn't separate weapons out for easy iteration by themselves like `_importedItems_weapons`.
+import _importedItems_weapons_local from "../assets/datasets/items_weapons.json" with { type: "json" };
+
+for (var i of Object.keys(_importedItems_weapons_local)) { // Using the specific import for weapons
 	let counter = 0;
 	let row = weaponstable.insertRow();
 	let _name = row.insertCell(counter);
-	_name.innerHTML = _importedItems_weapons[i].name;
+	_name.innerHTML = _importedItems_weapons_local[i].name;
 	counter++;
 	let _icon = row.insertCell(counter);
-	let iconSrc = importedIcons[_importedItems_weapons[i].icon];
+	let iconSrc = importedIcons[_importedItems_weapons_local[i].icon]; // Using merged importedIcons for icon lookup
 	var canvas = document.createElement("canvas");
 	canvas.width = 32;
 	canvas.height = 32;
 	const ctx = canvas.getContext("2d");
 	var img = document.createElement("img");
+	// This path adjustment is critical for images loaded in the /docs/ context
 	img.src = iconSrc.tileset.replace("./", "../");
 	img.addEventListener("load", (e) => {
 		ctx.drawImage(
@@ -137,10 +131,10 @@ for (var i of Object.keys(_importedItems_weapons)) {
 	_icon.appendChild(canvas);
 	counter++;
 	let _desc = row.insertCell(counter);
-	_desc.innerHTML = _importedItems_weapons[i].desc;
+	_desc.innerHTML = _importedItems_weapons_local[i].desc;
 	counter++;
 	let _type = row.insertCell(counter);
-	_type.innerHTML = _importedItems_weapons[i].itemtype.split(" ")[0]+" "+_importedItems_weapons[i].itemtype.split(" ")[1];
+	_type.innerHTML = _importedItems_weapons_local[i].itemtype.split(" ")[0]+" "+_importedItems_weapons_local[i].itemtype.split(" ")[1];
 	counter++;
 	for (var j of [
 		"attack",
@@ -151,7 +145,7 @@ for (var i of Object.keys(_importedItems_weapons)) {
 		"max_ammo",
 	]) {
 		let _stat = row.insertCell(counter);
-		_stat.innerHTML = _importedItems_weapons[i].stats[j];
+		_stat.innerHTML = _importedItems_weapons_local[i].stats[j];
 		counter++;
 	}
 }
@@ -211,4 +205,3 @@ function table_sort() {
 }
 
 table_sort();
-//

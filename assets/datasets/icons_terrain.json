@@ -1,0 +1,618 @@
+{
+	"grass": {
+		"name": "grass",
+		"icon": [
+			","
+		],
+		"color": [
+			"#568f51",
+			"#568f56",
+			"#609f60"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				7,
+				0
+			],
+			[
+				5,
+				0
+			]
+		]
+	},
+	"grass_dead": {
+		"name": "dead grass",
+		"icon": [
+			","
+		],
+		"color": [
+			"#5c5615",
+			"#7f751d",
+			"#6a6218"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				7,
+				3
+			],
+			[
+				6,
+				3
+			]
+		]
+	},
+	"sand": {
+		"name": "sand",
+		"icon": [
+			":"
+		],
+		"color": [
+			"#c7ab92",
+			"#CBB49F"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				1,
+				3
+			]
+		]
+	},
+	"dirt": {
+		"name": "dirt",
+		"icon": [
+			"."
+		],
+		"color": [
+			"#a37e5a",
+			"#9b7653",
+			"#947860"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				1,
+				3
+			]
+		]
+	},
+	"cave_floor": {
+		"name": "cave floor",
+		"icon": [
+			"."
+		],
+		"color": [
+			"#a37e5a",
+			"#9b7653",
+			"#947860"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				4,
+				3
+			],
+			[
+				5,
+				3
+			]
+		]
+	},
+	"cave_mushrooms": {
+		"name": "cave mushrooms",
+		"icon": [
+			";"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				7,
+				4
+			]
+		]
+	},
+	"snow": {
+		"name": "snow",
+		"icon": [
+			"."
+		],
+		"color": [
+			"#d8d3ce"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				4,
+				3
+			],
+			[
+				5,
+				3
+			]
+		]
+	},
+	"cave_wall": {
+		"name": "cave wall",
+		"icon": [
+			"#"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				5,
+				4
+			]
+		]
+	},
+	"wood_wall": {
+		"name": "wood wall",
+		"icon": [
+			"#"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				2,
+				6
+			]
+		]
+	},
+	"brick_wall": {
+		"name": "brick wall",
+		"icon": [
+			"#"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				0,
+				5
+			]
+		]
+	},
+	"snow_wall": {
+		"name": "snow brick wall",
+		"icon": [
+			"$"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				5,
+				5
+			]
+		]
+	},
+	"mud": {
+		"name": "mud",
+		"icon": [
+			"="
+		],
+		"color": [
+			"#534233",
+			"#504236",
+			"#4d4239"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/tiles.png",
+		"tcoords": [
+			[
+				0,
+				0
+			]
+		]
+	},
+	"bush": {
+		"name": "bush",
+		"icon": [
+			"%"
+		],
+		"color": [
+			"#335533"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				3,
+				2
+			]
+		]
+	},
+	"bush_dead": {
+		"name": "dead bush",
+		"icon": [
+			"%"
+		],
+		"color": [
+			"#534233",
+			"#504236",
+			"#4d4239"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				7,
+				2
+			]
+		]
+	},
+	"road": {
+		"name": "road",
+		"icon": [
+			" "
+		],
+		"color": [
+			"#666460"
+		],
+		"background": [
+			"transparent"
+		]
+	},
+	"water_shallow": {
+		"name": "shallow_water",
+		"icon": [
+			"~"
+		],
+		"color": [
+			"#8ed1e3"
+		],
+		"background": [
+			"#d4f1f9",
+			"#cff4fe",
+			"#d8eff5"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				0,
+				0
+			]
+		]
+	},
+	"tree": {
+		"name": "tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				0,
+				1
+			],
+			[
+				1,
+				1
+			],
+			[
+				2,
+				1
+			],
+			[
+				3,
+				1
+			]
+		]
+	},
+	"tree_dead": {
+		"name": "dead tree",
+		"icon": [
+			"Y"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				4,
+				4
+			]
+		]
+	},
+	"floor1": {
+		"name": "floor",
+		"icon": [
+			"."
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				0,
+				7
+			]
+		]
+	},
+	"floor6": {
+		"name": "compacted snow",
+		"icon": [
+			"."
+		],
+		"color": [
+			"#c1c1c1"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				3,
+				7
+			]
+		]
+	},
+	"floor2": {
+		"name": "floor",
+		"icon": [
+			"."
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				1,
+				7
+			]
+		]
+	},
+	"floor3": {
+		"name": "floor",
+		"icon": [
+			"."
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				2,
+				7
+			]
+		]
+	},
+	"floor4": {
+		"name": "floor",
+		"icon": [
+			"."
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				3,
+				7
+			]
+		]
+	},
+	"floor5": {
+		"name": "floor",
+		"icon": [
+			"."
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				4,
+				7
+			]
+		]
+	},
+	"wood_door": {
+		"name": "wooden door",
+		"icon": [
+			"U"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				6,
+				6
+			]
+		]
+	},
+	"igloo_door": {
+		"name": "igloo door",
+		"icon": [
+			"V"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				6,
+				5
+			]
+		]
+	},
+	"stairs_down": {
+		"name": "stairs (down)",
+		"icon": [
+			">"
+		],
+		"color": [
+			"#2f4f4f"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				5,
+				6
+			]
+		]
+	},
+	"acid_pool": {
+		"name": "acid pool",
+		"icon": [
+			"~"
+		],
+		"color": [
+			"#00FF00",
+			"#00CC00"
+		],
+		"background": [
+			"#330033"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				1,
+				3
+			]
+		]
+	},
+	"rubble_pile": {
+		"name": "rubble pile",
+		"icon": [
+			"#"
+		],
+		"color": [
+			"#888888"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				5,
+				3
+			]
+		]
+	}
+}
