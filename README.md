@@ -34,11 +34,11 @@ To run CosmoTactics locally:
 
     2.1. You can install Node.js from [the official website](https://nodejs.org/en/download), then run the game on the console:
 
-        `node server.js`
+    `node server.js`
 
     2.2. If you have Python installed, you can run it with:
 
-        `python -m http.server -b localhost 8125`
+    `python -m http.server -b localhost 8125`
 
     2.3. Download one of the many webserver tools around (they're small executables), and put it on the main directory.
 
