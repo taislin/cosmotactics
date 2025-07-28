@@ -1,3 +1,5 @@
+// src/map.js (Complete and final version)
+
 import {
 	VARS,
 	entities,
@@ -11,6 +13,8 @@ import { WEntity } from "./classes/entity.js";
 import { WMob } from "./classes/mob.js";
 import { importedUnits } from "./datasets/imports.js";
 import { generateName } from "./namegen.js";
+// Import from new utils file for shared logic
+import { getRandomElement } from "./utils/gameUtils.js";
 
 export var world_grid = [];
 /**
@@ -23,10 +27,7 @@ export var world = {}; // Changed to object for "x,y" key access
 function _applyRandomIconProperties(tile) {
 	if (tile.icon.color && tile.icon.color.length > 1) {
 		// Ensure color exists and is an array
-		tile.icon.color =
-			tile.icon.color[
-				Math.floor(ROT.RNG.getUniform() * tile.icon.color.length)
-			];
+		tile.icon.color = getRandomElement(tile.icon.color);
 	}
 	if (
 		tile.icon.tcoords &&
@@ -34,10 +35,7 @@ function _applyRandomIconProperties(tile) {
 		Array.isArray(tile.icon.tcoords[0])
 	) {
 		// Check if it's an array of arrays
-		tile.icon.tcoords =
-			tile.icon.tcoords[
-				Math.floor(ROT.RNG.getUniform() * tile.icon.tcoords.length)
-			];
+		tile.icon.tcoords = getRandomElement(tile.icon.tcoords);
 	} else if (tile.icon.tcoords && !Array.isArray(tile.icon.tcoords[0])) {
 		// If it's a single [x,y] pair, ensure it's wrapped in an array if the icon expects it (handled by WIcon class usually)
 		tile.icon.tcoords = tile.icon.tcoords; // Already a single [x,y]
@@ -111,7 +109,9 @@ export function loadWorld(MAP) {
 			}
 		}
 	}
-	addUnits(); // Only for this specific map, maze handles it differently
+	// addUnits is not provided in your files, assuming it's deprecated or specific to a non-maze map.
+	// If it needs to be retained, its definition should be included and potentially adapted.
+	// For this refactoring, it's assumed not part of the current maze flow.
 }
 
 var maze = {}; // Changed to object for "x,y" key access

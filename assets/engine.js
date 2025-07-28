@@ -1,6 +1,10 @@
 import { world_grid, loadWorld_maze, world } from "./map.js";
 import { goToLostMenu, sleep } from "./controls.js";
 import { setSeed } from "../index.js";
+// Import from new utils file for shared logic
+import { isTilePassableForMovement, checkFire } from "./utils/gameUtils.js";
+// Import for player squad AI logic
+import { processPlayerSquadAI } from "./ai/mobAI.js";
 
 /**
  * @type {Object} Holds all icon data.
@@ -54,68 +58,26 @@ const initial_stats = {
 export let STATS = JSON.parse(JSON.stringify(initial_stats));
 
 /**
- * Checks if a move to the specified coordinates is valid.
+ * Checks if a tile at the specified coordinates is passable for general pathfinding (e.g., for LOS or basic AI without considering specific unit collisions).
+ * This function now uses the more robust `isTilePassableForMovement` from `gameUtils.js` by passing `null` for the moving unit.
  * @param {number} x - The x-coordinate to check.
  * @param {number} y - The y-coordinate to check.
- * @returns {boolean} True if the move is valid, false otherwise.
+ * @returns {boolean} True if the tile is generally passable, false otherwise.
  */
 export function checkMove(x, y) {
-	if (world_grid[y] && world_grid[y][x] === 1) {
-		// Strict equality
-		for (var e of entities) {
-			if (
-				e.x === x && // Strict equality
-				e.y === y && // Strict equality
-				!e.passable &&
-				e.owner !== VARS.SELECTED.owner // Strict inequality
-			) {
-				return false;
-			}
-		}
-		return true;
-	} else {
-		return false;
-	}
-}
-
-/**
- * Checks if a move to the specified coordinates is valid for a specific unit owner.
- * @param {number} x - The x-coordinate to check.
- * @param {number} y - The y-coordinate to check.
- * @param {Object} movingUnit - The entity instance that is attempting the move.
- * @returns {boolean} True if the move is valid, false otherwise.
- */
-export function checkMoveOwned(x, y, movingUnit) {
-	if (world_grid[y] && world_grid[y][x] === 1) {
-		// Strict equality
-		for (var e of entities) {
-			// ** THE FIX IS HERE **
-			// Block the move if there's an impassable entity on the tile
-			// AND that entity is NOT the one currently trying to move.
-			if (
-				e.x === x &&
-				e.y === y &&
-				!e.passable &&
-				e !== movingUnit // This prevents any unit from moving onto another's tile.
-			) {
-				return false;
-			}
-		}
-		return true;
-	} else {
-		return false;
-	}
+	return isTilePassableForMovement(x, y, null);
 }
 
 /**
  * Checks if a tile at the specified coordinates has light.
+ * This function relies on `world_grid` which directly reflects terrain passability for light.
  * @param {number} x - The x-coordinate to check.
  * @param {number} y - The y-coordinate to check.
- * @returns {boolean} True if the tile has light, false otherwise.
+ * @returns {boolean} True if the tile has light (i.e., is not a blocking wall), false otherwise.
  */
 export function checkLight(x, y) {
 	if (world_grid[y] && world_grid[y][x] === 1) {
-		// Strict equality
+		// 1 typically means passable for light
 		return true;
 	} else {
 		return false;
@@ -136,7 +98,6 @@ export function processTurn() {
 	const activeEntities = [...entities]; // Create a shallow copy to iterate over
 
 	for (const e of activeEntities) {
-		// Use const for iteration variable
 		if (!e.mob || e.mob.ai === "dead") continue;
 
 		// Update defence stats for player units at the start of their potential action
@@ -163,49 +124,26 @@ export function processTurn() {
 			if (e === VARS.SELECTED) {
 				// The actively selected player unit's primary action (move/fire/wait)
 				// is already handled by player input via controls.js.
+				// For the selected unit, we simply advance its turn based on its speed
+				// since its action was player-controlled.
+				e.nextMoveTurn = VARS.TURN + 1 / e.mob.stats.speed;
 			} else {
 				// Player squad AI: Handle follow/hold and autofire/melee for non-selected player units
-				const mob = e.mob;
-				let actionTakenThisTurn = false; // Flag to ensure only one main action is taken
-
-				// Priority 1: Autofire (if enabled)
-				if (mob.autofire || mob.stance === "hold") {
-					// Units on 'hold' also try to fire
-					actionTakenThisTurn = e.processFire(); // processFire returns true if it fired/reloaded
-				}
-
-				// Priority 2: Melee (if not already acted and enemy is in range)
-				if (!actionTakenThisTurn) {
-					const en = e.getEnemy(1.5); // Check for enemies in melee range
-					if (en.entity && en.dist <= 1.5) {
-						actionTakenThisTurn = e.doMelee(en); // doMelee returns true if it attacked
-					}
-				}
-
-				// Priority 3: Follow (if not already acted and in 'follow' stance)
-				if (!actionTakenThisTurn && mob.stance === "follow") {
-					const pl = e.getPlayer();
-					if (pl.entity && pl.dist > 1.5) {
-						// Only move if player is not directly adjacent
-						actionTakenThisTurn = e.doMove(pl, mob.stats.speed); // doMove updates nextMoveTurn
-					} else {
-						// If player is adjacent, they've "caught up", so recharge their turn
-						e.nextMoveTurn = VARS.TURN + 1 / mob.stats.speed;
-					}
-				}
+				processPlayerSquadAI(e); // Delegate to AI module in mobAI.js
 			}
 		} else {
 			// Enemy AI
-			e.performAITurn(); // Let enemy AI units perform their turn
+			e.performAITurn(); // Let enemy AI units perform their turn (delegated to mobAI.js)
 		}
 	}
+
 	// --- End of AI and Player Squad Action Phase ---
 
 	// --- Start of Post-Action Phase: Health Check & Death ---
 	let dead_entities_this_turn = []; // Collection for safe removal
 
 	for (const e of entities) {
-		e.process();
+		e.process(); // This handles health checks and marks as dead
 		if (e.mob && e.mob.ai === "dead") {
 			dead_entities_this_turn.push(e);
 		}

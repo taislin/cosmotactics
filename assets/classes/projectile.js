@@ -1,6 +1,9 @@
+// src/classes/projectile.js
+
 import { icons, VARS, projectiles, debugLog, entities } from "../engine.js";
 import { effects } from "../display.js";
-import { findMobCoords } from "./entity.js";
+// Import findMobCoords and getDir from the new utils file
+import { findMobCoords } from "./../utils/gameUtils.js"; // getDir is not needed directly here, but checkFire is conceptually related
 import { sleep } from "../controls.js";
 import { world_grid } from "../map.js";
 
@@ -17,6 +20,7 @@ function getNormal(mean = 0, stdev = 1) {
 	const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
 	return z * stdev + mean; // Apply mean and standard deviation
 }
+
 /**
  * Calculates damage based on the modifier's attack stat.
  * Damage is randomized within a range around the attack stat.
@@ -48,7 +52,7 @@ export class Projectile {
 		this.originY = y;
 		this.faction = faction;
 		this.type = type;
-		this.dir = 0; // Direction for sprite
+		this.dir = 0; // Direction for sprite (0: vertical, 1: horizontal, 2: backslash, 3: forward slash)
 		projectiles.push(this);
 
 		// Calculate damage and path
@@ -59,25 +63,36 @@ export class Projectile {
 		// Calculate accuracy penalty based on distance
 		const effectiveRange = Math.max(1, this.path.length);
 		const rangeRatio = Math.min(effectiveRange / modif.stats.range, 1);
-		const distancePenalty = 1 - rangeRatio * 0.25;
+		const distancePenalty = 1 - rangeRatio * 0.25; // 25% accuracy loss at max range
 		this.acc = modif.stats.accuracy * distancePenalty;
 		debugLog(
 			`Projectile Acc: ${this.acc.toFixed(2)} (Base: ${
 				modif.stats.accuracy
-			}, RangeRatio: ${rangeRatio.toFixed(2)})`
+			}, RangeRatio: ${rangeRatio.toFixed(2)})`,
+			"debug"
 		);
 
 		// Determine projectile sprite direction
-		this.dir = getDirection(this.x, this.y, this.tgt[0], this.tgt[1]);
+		this.dir = getProjectileDirection(
+			this.x,
+			this.y,
+			this.tgt[0],
+			this.tgt[1]
+		);
 		this.launch();
 	}
 
 	/** Calculates the projectile's path using Dijkstra's algorithm. */
 	getPath() {
+		// Projectiles always path through any tile regardless of contents, only checking if it's a valid map coordinate.
+		// Actual collision checks are done step-by-step during launch.
 		const dijkstra = new ROT.Path.Dijkstra(
 			this.tgt[0],
 			this.tgt[1],
-			() => true
+			(px, py) => {
+				// Ensure coordinates are within map bounds
+				return px >= 0 && px < VARS.MAP_X && py >= 0 && py < VARS.MAP_Y;
+			}
 		);
 		const path = [];
 		dijkstra.compute(this.x, this.y, (x, y) => path.push([x, y]));
@@ -86,7 +101,10 @@ export class Projectile {
 
 	/** Handles the projectile hitting a target. */
 	handleHit(target) {
-		debugLog(`Projectile hit ${target.name} at ${this.x},${this.y}`);
+		debugLog(
+			`Projectile hit ${target.name} at ${this.x},${this.y}`,
+			"info"
+		);
 		effects.push({
 			x: this.x,
 			y: this.y,
@@ -107,11 +125,13 @@ export class Projectile {
 	async launch() {
 		this.timer++;
 		if (this.timer > 30) {
+			// Timeout to prevent infinite projectiles in case of pathing issues
 			debugLog("Projectile timed out!", "warn");
 			this.destroy();
 			return;
 		}
-		// Skip shooter's own tile
+
+		// Remove the shooter's own tile from the path if it's the first step
 		if (
 			this.path.length > 0 &&
 			this.path[0][0] === this.originX &&
@@ -119,31 +139,39 @@ export class Projectile {
 		) {
 			this.path.shift();
 		}
-		const curr = this.path.shift();
+
+		const curr = this.path.shift(); // Get the next tile in the path
 		if (!curr) {
+			// Path finished or empty
 			this.destroy();
 			return;
 		}
+
 		this.x = curr[0];
 		this.y = curr[1];
-		// Check for collision with walls
+
+		// Check for collision with impassable terrain (walls)
 		if (!world_grid[this.y] || world_grid[this.y][this.x] === 0) {
-			debugLog("Projectile hit a wall.");
+			// 0 means impassable wall
+			debugLog("Projectile hit a wall.", "info");
 			this.destroy();
 			return;
 		}
+
+		// Check for collision with entities
 		const targetEntity = findMobCoords(this.x, this.y);
 		if (
-			targetEntity &&
-			targetEntity.mob &&
-			targetEntity.owner !== this.faction
+			targetEntity && // Is there an entity at this location?
+			targetEntity.mob && // Is it a mob?
+			targetEntity.owner !== this.faction // Is it an enemy or neutral?
 		) {
+			// Check if this is the *intended* target (last tile of the path)
 			if (
 				targetEntity.x === this.tgt[0] &&
 				targetEntity.y === this.tgt[1]
 			) {
-				// Intended target
-				if (Math.random() < this.acc) {
+				// This is the intended target, apply accuracy check
+				if (ROT.RNG.getUniform() < this.acc) {
 					this.handleHit(targetEntity);
 				} else {
 					logMiss(targetEntity, this.faction);
@@ -151,48 +179,69 @@ export class Projectile {
 				}
 				return;
 			} else {
-				// Intervening obstacle
-				if (Math.random() < 0.15) {
+				// This is an intervening entity (not the intended target), apply chance to hit obstacle
+				if (ROT.RNG.getUniform() < 0.15) {
+					// 15% chance to hit an intervening obstacle
 					debugLog("Projectile hit an intervening obstacle!", "warn");
 					this.handleHit(targetEntity);
 					return;
 				}
 			}
 		}
+
+		// If projectile hasn't hit anything and there's more path, continue
 		if (this.path.length > 0) {
-			await sleep(33);
-			this.launch();
+			await sleep(33); // Small delay for visual effect
+			this.launch(); // Continue movement
 		} else {
+			// Path exhausted without hitting the intended target or an obstacle (e.g., target moved)
+			debugLog("Projectile path exhausted without direct hit.", "debug");
 			this.destroy();
 		}
 	}
 
 	/** Destroys the projectile, removing it from the game. */
 	destroy() {
-		this.path = [];
+		this.path = []; // Clear path to prevent further steps
 		const i = projectiles.indexOf(this);
-		if (i > -1) projectiles.splice(i, 1);
+		if (i > -1) projectiles.splice(i, 1); // Remove from active projectiles list
 	}
 }
 
-function getDirection(x, y, tx, ty) {
-	// Returns a direction integer for projectile sprite
-	if (tx < x) {
-		if (ty < y) return 2;
-		else if (ty > y) return 3;
-		else return 1;
-	} else if (tx > x) {
-		if (ty < y) return 3;
-		else if (ty > y) return 2;
-		else return 1;
+// Determines the sprite direction for the projectile based on movement vector.
+// Maps 8-directional movement to the 4 available projectile sprites (|, -, \, /).
+function getProjectileDirection(x, y, tx, ty) {
+	const dx = tx - x;
+	const dy = ty - y;
+
+	// Normalize direction to -1, 0, or 1
+	const ndx = Math.sign(dx);
+	const ndy = Math.sign(dy);
+
+	// Map to sprite index:
+	// 0: Vertical (dy != 0, dx == 0)
+	// 1: Horizontal (dx != 0, dy == 0)
+	// 2: Backslash-like (dx and dy have same sign: SE or NW)
+	// 3: Forwardslash-like (dx and dy have opposite signs: NE or SW)
+
+	if (ndx === 0) {
+		// Vertical movement
+		return 0; // '|'
+	} else if (ndy === 0) {
+		// Horizontal movement
+		return 1; // '-'
+	} else if (ndx * ndy === 1) {
+		// Both positive (SE) or both negative (NW)
+		return 2; // '\'
 	} else {
-		return 0;
+		// One positive, one negative (NE or SW)
+		return 3; // '/'
 	}
 }
 
 function logHit(t, dmg, owner) {
-	let precol = owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
-	let targetprecol = t.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
+	let precol = owner === "player" ? "%c{#009f00}" : "%c{#ffa500}"; // Shooter's faction color
+	let targetprecol = t.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}"; // Target's faction color
 
 	VARS.GAMELOG.unshift(
 		`${VARS.TURN}: ${targetprecol}${
@@ -202,8 +251,8 @@ function logHit(t, dmg, owner) {
 }
 
 function logMiss(t, owner) {
-	let precol = owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
-	let targetprecol = t.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}";
+	let precol = owner === "player" ? "%c{#009f00}" : "%c{#ffa500}"; // Shooter's faction color
+	let targetprecol = t.owner === "player" ? "%c{#009f00}" : "%c{#ffa500}"; // Target's faction color
 
 	VARS.GAMELOG.unshift(
 		`${VARS.TURN}: Shot misses ${targetprecol}${t.name}%c{}!`

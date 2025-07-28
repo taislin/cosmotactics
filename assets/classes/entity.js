@@ -1,8 +1,9 @@
+// src/classes/entity.js
+
 import {
 	icons,
 	entities, // Note: This is the global entities array
 	VARS,
-	checkMoveOwned,
 	player_entities,
 	debugLog,
 } from "../engine.js";
@@ -12,14 +13,15 @@ import { Projectile } from "./projectile.js";
 import { getNextUnit } from "../controls.js";
 import { world, world_grid } from "../map.js";
 
-/**
- * Helper function to select a random element from an array.
- * @param {Array} arr - The array to select from.
- * @returns {*} A random element from the array.
- */
-function _getRandomElement(arr) {
-	return arr[Math.floor(ROT.RNG.getUniform() * arr.length)]; // Use ROT.RNG for consistency
-}
+// Import from new utils file
+import {
+	getRandomElement,
+	findMobCoords,
+	checkFire,
+	isTilePassableForMovement,
+} from "../utils/gameUtils.js";
+// Import from new AI file
+import { performAITurn as MobPerformAITurn } from "../ai/mobAI.js";
 
 export class WEntity {
 	/**
@@ -74,22 +76,23 @@ export class WEntity {
 
 		// Apply random icon properties if applicable
 		if (this.icon.color && this.icon.color.length > 1) {
-			this.icon.color = _getRandomElement(this.icon.color);
+			this.icon.color = getRandomElement(this.icon.color);
 		}
 		if (
 			this.icon.tcoords &&
 			this.icon.tcoords.length > 1 &&
 			Array.isArray(this.icon.tcoords[0])
 		) {
-			this.icon.tcoords = _getRandomElement(this.icon.tcoords);
+			this.icon.tcoords = getRandomElement(this.icon.tcoords);
 		} else if (this.icon.tcoords && !Array.isArray(this.icon.tcoords[0])) {
 			this.icon.tcoords = this.icon.tcoords[0]; // If it's just [x,y] or a single value, ensure it's correct
 		}
 	}
 
 	/**
-	 * Handles the entity's firing logic, including ranged attacks for AI and player-controlled entities.
-	 * Checks for conditions like stance, autofire, and ammo before firing.
+	 * Handles the entity's firing logic, including ranged attacks.
+	 * This method can be called by AI or player controls.
+	 * Checks for conditions like ammo before firing.
 	 * Returns true if an action (fire or reload) was taken, false otherwise.
 	 */
 	processFire() {
@@ -98,14 +101,29 @@ export class WEntity {
 		const mob = this.mob;
 		const ranged = mob.slots.ranged;
 
-		// Player unit: Reload if out of ammo. This is a special action that consumes a turn.
-		if (this.owner === "player" && ranged && ranged.stats.ammo <= 0) {
-			ranged.stats.ammo = ranged.stats.max_ammo;
-			VARS.GAMELOG.unshift(
-				`${VARS.TURN}: ${this.name} reloads the ${ranged.name}.`
-			);
-			debugLog(`${this.name} reloaded.`, "info");
-			return true; // Reload consumes the turn
+		// If out of ammo, attempt to reload if player unit, or if AI reloads automatically
+		if (ranged && ranged.stats.ammo <= 0) {
+			// Player unit: Reload costs a turn
+			if (this.owner === "player") {
+				ranged.stats.ammo = ranged.stats.max_ammo;
+				VARS.GAMELOG.unshift(
+					`${VARS.TURN}: ${this.name} reloads the ${ranged.name}.`
+				);
+				debugLog(`${this.name} reloaded.`, "info");
+				return true; // Reload consumes the turn
+			} else {
+				// AI units might just wait or switch to melee if out of ammo and no auto-reload defined
+				// For now, AI simple reloads if it has a ranged weapon and is out of ammo.
+				if (ranged.stats.reload > 0) {
+					ranged.stats.ammo = ranged.stats.max_ammo;
+					VARS.GAMELOG.unshift(
+						`${VARS.TURN}: ${this.name} reloads the ${ranged.name}.`
+					);
+					debugLog(`${this.name} AI reloaded.`, "info");
+					return true;
+				}
+				return false; // AI cannot reload or has no ranged weapon
+			}
 		}
 
 		// Find a potential target for firing
@@ -141,251 +159,15 @@ export class WEntity {
 	/**
 	 * Executes the AI turn for this entity.
 	 * This method is called by the game engine for non-player entities.
+	 * It delegates the actual AI logic to `mobAI.js`.
 	 */
 	performAITurn() {
-		if (!this.mob || this.mob.ai === "dead" || this.owner === "player") {
-			return; // Only AI-controlled, living, non-player units act here
-		}
-		if (VARS.TURN < this.nextMoveTurn) {
-			// Check if unit is ready to act based on speed
-			debugLog(
-				`${this.name} (Speed: ${this.mob.stats.speed}) is recharging (nextMoveTurn: ${this.nextMoveTurn}, current: ${VARS.TURN})`,
-				"debug"
-			);
-			return;
-		}
-
-		const mob = this.mob;
-		const currentHealthPercent = mob.stats.health / this.originalHealth;
-
-		// Morale Check: Retreat if health is very low and morale is low
-		if (currentHealthPercent < 0.25 && mob.morale < 150) {
-			// Example threshold
-			debugLog(
-				`${this.name} (${mob.ai} AI) is low on health (${mob.stats.health} HP) and considering retreat.`,
-				"info"
-			);
-			this.handleRetreat();
-			return; // Action taken, end turn
-		}
-
-		// Find a target based on AI type
-		const target = this._findTarget();
-		if (!target) {
-			debugLog(
-				`${this.name} (${mob.ai} AI) found no valid targets. Idling.`,
-				"debug"
-			);
-			// If no target, simply pass the turn or wander randomly
-			return;
-		}
-
-		// AI Decision Logic based on mob.ai type
-		switch (mob.ai) {
-			case "basic":
-				this._handleBasicAI(target);
-				break;
-			case "aggressive":
-				this._handleAggressiveAI(target);
-				break;
-			case "ranged":
-				this._handleRangedAI(target);
-				break;
-			case "melee_aggressive":
-				this._handleMeleeAggressiveAI(target);
-				break;
-			// Add more complex AI types here (e.g., "flanker", "support", "cautious")
-			default:
-				this._handleBasicAI(target); // Fallback
-				break;
-		}
-	}
-
-	/**
-	 * Internal: Basic AI behavior - prioritizes ranged, then moves/melees.
-	 * @param {object} target - The identified target.
-	 */
-	_handleBasicAI(target) {
-		const mob = this.mob;
-		const ranged = mob.slots.ranged;
-
-		const canRangedAttack =
-			ranged &&
-			target.dist <= ranged.stats.range &&
-			checkFire(this.x, this.y, target.x, target.y);
-		const canMeleeAttack = target.dist <= 1.5; // Use same melee range as doMelee
-
-		if (canRangedAttack) {
-			this.doRanged(target);
-		} else if (canMeleeAttack) {
-			this.doMelee(target);
-		} else {
-			// If neither ranged nor melee, try to close distance
-			this.doMove(target, mob.stats.speed);
-		}
-	}
-
-	/**
-	 * Internal: Aggressive AI behavior - always tries to close distance and attack.
-	 * @param {object} target - The identified target.
-	 */
-	_handleAggressiveAI(target) {
-		const mob = this.mob;
-		const canMeleeAttack = target.dist <= 1.5;
-		const ranged = mob.slots.ranged;
-		const canRangedAttack =
-			ranged &&
-			target.dist <= ranged.stats.range &&
-			checkFire(this.x, this.y, target.x, target.y);
-
-		if (canMeleeAttack) {
-			this.doMelee(target);
-		} else if (canRangedAttack) {
-			// If cannot melee, try to fire ranged
-			this.doRanged(target);
-		} else {
-			// If neither, try to close distance
-			this.doMove(target, mob.stats.speed);
-		}
-	}
-
-	/**
-	 * Internal: Ranged AI behavior - tries to maintain optimal range, fires if possible.
-	 * @param {object} target - The identified target.
-	 */
-	_handleRangedAI(target) {
-		const mob = this.mob;
-		const ranged = mob.slots.ranged;
-
-		if (!ranged) {
-			// If no ranged weapon, fall back to basic movement
-			this.doMove(target, mob.stats.speed);
-			return;
-		}
-
-		const optimalRange = ranged.stats.range * 0.75; // Aim for 75% of max range
-		const currentDistance = target.dist;
-		const canFire =
-			currentDistance <= ranged.stats.range &&
-			checkFire(this.x, this.y, target.x, target.y);
-
-		if (canFire) {
-			// If too close, try to move away
-			if (currentDistance < optimalRange * 0.5 && mob.stats.speed > 0) {
-				// e.g., if closer than half optimal range
-				this.doMove(target, mob.stats.speed * 0.5, true); // Move away
-			} else if (currentDistance > optimalRange && mob.stats.speed > 0) {
-				// If too far, try to move slightly closer (e.g., half speed toward target)
-				this.doMove(target, mob.stats.speed * 0.5);
-			}
-			this.doRanged(target); // Always try to fire if within range and LOS
-		} else {
-			// Cannot fire (out of range or blocked), so move closer
-			this.doMove(target, mob.stats.speed);
-		}
-	}
-
-	/**
-	 * Internal: Melee Aggressive AI behavior - always tries to close distance for melee.
-	 * @param {object} target - The identified target.
-	 */
-	_handleMeleeAggressiveAI(target) {
-		const mob = this.mob;
-		const canMeleeAttack = target.dist <= 1.5; // Direct adjacency
-
-		if (canMeleeAttack) {
-			this.doMelee(target);
-		} else {
-			this.doMove(target, mob.stats.speed); // Always try to close distance
-		}
-	}
-
-	/**
-	 * Internal: Determines the best target for this entity based on its AI and current game state.
-	 * @returns {object|null} An object with target details (dist, x, y, entity) or null if no target found.
-	 */
-	_findTarget() {
-		// Prioritization order:
-		// 1. Closest player unit (VARS.SELECTED - player's active unit)
-		// 2. Player unit with lowest current health
-		// 3. Any other visible player unit (closest)
-
-		let bestTarget = null;
-		let lowestHealth = Infinity;
-		let closestDistance = Infinity;
-
-		// Iterate through all player entities (assuming these are the targets)
-		for (const playerUnit of player_entities) {
-			if (playerUnit.mob.ai === "dead" || !playerUnit.visible) {
-				// Only target living, visible units
-				continue;
-			}
-
-			const dist = Math.hypot(
-				this.x - playerUnit.x,
-				this.y - playerUnit.y
-			);
-
-			// Check line of sight (only if unit's FOV is active, which is implied by 'visible')
-			if (!checkFire(this.x, this.y, playerUnit.x, playerUnit.y)) {
-				continue; // Cannot see or shoot target through obstacles
-			}
-
-			// Prioritize VARS.SELECTED if it's visible and not dead
-			if (playerUnit === VARS.SELECTED && playerUnit.mob.ai !== "dead") {
-				debugLog(
-					`${this.name} prioritizing SELECTED player unit: ${playerUnit.name}`,
-					"debug"
-				);
-				return {
-					dist,
-					x: playerUnit.x,
-					y: playerUnit.y,
-					entity: playerUnit,
-				}; // Found immediate priority target
-			}
-
-			// Prioritize lowest health
-			if (playerUnit.mob.stats.health < lowestHealth) {
-				lowestHealth = playerUnit.mob.stats.health;
-				bestTarget = {
-					dist,
-					x: playerUnit.x,
-					y: playerUnit.y,
-					entity: playerUnit,
-				};
-				closestDistance = dist; // Also update closest distance if new lowest health target is found
-			} else if (
-				playerUnit.mob.stats.health === lowestHealth &&
-				dist < closestDistance
-			) {
-				// If health is same, pick closer one
-				closestDistance = dist;
-				bestTarget = {
-					dist,
-					x: playerUnit.x,
-					y: playerUnit.y,
-					entity: playerUnit,
-				};
-			} else if (dist < closestDistance && bestTarget === null) {
-				// If no lowest health target yet, just pick closest
-				closestDistance = dist;
-				bestTarget = {
-					dist,
-					x: playerUnit.x,
-					y: playerUnit.y,
-					entity: playerUnit,
-				};
-			}
-		}
-
-		return bestTarget;
+		MobPerformAITurn(this); // Delegate to the AI module
 	}
 
 	/**
 	 * Handles general entity processing (health, death).
-	 * The main AI logic is now in performAITurn() for enemies.
-	 * This method is specifically for death checks.
+	 * This method is primarily for death checks.
 	 */
 	process() {
 		if (!this.mob || this.mob.ai === "dead") return;
@@ -395,12 +177,11 @@ export class WEntity {
 			this.icon = JSON.parse(JSON.stringify(icons["dead"]));
 			this.icon.tcoords =
 				this.icon.tcoords.length > 1
-					? _getRandomElement(this.icon.tcoords)
+					? getRandomElement(this.icon.tcoords)
 					: this.icon.tcoords[0];
 			this.mob.ai = "dead"; // Mark as dead, engine.js will remove from array
 			this.passable = true; // Dead units become passable
 			if (world[`${this.x},${this.y}`]) {
-				// Use template literal for consistent key
 				world[`${this.x},${this.y}`].icon = icons["dead"]; // Change map tile icon
 				world_grid[this.y][this.x] = 1; // Make map tile passable
 			}
@@ -607,7 +388,8 @@ export class WEntity {
 			let maxDistIncrease = -Infinity; // Find tile that maximizes distance increase
 
 			for (const [adjX, adjY] of adjacentTiles) {
-				if (checkMoveOwned(adjX, adjY, this)) {
+				if (isTilePassableForMovement(adjX, adjY, this)) {
+					// Use the new utility for movement checks
 					const newDist = Math.hypot(
 						adjX - target.x,
 						adjY - target.y
@@ -632,6 +414,7 @@ export class WEntity {
 		} else {
 			// Move towards target (first step in the path)
 			if (path.length < 2) {
+				// path[0] is current pos, so need at least path[1] for movement
 				debugLog(
 					`${this.name} pathfinding failed or no path to target.`,
 					"warn"
@@ -643,7 +426,8 @@ export class WEntity {
 		}
 
 		// Check if the next tile is valid and not occupied by another non-passable entity
-		if (checkMoveOwned(nextTileX, nextTileY, this) === true) {
+		if (isTilePassableForMovement(nextTileX, nextTileY, this) === true) {
+			// Use the new utility
 			this.x = nextTileX;
 			this.y = nextTileY;
 			debugLog(`${this.name} moved to (${this.x},${this.y}).`, "debug");
@@ -760,91 +544,4 @@ export class WEntity {
 		}
 		return target_entity;
 	}
-
-	/**
-	 * Handles unit retreating behavior.
-	 * Tries to move away from the closest visible enemy.
-	 */
-	handleRetreat() {
-		const closestEnemy = this.getEnemy(10); // Find closest enemy within 10 tiles
-		if (closestEnemy.entity) {
-			debugLog(
-				`${this.name} is retreating from ${closestEnemy.entity.name}.`,
-				"info"
-			);
-			this.doMove(closestEnemy, this.mob.stats.speed, true); // Move away
-		} else {
-			debugLog(
-				`${this.name} wants to retreat but found no enemies to retreat from.`,
-				"debug"
-			);
-		}
-	}
-}
-
-/**
- * Finds a mob entity at the specified coordinates.
- * @param {number} tgt_x - The target x-coordinate.
- * @param {number} tgt_y - The target y-coordinate.
- * @returns {WEntity|null} The mob entity if found and alive, otherwise null.
- */
-export function findMobCoords(tgt_x, tgt_y) {
-	for (const e of entities) {
-		if (e.x === tgt_x && e.y === tgt_y && e.mob && e.mob.ai !== "dead") {
-			return e;
-		}
-	}
-	return null;
-}
-
-/**
- * Checks if there is a clear line of fire between two points, accounting for walls/impassable terrain.
- * @param {number} x1 - The starting x-coordinate.
- * @param {number} y1 - The starting y-coordinate.
- * @param {number} x2 - The target x-coordinate.
- * @param {number} y2 - The target y-coordinate.
- * @returns {boolean} True if there is a clear line of fire, otherwise false.
- */
-function checkFire(x1, y1, x2, y2) {
-	const pathfinder = new ROT.Path.Dijkstra(x2, y2, (px, py) => {
-		if (px < 0 || px >= VARS.MAP_X || py < 0 || py >= VARS.MAP_Y) {
-			return false;
-		}
-		return world_grid[py][px] === 1;
-	});
-
-	let hasLineOfSight = true;
-	let path = [];
-	pathfinder.compute(x1, y1, (px, py) => {
-		path.push([px, py]);
-	});
-
-	if (
-		path.length === 0 ||
-		path[path.length - 1][0] !== x2 ||
-		path[path.length - 1][1] !== y2
-	) {
-		hasLineOfSight = false;
-	}
-
-	return hasLineOfSight;
-}
-
-// getDir is not used within WEntity, but might be used elsewhere. Keeping for now.
-function getDir(ox, oy, tx, ty) {
-	let dir = null;
-	if (Math.abs(ox - tx) >= Math.abs(oy - ty)) {
-		if (ox < tx) {
-			dir = "east";
-		} else {
-			dir = "west";
-		}
-	} else {
-		if (oy < ty) {
-			dir = "south";
-		} else {
-			dir = "north";
-		}
-	}
-	return dir;
 }

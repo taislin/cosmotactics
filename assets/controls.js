@@ -2,7 +2,6 @@ import { updateCanvas, currentLoc, drawPaths, effects } from "./display.js";
 import {
 	VARS,
 	STATS,
-	checkMove,
 	processTurn,
 	icons,
 	entities,
@@ -22,7 +21,8 @@ import {
 import { world, world_grid, nextLevel } from "./map.js";
 import { Projectile } from "./classes/projectile.js";
 import { drawMainMenu, drawLostMenu } from "./mainmenu.js";
-import { findMobCoords } from "./classes/entity.js";
+// Import from new utils file for shared logic
+import { findMobCoords, isTilePassableForMovement } from "./utils/gameUtils.js";
 
 let loaded = false;
 let lastMoveTime = 0;
@@ -33,7 +33,6 @@ export function setControls() {
 	window.addEventListener("keydown", handleKeyDown);
 	// Mouse controls
 	window.addEventListener("click", handleClick);
-	// ...existing code...
 
 	function handleKeyDown(e) {
 		const code = e.code;
@@ -69,7 +68,7 @@ export function setControls() {
 				document
 					.getElementById("terminal")
 					.appendChild(gameDisplay.getContainer());
-				setInterval(updateCanvas, 100);
+				window._updateCanvasIntervalId = setInterval(updateCanvas, 100); // Store interval ID
 			}
 			drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 			return;
@@ -77,7 +76,7 @@ export function setControls() {
 		// Game controls
 		if (!loaded) {
 			loaded = true;
-			setInterval(updateCanvas, 100);
+			window._updateCanvasIntervalId = setInterval(updateCanvas, 100); // Store interval ID
 		}
 		const draw_interval = [
 			selected.x - VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
@@ -138,8 +137,8 @@ export function setControls() {
 				break;
 			case "Enter":
 			case "Space":
-				const currentLoc = [VARS.TARGET[0], VARS.TARGET[1]];
-				clicks(currentLoc, draw_interval, this);
+				const targetCoords = [VARS.TARGET[0], VARS.TARGET[1]];
+				clicks(targetCoords, draw_interval, this);
 				break;
 			case "KeyQ":
 			case "Numpad7":
@@ -225,10 +224,11 @@ export function setControls() {
 				break;
 		}
 		currentLoc = [VARS.TARGET[0], VARS.TARGET[1]];
+		// Use the new, more robust passability check here
 		const dijkstra = new ROT.Path.Dijkstra(
 			currentLoc[0],
 			currentLoc[1],
-			checkMove
+			(x, y) => isTilePassableForMovement(x, y, VARS.SELECTED) // Pass VARS.SELECTED so it can pathfind through its own square
 		);
 		if (VARS.MODE === "none") {
 			drawPaths.length = 0;
@@ -275,14 +275,14 @@ export function setControls() {
 						100
 					);
 				}
-				if (sel.itemtype === "health") {
+				if (sel.itemtype === "healing") {
+					// Corrected from 'health' to 'healing' based on items.json
 					for (const e of player_entities) {
-						e.mob.stats.health += sel.stats.health;
+						e.mob.stats.health = Math.min(
+							e.mob.stats.health + sel.stats.health,
+							e.originalHealth
+						); // Cap health at originalHealth
 					}
-					STATS.OXYGEN = Math.min(
-						STATS.OXYGEN + sel.stats.oxygen,
-						100
-					);
 				}
 				sel.x = -1;
 				sel.y = -1;
@@ -313,13 +313,13 @@ export function setControls() {
 				document
 					.getElementById("terminal")
 					.appendChild(gameDisplay.getContainer());
-				setInterval(updateCanvas, 100);
+				window._updateCanvasIntervalId = setInterval(updateCanvas, 100); // Store interval ID
 			}
 			return;
 		}
 		if (!loaded) {
 			loaded = true;
-			setInterval(updateCanvas, 100);
+			window._updateCanvasIntervalId = setInterval(updateCanvas, 100); // Store interval ID
 		}
 		const coordsm = msgDisplay.eventToPosition(e);
 		if (
@@ -355,6 +355,10 @@ export function setControls() {
 		updateCanvas();
 	}
 
+	// This is a duplicate window.addEventListener("click") function.
+	// It should be removed as handleCLick() above covers the same functionality.
+	// For now, I'll comment it out to avoid redundancy.
+	/*
 	window.addEventListener("click", function (e) {
 		if (VARS.GAMEWINDOW == "LOST") {
 			sleep(2000);
@@ -374,14 +378,14 @@ export function setControls() {
 				document
 					.getElementById("terminal")
 					.appendChild(gameDisplay.getContainer());
-				setInterval(updateCanvas, 100);
+				window._updateCanvasIntervalId = setInterval(updateCanvas, 100);
 			} else if (coordsm[1] == 11) {
 			}
 			return;
 		}
 		if (!loaded) {
 			loaded = true;
-			setInterval(updateCanvas, 100);
+			window._updateCanvasIntervalId = setInterval(updateCanvas, 100);
 		}
 		let coordsm = msgDisplay.eventToPosition(e);
 		if (
@@ -422,6 +426,7 @@ export function setControls() {
 		clicks(currentLoc, draw_interval, this);
 		updateCanvas();
 	});
+	*/
 }
 
 /**
@@ -496,10 +501,11 @@ function clicks(currentLoc, draw_interval, O) {
 			updateCanvas();
 		}
 	} else if (VARS.MODE == "none") {
+		// Use the new, more robust passability check for Dijkstra
 		var dijkstra = new ROT.Path.Dijkstra(
 			currentLoc[0],
 			currentLoc[1],
-			checkMove
+			(x, y) => isTilePassableForMovement(x, y, VARS.SELECTED)
 		);
 		if (
 			VARS.TARGET[0] == currentLoc[0] &&
@@ -509,25 +515,26 @@ function clicks(currentLoc, draw_interval, O) {
 			drawPaths.length = 0;
 			if (
 				!VARS.TARGET ||
-				world_grid[VARS.TARGET[1]][VARS.TARGET[0]] == 0
+				world_grid[VARS.TARGET[1]][VARS.TARGET[0]] == 0 // Check raw map grid for impassable tiles
 			) {
 				debugLog("Rejected! Impassible tile at destination");
 				return;
 			}
-			for (let e in entities) {
-				if (
-					VARS.MODE == "none" &&
-					entities[e].x == VARS.TARGET[0] &&
-					entities[e].y == VARS.TARGET[1] &&
-					entities[e].passable == false
-				) {
-					if (entities[e].mob && entities[e].mob.ai == "dead") {
-					} else {
-						debugLog("Rejected! Entity at destination");
-						return;
-					}
+			// This part is crucial: check if the target tile is blocked by an *impassable* entity (excluding self)
+			let entityAtTarget = findMobCoords(VARS.TARGET[0], VARS.TARGET[1]);
+			if (
+				entityAtTarget &&
+				!entityAtTarget.passable && // Is the entity at target impassable?
+				entityAtTarget !== VARS.SELECTED // Is it not the selected unit itself?
+			) {
+				if (entityAtTarget.mob && entityAtTarget.mob.ai == "dead") {
+					// Dead entities are passable, so allow move. No rejection.
+				} else {
+					debugLog("Rejected! Entity at destination is impassable.");
+					return;
 				}
 			}
+
 			O.path = [];
 			dijkstra.compute(VARS.SELECTED.x, VARS.SELECTED.y, function (x, y) {
 				path.push([x, y]);
@@ -685,7 +692,8 @@ function clickGUI(coords) {
 		if (coords[0] >= 1 && coords[0] <= 6) {
 			goToMainMenu();
 		} else if (coords[0] >= 26 && coords[0] <= 30) {
-			goToMap();
+			// goToMap is not defined in the provided files.
+			// If it's intended to navigate somewhere, define it or remove this branch.
 		}
 	}
 	updateCanvas();
@@ -722,7 +730,11 @@ function goToMainMenu() {
 			.getElementById("terminal")
 			.appendChild(menuDisplay.getContainer());
 	}
-	clearInterval(updateCanvas);
+	if (window._updateCanvasIntervalId) {
+		// Check if the ID exists before clearing
+		clearInterval(window._updateCanvasIntervalId);
+		window._updateCanvasIntervalId = null; // Clear the stored ID
+	}
 	drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 }
 export function goToLostMenu() {
@@ -738,7 +750,10 @@ export function goToLostMenu() {
 			.getElementById("terminal")
 			.appendChild(menuDisplay.getContainer());
 	}
-	clearInterval(updateCanvas);
+	if (window._updateCanvasIntervalId) {
+		clearInterval(window._updateCanvasIntervalId);
+		window._updateCanvasIntervalId = null;
+	}
 	drawLostMenu(menuDisplay, gameDisplay, msgDisplay);
 }
 function showObjs() {
@@ -757,19 +772,13 @@ function drawPathsFunc(x, y, draw_interval, currentLoc) {
 		return;
 	}
 	if (x != VARS.SELECTED.x || y != VARS.SELECTED.y) {
-		let ent = null;
-		for (var e of entities) {
-			if (e.x == x && e.y == y) {
-				ent = e.icon;
-				break;
-			}
-		}
+		let ent = findMobCoords(x, y); // Use findMobCoords from gameUtils
 		if (ent) {
 			drawPaths.push([
 				x - draw_interval[0],
 				y - draw_interval[1],
-				[icons["cursor"], ent],
-				[icons["cursor"].color, ent.color],
+				[icons["cursor"], ent.icon], // Use entity's icon
+				[icons["cursor"].color, ent.icon.color],
 				["transparent", "transparent"],
 			]);
 		} else {
@@ -787,19 +796,13 @@ function drawPathsFunc(x, y, draw_interval, currentLoc) {
 		y == currentLoc[1] &&
 		(x != VARS.SELECTED.x || y != VARS.SELECTED.y)
 	) {
-		let ent = null;
-		for (var e of entities) {
-			if (e.x == x && e.y == y) {
-				ent = e.icon;
-				break;
-			}
-		}
+		let ent = findMobCoords(x, y); // Use findMobCoords from gameUtils
 		if (ent) {
 			drawPaths.push([
 				x - draw_interval[0],
 				y - draw_interval[1],
-				[icons["cursor_square"], ent],
-				[icons["cursor_square"].color, ent.color],
+				[icons["cursor_square"], ent.icon], // Use entity's icon
+				[icons["cursor_square"].color, ent.icon.color],
 				["transparent", "transparent"],
 			]);
 		} else {
@@ -841,42 +844,58 @@ function processMove(_x, _y) {
 
 	VARS.TARGET = [-1, -1];
 	drawPaths.length = 0;
-	if (!findMobCoords(_x, _y) && checkMove(_x, _y)) {
-		VARS.SELECTED.x = Math.max(_x, 0);
-		VARS.SELECTED.y = Math.max(_y, 0);
-		VARS.TARGET[0] = Math.max(_x, 0);
-		VARS.TARGET[1] = Math.max(_y, 0);
-		currentLoc[0] = Math.max(_x, 0);
-		currentLoc[1] = Math.max(_y, 0);
+
+	// Check if target tile is passable for the selected unit, considering terrain and other entities
+	const targetEntity = findMobCoords(_x, _y); // Find any living mob at the target coordinates
+	const isTargetTilePassable = isTilePassableForMovement(
+		_x,
+		_y,
+		VARS.SELECTED
+	);
+
+	if (isTargetTilePassable && !targetEntity) {
+		// Target tile is empty and passable for movement, proceed with direct move
+		VARS.SELECTED.x = _x;
+		VARS.SELECTED.y = _y;
+		VARS.TARGET[0] = _x;
+		VARS.TARGET[1] = _y;
+		currentLoc[0] = _x;
+		currentLoc[1] = _y;
 		processTurn();
-	} else {
-		let en = findMobCoords(_x, _y);
-		if (en.owner == VARS.SELECTED.owner) {
-			//swap places
+	} else if (targetEntity) {
+		// There is a living entity at the target location
+		if (targetEntity.owner === VARS.SELECTED.owner) {
+			// Swap places with a friendly unit
 			let o1x = VARS.SELECTED.x;
 			let o1y = VARS.SELECTED.y;
-			let o2x = en.x;
-			let o2y = en.y;
+			let o2x = targetEntity.x;
+			let o2y = targetEntity.y;
+
 			VARS.SELECTED.x = o2x;
 			VARS.SELECTED.y = o2y;
 			VARS.TARGET[0] = o2x;
 			VARS.TARGET[1] = o2y;
 			currentLoc[0] = o2x;
 			currentLoc[1] = o2y;
-			en.x = o1x;
-			en.y = o1y;
+
+			targetEntity.x = o1x;
+			targetEntity.y = o1y;
 			processTurn();
-			return;
-		}
-		if (en && en.mob && en.mob.ai != "dead") {
+		} else {
+			// Attack an enemy unit
 			VARS.SELECTED.doMelee({
-				dist: 1,
+				dist: 1, // Assume adjacent for direct attack
 				x: _x,
 				y: _y,
 				dir: null,
-				entity: en,
+				entity: targetEntity,
 			});
 			processTurn();
 		}
+	} else {
+		debugLog(
+			"Move rejected: Impassable tile or unknown reason (e.g., dead entity that isn't truly passable).",
+			"warn"
+		);
 	}
 }

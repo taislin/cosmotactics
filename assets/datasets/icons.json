@@ -258,11 +258,11 @@
 			"transparent"
 		],
 		"passable": true,
-		"tileset": "./icons/tiles.png",
+		"tileset": "./icons/terrain.png",
 		"tcoords": [
 			[
-				0,
-				0
+				1,
+				3
 			]
 		]
 	},

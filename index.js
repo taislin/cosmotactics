@@ -9,7 +9,6 @@ import { icons } from "./assets/engine.js";
 // Preload tile sets
 function preloadTileSets() {
 	const sources = [
-		"./icons/tiles.png",
 		"./icons/terrain.png",
 		"./icons/gui.png",
 		"./icons/entities.png",

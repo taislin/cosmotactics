@@ -8,15 +8,15 @@ import { importedIcons } from "./../datasets/imports.js";
 export class WIcon {
 	constructor(
 		/** The name of the icon. */
-		name = "", 
+		name = "",
 		/** The character(s) representing the icon. */
-		icon = ["?"], 
+		icon = ["?"],
 		/** The color(s) of the icon. */
 		color = ["#FFF"],
 		background = [null],
 		passable = true,
-		tileset = "./icons/tiles.png",
-		tcoords = [0, 0]
+		tileset = "./icons/gui.png",
+		tcoords = [0, 3]
 	) {
 		this.icon = icon;
 		this.name = name;
