@@ -1,9 +1,10 @@
 # CosmoTactics
 
 ![CosmoTactics Logo](icons/icon.png)
-![CosmoTactics Gameplay Screenshot](docs/screen.png)
 
 A squad-based tactical roguelike game set in a gritty sci-fi universe. **_Lead your Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
+
+<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" width="400"/>
 
 ## 📜 Features
 
@@ -31,19 +32,15 @@ To run CosmoTactics locally:
 2.  **Install Server:**
     This project has no dependencies (the only real dependency is [rot.js](https://ondras.github.io/rot.js/hp/), which is included in a minified version). All you need is a webserver, three options below:
 
-        2.1. You can install Node.js from [the official website](https://nodejs.org/en/download), then run the game on the console:
+    2.1. You can install Node.js from [the official website](https://nodejs.org/en/download), then run the game on the console:
 
-        ```bash
-        node server.js
-        ```
+        `node server.js`
 
-        2.2. If you have Python installed, you can run it with:
+    2.2. If you have Python installed, you can run it with:
 
-        ```bash
-        python -m http.server -b localhost 8125
-        ```
+        `python -m http.server -b localhost 8125`
 
-        2.3. Download one of the many webserver tools around (they're small executables), and put it on the main directory.
+    2.3. Download one of the many webserver tools around (they're small executables), and put it on the main directory.
 
     This will start a server, usually accessible at `http://127.0.0.1:8125/`. Open this URL in your web browser.
 
