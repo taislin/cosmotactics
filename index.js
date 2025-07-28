@@ -51,7 +51,7 @@ export const msgDisplayConfig = {
 	fontSize: 16,
 	bg: "#222",
 	fg: "#fff",
-	fontFamily: "Space Mono, monospace",
+	fontFamily: "Noto Sans Mono, monospace",
 	spacing: 1,
 };
 export const menuDisplayConfig = {

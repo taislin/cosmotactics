@@ -6,6 +6,7 @@ import { isTilePassableForMovement, checkFire } from "./utils/gameUtils.js";
 // Import for player squad AI logic
 import { processPlayerSquadAI } from "./ai/mobAI.js";
 
+export { log };
 /**
  * @type {Object} Holds all icon data.
  */
@@ -183,6 +184,74 @@ function checkLose() {
 		return true;
 	}
 	return false;
+}
+
+/**
+ * NEW: Central logging function.
+ * Creates formatted, atmospheric log messages from event objects.
+ * @param {object} event - A structured object describing the game event.
+ * e.g., { type: 'damage', source: entity, target: entity, amount: 10, weapon: item }
+ * e.g., { type: 'action', source: entity, action: 'reloads', weapon: item }
+ */
+function log(event) {
+	let message = `${VARS.TURN}: `;
+	const sourceName = event.source
+		? event.source.owner === "player"
+			? `%c{#009f00}${event.source.name}%c{}`
+			: `%c{#ffa500}${event.source.name}%c{}`
+		: "";
+	const targetName = event.target
+		? event.target.owner === "player"
+			? `%c{#009f00}${event.target.name}%c{}`
+			: `%c{#ffa500}${event.target.name}%c{}`
+		: "";
+
+	switch (event.type) {
+		case "damage":
+			const damageText = `%c{red}${event.amount} HP%c{}`;
+			let verb = "hits";
+			if (event.weapon) {
+				if (event.weapon.itemtype.includes("laser")) verb = "sears";
+				if (event.weapon.itemtype.includes("plasma")) verb = "blasts";
+				if (event.weapon.itemtype.includes("projectile"))
+					verb = "shoots";
+				if (event.weapon.itemtype.includes("bladed")) verb = "slashes";
+			}
+
+			// Critical: Highlight when the player is the target
+			if (event.target && event.target.owner === "player") {
+				message += `%b{#401010}🛡️ ${sourceName} ${verb} ${targetName} for ${damageText}!%b{}`;
+			} else {
+				message += `${sourceName} ${verb} ${targetName} for ${damageText}.`;
+			}
+			break;
+
+		case "miss":
+			message += `${sourceName}'s shot misses ${targetName}.`;
+			break;
+
+		case "action":
+			let weaponName = event.weapon ? ` their ${event.weapon.name}` : "";
+			message += `${sourceName} ${event.action}${weaponName}.`;
+			break;
+
+		case "death":
+			message += `${sourceName} dies!`;
+			if (event.source.mob && event.source.mob.death_message) {
+				message = `${VARS.TURN}: ${event.source.mob.death_message}`;
+			}
+			break;
+
+		case "info":
+			message += `%c{yellow}${event.text}%c{}`;
+			break;
+
+		default:
+			message += event.text; // Fallback for simple messages
+			break;
+	}
+
+	VARS.GAMELOG.unshift(message);
 }
 
 /**

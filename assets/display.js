@@ -467,12 +467,12 @@ function drawMenu() {
 					let indx = "- ";
 					if (VARS.MENU_ITEM == i + 1) {
 						indx = "%c{orange}> ";
-						const selectedEntity = locEnt[i];
-						if (selectedEntity && selectedEntity.desc) {
+
+						if (locEnt[i] && locEnt[i].mob && locEnt[i].mob.desc) {
 							msgDisplay.drawText(
 								2,
 								25,
-								"%c{grey}" + selectedEntity.desc,
+								"%c{grey}" + locEnt[i].mob.desc,
 								28
 							); // Draw description at the bottom
 						}

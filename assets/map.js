@@ -490,7 +490,8 @@ function createUnit(x, y, unitName, faction = "enemy") {
 			{}, // slots (will be populated by equipItem)
 			[], // traits
 			unitData.background, // background
-			unitData.death_message
+			unitData.death_message,
+			unitData.desc
 		),
 		false,
 		"mob"
@@ -531,7 +532,8 @@ function createPlayerUnit(x, y, unitName) {
 			{}, // slots
 			[], // traits
 			unitData.background,
-			unitData.death_message
+			unitData.death_message,
+			unitData.desc
 		),
 		false,
 		"mob"
