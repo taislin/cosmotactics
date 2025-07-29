@@ -12,7 +12,7 @@
 A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your **_Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
 
 <p align="center">
-<img src="https://github.com/taislin/cosmotactics/raw/master/app/docs/screen.png" alt="gameplay screenshot" height="350"/>
+<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="350"/>
 </p>
 
 ## 📜 Features
@@ -39,8 +39,8 @@ To run CosmoTactics locally, just download a release and run the executable for 
 |   cosmotactics-mac_arm64   |  macOS  |      arm64       | Application binary (M1/M2/M3) |
 |    cosmotactics-win_x64    | Windows |      x86_64      |      Application binary       |
 
-[!NOTE]
-If for some reason you are using Windows 32bit, you won't be able to use the executable. You will need to follow the development steps below.
+> [!NOTE]
+> If for some reason you are using Windows 32bit, you won't be able to use the executable. You will need to follow the development steps below.
 
 ### If you want to help in the development
 
@@ -85,4 +85,4 @@ Contributions are welcome! If you have suggestions for new features, bug fixes, 
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
