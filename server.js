@@ -121,7 +121,7 @@ const server = http.createServer((request, response) => {
 			contentType = "text/html";
 		}
 	}
-	console.log(`Requested: ${requestUrl}`);
+	//console.log(`Requested: ${requestUrl}`);
 	/*
 	console.log(
 		`Serving: ${filePath} (ContentType: ${contentType}) for URL: ${requestUrl}`

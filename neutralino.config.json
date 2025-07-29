@@ -32,6 +32,46 @@
         "extensionsPath": "/extensions/",
         "clientLibrary": "./app/assets/neutralino.js",
         "binaryVersion": "6.2.0",
-        "clientVersion": "6.2.0"
+        "clientVersion": "6.2.0",
+        "bundle": {
+            "icon": {
+                "mac": "./app/icons/icon.icns",
+                "windows": "./app/icons/icon.ico",
+                "linux": "./app/icons/icon.png"
+            }
+        }
+    },
+    "buildScript": {
+        "mac": {
+            "architecture": [
+                "x64",
+                "arm64",
+                "universal"
+            ],
+            "minimumOS": "10.13.0",
+            "appName": "cosmotactics",
+            "appBundleName": "Cosmotactics",
+            "appIdentifier": "com.cosmotactics.app",
+            "appIcon": "app/icons/icon.icns"
+        },
+        "win": {
+            "architecture": [
+                "x64"
+            ],
+            "appName": "cosmotactics",
+            "appIcon": "app/icons/icon.ico"
+        },
+        "linux": {
+            "architecture": [
+                "x64",
+                "arm64",
+                "armhf"
+            ],
+            "appName": "cosmotactics",
+            "appIcon": "app/icons/icon.png",
+            "appPath": "/usr/share/cosmotactics",
+            "appIconPath": "/usr/share/cosmotactics/icon.png",
+            "appIconLocation": "/usr/share/cosmotactics/icon.png"
+        }
     }
 }
