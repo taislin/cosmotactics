@@ -6,7 +6,7 @@
 
 ![GitHub package.json version](https://img.shields.io/github/package-json/v/taislin/cosmotactics)
 ![GitHub Release Date](https://img.shields.io/github/release-date/taislin/cosmotactics)
-![GitHub License](https://img.shields.io/github/license/taislin/cosmotactics)
+<a href="https://creativecommons.org/licenses/by-nc/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY%20NC-blue" alt="License"></a>
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/taislin/cosmotactics)
 
 A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your **_Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
@@ -85,4 +85,8 @@ Contributions are welcome! If you have suggestions for new features, bug fixes, 
 
 ## 📄 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **Creative Commons BY NC 4.0 License**.
+
+This license enables reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator.
+
+See the [LICENSE](LICENSE) file for details.
