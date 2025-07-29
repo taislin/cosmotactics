@@ -81,6 +81,17 @@ function generateOpenWorld() {
 		survive: [4, 5, 6, 7, 8],
 	});
 
+	// Define the pool of alien tree types
+	const ALIEN_TREE_TYPES = [
+		"alien_tree_purple",
+		"alien_tree_green",
+		"alien_tree_blue",
+		"alien_tree_orange",
+	];
+
+	// Map to store the chosen tree type for each connected forest region
+	const forestRegionTypes = {}; // Key: "x,y" of a cell in a region, Value: chosen tree type for that region
+
 	// 1. Seed the map with noise (potential trees)
 	cellular.randomize(0.5); // Start with 50% "alive" cells
 
@@ -89,19 +100,51 @@ function generateOpenWorld() {
 		cellular.create();
 	}
 
-	// 3. Connect isolated areas to ensure map is traversable
+	// 3. Connect isolated areas and assign cluster types
 	cellular.connect((x, y, value) => {
-		let terrainType = value === 1 ? "tree" : "grass";
+		let terrainType;
 
-		// Add some variety to the grass areas
-		if (terrainType === "grass" && ROT.RNG.getUniform() < 0.05) {
-			terrainType = "bush";
-		} else if (terrainType === "grass" && ROT.RNG.getUniform() < 0.03) {
-			terrainType = "dirt";
+		if (value === 1) {
+			// This is a "forest" cell
+			// Find the region this cell belongs to (using flood fill or similar mechanism implied by cellular.connect)
+			// For ROT.Map.Cellular, `connect` visits each cell and its neighbors.
+			// We can leverage this to assign a consistent type to connected regions.
+			const key = `${x},${y}`;
+
+			// Simple region assignment: Check neighbors for an existing type, or pick a new one.
+			// This isn't a perfect flood-fill, but it tends to make clusters.
+			let assignedType = null;
+			ROT.DIRS[8].forEach((dir) => {
+				const nx = x + dir[0];
+				const ny = y + dir[1];
+				const neighborKey = `${nx},${ny}`;
+				if (forestRegionTypes[neighborKey]) {
+					assignedType = forestRegionTypes[neighborKey];
+				}
+			});
+
+			if (!assignedType) {
+				// If no neighbor has an assigned type, this is likely a new region (or edge of one)
+				assignedType = getRandomElement(ALIEN_TREE_TYPES);
+			}
+			forestRegionTypes[key] = assignedType; // Assign/confirm type for this cell
+
+			terrainType = assignedType; // Use the chosen tree type
+		} else {
+			// This is a "ground" cell
+			terrainType = "grass";
+			// Add some variety to the grass areas
+			if (ROT.RNG.getUniform() < 0.05) {
+				terrainType = "alien_bush";
+			} else if (ROT.RNG.getUniform() < 0.05) {
+				terrainType = "alien_flowers";
+			} else if (ROT.RNG.getUniform() < 0.03) {
+				terrainType = "dirt";
+			}
 		}
 
 		mapData[`${x},${y}`] = terrainType;
-	}, 0);
+	}, 0); // The `0` here is the "floor" value for ROT.Map.Cellular
 
 	return mapData;
 }

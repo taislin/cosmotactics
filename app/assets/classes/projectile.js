@@ -43,30 +43,43 @@ function calculateDamage(modif) {
 	return Math.max(1, dmg); // Ensure at least 1 damage
 }
 
+// Linear interpolation function
+function lerp(a, b, t) {
+	return a * (1 - t) + b * t;
+}
+
 /**
  * Represents a projectile in the game.
  */
 export class Projectile {
 	constructor(x, y, modif, source_entity, tgt, type) {
+		// --- Latch the animation lock ---
+		VARS.isAnimating = true;
+
 		// Initialize projectile properties
 		this.tgt = tgt;
 		this.modif = modif;
+		// Logical integer coordinates for collision
 		this.x = x;
 		this.y = y;
-		this.originX = x;
-		this.originY = y;
+		// Floating-point coordinates for smooth rendering
+		this.px = x;
+		this.py = y;
+
 		this.source = source_entity;
 		this.faction = source_entity.owner;
 		this.type = type;
-		this.dir = 0; // Direction for sprite (0: vertical, 1: horizontal, 2: backslash, 3: forward slash)
-		projectiles.push(this);
+		this.dir = 0; // Direction for sprite
 
-		// Calculate damage and path
-		this.dmg = calculateDamage(modif);
-		this.timer = 0;
+		// Animation properties
+		this.speed = 0.015; // Tiles per millisecond
 		this.path = this.getPath();
+		this.currentTargetTile = null;
+		this.progress = 0; // Progress towards currentTargetTile (0.0 to 1.0)
+		this.segmentDuration = 0; // Time in ms to travel one segment
 
-		// Calculate accuracy penalty based on distance
+		// Calculate damage and accuracy
+		this.dmg = calculateDamage(modif);
 		const effectiveRange = Math.max(1, this.path.length);
 		const rangeRatio = Math.min(effectiveRange / modif.stats.range, 1);
 		const distancePenalty = 1 - rangeRatio * 0.25; // 25% accuracy loss at max range
@@ -85,24 +98,125 @@ export class Projectile {
 			this.tgt[0],
 			this.tgt[1]
 		);
-		this.launch();
+
+		// Start the first segment of movement
+		this.startNextSegment();
+
+		projectiles.push(this);
 	}
 
 	/** Calculates the projectile's path using Dijkstra's algorithm. */
 	getPath() {
-		// Projectiles always path through any tile regardless of contents, only checking if it's a valid map coordinate.
-		// Actual collision checks are done step-by-step during launch.
 		const dijkstra = new ROT.Path.Dijkstra(
 			this.tgt[0],
 			this.tgt[1],
 			(px, py) => {
-				// Ensure coordinates are within map bounds
 				return px >= 0 && px < VARS.MAP_X && py >= 0 && py < VARS.MAP_Y;
 			}
 		);
 		const path = [];
 		dijkstra.compute(this.x, this.y, (x, y) => path.push([x, y]));
+		// Remove the starting tile from the path
+		if (path.length > 0) path.shift();
 		return path;
+	}
+
+	/** Sets up the next segment of the path for animation. */
+	startNextSegment() {
+		if (this.path.length === 0) {
+			this.destroy();
+			return;
+		}
+		this.currentTargetTile = this.path.shift();
+		this.progress = 0;
+
+		const dist = Math.hypot(
+			this.currentTargetTile[0] - this.px,
+			this.currentTargetTile[1] - this.py
+		);
+		this.segmentDuration = dist / this.speed;
+	}
+
+	/** Main update method called by the game loop. */
+	update(deltaTime) {
+		if (!this.currentTargetTile) return;
+
+		// Update progress
+		this.progress += deltaTime;
+
+		// Calculate interpolation factor, capped at 1.0
+		const t = Math.min(this.progress / this.segmentDuration, 1.0);
+
+		// Lerp the render position
+		this.px = lerp(this.x, this.currentTargetTile[0], t);
+		this.py = lerp(this.y, this.currentTargetTile[1], t);
+
+		// If segment is complete
+		if (t >= 1.0) {
+			this.x = this.currentTargetTile[0];
+			this.y = this.currentTargetTile[1];
+			this.px = this.x;
+			this.py = this.y;
+
+			// Check for collision at the new tile
+			if (this.checkCollision()) {
+				return; // Collision handled, projectile destroyed
+			}
+
+			// If no collision and path remains, start the next segment
+			if (this.path.length > 0) {
+				this.startNextSegment();
+			} else {
+				// Path exhausted
+				this.destroy();
+			}
+		}
+	}
+
+	/** Checks for and handles collisions at the current logical position. */
+	checkCollision() {
+		// Check for wall collision
+		if (!world_grid[this.y] || world_grid[this.y][this.x] === 0) {
+			debugLog("Projectile hit a wall.", "info");
+			this.destroy();
+			return true;
+		}
+
+		// Check for entity collision
+		const targetEntity = findMobCoords(this.x, this.y);
+		if (targetEntity && targetEntity.owner !== this.faction) {
+			// Hit an enemy
+			// If it's the intended final target, apply accuracy check
+			if (this.x === this.tgt[0] && this.y === this.tgt[1]) {
+				if (ROT.RNG.getUniform() < this.acc) {
+					this.handleHit(targetEntity);
+				} else {
+					log({
+						type: "miss",
+						source: this.source,
+						target: targetEntity,
+					});
+					effects.push({
+						x: targetEntity.x,
+						y: targetEntity.y,
+						icon: icons.miss,
+						color: "#FFFF00",
+						background: "transparent",
+					});
+					this.destroy();
+				}
+			} else {
+				// Hit an intervening obstacle, small chance to hit
+				if (ROT.RNG.getUniform() < 0.15) {
+					debugLog("Projectile hit an intervening obstacle!", "warn");
+					this.handleHit(targetEntity);
+				} else {
+					return false; // Flew through
+				}
+			}
+			return true; // Collision handled
+		}
+		return false; // No collision
 	}
 
 	/** Handles the projectile hitting a target. */
@@ -133,131 +247,30 @@ export class Projectile {
 		this.destroy();
 	}
 
-	/** Launches the projectile, moving it along its path and handling collisions. */
-	async launch() {
-		this.timer++;
-		if (this.timer > 30) {
-			// Timeout to prevent infinite projectiles in case of pathing issues
-			debugLog("Projectile timed out!", "warn");
-			this.destroy();
-			return;
-		}
-
-		// Remove the shooter's own tile from the path if it's the first step
-		if (
-			this.path.length > 0 &&
-			this.path[0][0] === this.originX &&
-			this.path[0][1] === this.originY
-		) {
-			this.path.shift();
-		}
-
-		const curr = this.path.shift(); // Get the next tile in the path
-		if (!curr) {
-			// Path finished or empty
-			this.destroy();
-			return;
-		}
-
-		this.x = curr[0];
-		this.y = curr[1];
-
-		// Check for collision with impassable terrain (walls)
-		if (!world_grid[this.y] || world_grid[this.y][this.x] === 0) {
-			// 0 means impassable wall
-			debugLog("Projectile hit a wall.", "info");
-			this.destroy();
-			return;
-		}
-
-		// Check for collision with entities
-		const targetEntity = findMobCoords(this.x, this.y);
-		if (
-			targetEntity && // Is there an entity at this location?
-			targetEntity.mob && // Is it a mob?
-			targetEntity.owner !== this.faction // Is it an enemy or neutral?
-		) {
-			// Check if this is the *intended* target (last tile of the path)
-			if (
-				targetEntity.x === this.tgt[0] &&
-				targetEntity.y === this.tgt[1]
-			) {
-				// This is the intended target, apply accuracy check
-				if (ROT.RNG.getUniform() < this.acc) {
-					this.handleHit(targetEntity);
-				} else {
-					log({
-						type: "miss",
-						source: this.source,
-						target: targetEntity,
-					});
-					effects.push({
-						x: targetEntity.x,
-						y: targetEntity.y,
-						icon: icons.miss,
-						color: "#FFFF00",
-						background: "transparent",
-					});
-					this.destroy();
-				}
-				return;
-			} else {
-				// This is an intervening entity (not the intended target), apply chance to hit obstacle
-				if (ROT.RNG.getUniform() < 0.15) {
-					// 15% chance to hit an intervening obstacle
-					debugLog("Projectile hit an intervening obstacle!", "warn");
-					this.handleHit(targetEntity);
-					return;
-				}
-			}
-		}
-
-		// If projectile hasn't hit anything and there's more path, continue
-		if (this.path.length > 0) {
-			await sleep(33); // Small delay for visual effect
-			this.launch(); // Continue movement
-		} else {
-			// Path exhausted without hitting the intended target or an obstacle (e.g., target moved)
-			debugLog("Projectile path exhausted without direct hit.", "debug");
-			this.destroy();
-		}
-	}
-
-	/** Destroys the projectile, removing it from the game. */
+	/** Destroys the projectile, removing it from the game and releasing the animation lock if it's the last one. */
 	destroy() {
-		this.path = []; // Clear path to prevent further steps
 		const i = projectiles.indexOf(this);
-		if (i > -1) projectiles.splice(i, 1); // Remove from active projectiles list
+		if (i > -1) projectiles.splice(i, 1);
+
+		// If this was the last projectile, release the animation lock
+		if (projectiles.length === 0) {
+			VARS.isAnimating = false;
+			debugLog(
+				"All projectiles finished, animation lock released.",
+				"info"
+			);
+		}
 	}
 }
 
 // Determines the sprite direction for the projectile based on movement vector.
-// Maps 8-directional movement to the 4 available projectile sprites (|, -, \, /).
 function getProjectileDirection(x, y, tx, ty) {
 	const dx = tx - x;
 	const dy = ty - y;
-
-	// Normalize direction to -1, 0, or 1
 	const ndx = Math.sign(dx);
 	const ndy = Math.sign(dy);
-
-	// Map to sprite index:
-	// 0: Vertical (dy != 0, dx == 0)
-	// 1: Horizontal (dx != 0, dy == 0)
-	// 2: Backslash-like (dx and dy have same sign: SE or NW)
-	// 3: Forwardslash-like (dx and dy have opposite signs: NE or SW)
-
-	if (ndx === 0) {
-		// Vertical movement
-		return 0; // '|'
-	} else if (ndy === 0) {
-		// Horizontal movement
-		return 1; // '-'
-	} else if (ndx * ndy === 1) {
-		// Both positive (SE) or both negative (NW)
-		return 2; // '\'
-	} else {
-		// One positive, one negative (NE or SW)
-		return 3; // '/'
-	}
+	if (ndx === 0) return 0; // Vertical
+	if (ndy === 0) return 1; // Horizontal
+	if (ndx * ndy === 1) return 2; // Backslash-like (SE or NW)
+	return 3; // Forwardslash-like (NE or SW)
 }

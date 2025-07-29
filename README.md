@@ -12,7 +12,7 @@
 A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your **_Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
 
 <p align="center">
-<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="350"/>
+<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="350"/><img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen2.png" alt="gameplay screenshot" height="350"/>
 </p>
 
 ## 📜 Features
@@ -72,12 +72,13 @@ CosmoTactics is fully playable using either keyboard, mouse, or a combination.
 
 For a comprehensive guide on game mechanics, controls, units, and items, please refer to the **Operator's Manual** (which is also hosted on GitHub Pages):
 
-[**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/docs/index.html)
+[**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/)
 
 ## 🛠 Technologies Used
 
 -   **HTML5, CSS3, JavaScript:** Core web technologies.
 -   **ROT.js:** Robust roguelike toolkit for display, map generation, FOV, pathfinding, and RNG.
+-   **Neutralino.js:** Used for the executable, basically a small, self-contained browser app.
 
 ## 🤝 Contributing
 

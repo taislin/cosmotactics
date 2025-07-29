@@ -14,10 +14,46 @@ export var currentLoc = [0, 0];
 export var drawPaths = [];
 
 /**
- * Updates the game canvas, drawing the map, entities, items, and UI elements.
+ * Utility function to tint an image with a specific color.
+ * @param {HTMLImageElement} image - The source image to tint.
+ * @param {string} color - The color string (e.g., "#ff0000", "red").
+ * @returns {HTMLCanvasElement} A new canvas element with the tinted image.
  */
-export function updateCanvas() {
+function tintImage(image, color) {
+	const canvas = document.createElement("canvas");
+	canvas.width = image.width;
+	canvas.height = image.height;
+	const ctx = canvas.getContext("2d");
+
+	// Draw the original image
+	ctx.drawImage(image, 0, 0);
+
+	// Apply the tint color
+	ctx.globalCompositeOperation = "source-atop";
+	ctx.fillStyle = color;
+	ctx.fillRect(0, 0, image.width, image.height);
+
+	// Restore to default composite operation
+	ctx.globalCompositeOperation = "source-over";
+
+	return canvas;
+}
+
+/**
+ * Updates the game canvas, drawing the map, entities, items, and UI elements.
+ * @param {CanvasRenderingContext2D} projectileCtx - The context for the overlay canvas.
+ */
+export function updateCanvas(projectileCtx) {
 	gameDisplay.clear();
+	if (projectileCtx) {
+		// Clear the projectile canvas if it exists
+		projectileCtx.clearRect(
+			0,
+			0,
+			projectileCtx.canvas.width,
+			projectileCtx.canvas.height
+		);
+	}
 	drawMenu();
 
 	// Calculate the visible area of the map based on the selected entity's position and zoom level.
@@ -150,23 +186,6 @@ export function updateCanvas() {
 			}
 		}
 	}
-	for (let p in projectiles) {
-		if (projectiles[p].type) {
-			let projcolor = "#ff0000";
-			if (projectiles[p].type == "plasma") {
-				projcolor = "#ffa500";
-			} else if (projectiles[p].type == "projectile") {
-				projcolor = "#ccc";
-			}
-			gameDisplay.draw(
-				projectiles[p].x - drawInterval[0],
-				projectiles[p].y - drawInterval[1],
-				icons["projectile_" + projectiles[p].dir],
-				projcolor,
-				"transparent"
-			);
-		}
-	}
 	for (let e in entities) {
 		if (entities[e].mob && entities[e].mob.ai == "dead") {
 			continue;
@@ -258,6 +277,76 @@ export function updateCanvas() {
 		}
 	}
 	drawEffects(drawInterval);
+
+	// --- NEW Projectile Drawing Loop with Color ---
+	if (projectileCtx) {
+		const options = gameDisplay.getOptions();
+		const tileWidth = options.tileWidth;
+		const tileHeight = options.tileHeight;
+
+		for (const projectile of projectiles) {
+			if (!projectile.type) continue;
+
+			const iconData = icons["projectile_" + projectile.dir];
+			if (!iconData) continue;
+
+			const tilesetImage = options.tileSet.find((img) =>
+				img.src.endsWith(iconData.tileset.replace("./", "/"))
+			);
+			if (!tilesetImage || !tilesetImage.complete) continue;
+
+			// Get the projectile's color, default to red if not specified
+			let projColor = "#ff0000";
+			if (projectile.type == "plasma") {
+				projColor = "#ffa500";
+			} else if (projectile.type == "projectile") {
+				projColor = "#ccc";
+			}
+			// Use iconData's color if it has a direct one (single value)
+			else if (typeof iconData.color === "string") {
+				projColor = iconData.color;
+			} else if (
+				Array.isArray(iconData.color) &&
+				iconData.color.length > 0
+			) {
+				// If it's an array, pick the first one or a random one if needed
+				projColor = iconData.color[0]; // Or getRandomElement(iconData.color) if desired
+			}
+
+			// Create a tinted version of the projectile icon
+			const sourceX = iconData.tcoords[0];
+			const sourceY = iconData.tcoords[1];
+
+			const tempCanvas = document.createElement("canvas");
+			tempCanvas.width = tileWidth;
+			tempCanvas.height = tileHeight;
+			const tempCtx = tempCanvas.getContext("2d");
+
+			// Draw the specific projectile icon from the tileset onto the temp canvas
+			tempCtx.drawImage(
+				tilesetImage,
+				sourceX, // sx
+				sourceY, // sy
+				tileWidth, // sWidth
+				tileHeight, // sHeight
+				0, // dx
+				0, // dy
+				tileWidth, // dWidth
+				tileHeight // dHeight
+			);
+
+			// Now tint the image on the temporary canvas
+			const tintedImage = tintImage(tempCanvas, projColor);
+
+			// Calculate precise pixel coordinates for drawing on the main projectile canvas
+			const drawX = (projectile.px - drawInterval[0]) * tileWidth;
+			const drawY = (projectile.py - drawInterval[1]) * tileHeight;
+
+			// Draw the tinted projectile onto the main projectile canvas
+			projectileCtx.drawImage(tintedImage, drawX, drawY);
+		}
+	}
+	// --- END NEW Projectile Drawing Loop ---
 }
 
 export let effects = [];

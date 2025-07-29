@@ -4,7 +4,8 @@ import { loadIcons, _tileMap } from "./assets/classes/icons.js";
 import { loadLevel } from "./assets/map.js";
 import { loadItems } from "./assets/classes/items.js";
 import { drawMainMenu } from "./assets/mainmenu.js";
-import { icons } from "./assets/engine.js";
+import { icons, updateGameLogic, VARS } from "./assets/engine.js";
+import { updateCanvas } from "./assets/display.js";
 
 // Preload tile sets
 function preloadTileSets() {
@@ -69,10 +70,36 @@ export const gameDisplay = new ROT.Display(gameDisplayConfig);
 export const menuDisplay = new ROT.Display(menuDisplayConfig);
 export const msgDisplay = new ROT.Display(msgDisplayConfig);
 
+// Projectile Canvas setup
+let projectileCanvas;
+let projectileCtx;
+
+export function setupProjectileCanvas() {
+	projectileCanvas = document.getElementById("projectile-canvas");
+	const rotCanvas = gameDisplay.getContainer();
+	projectileCanvas.width = rotCanvas.width;
+	projectileCanvas.height = rotCanvas.height;
+	projectileCtx = projectileCanvas.getContext("2d");
+}
+
 // Attach displays to DOM
 function attachDisplays() {
 	document.getElementById("terminal").appendChild(menuDisplay.getContainer());
 	document.getElementById("msg").appendChild(msgDisplay.getContainer());
+}
+
+// Main Game Loop
+let lastTime = 0;
+function gameLoop(timestamp) {
+	const deltaTime = timestamp - lastTime;
+	lastTime = timestamp;
+
+	if (VARS.GAMEWINDOW === "GAME") {
+		updateGameLogic(deltaTime); // Update projectiles and other animations
+		updateCanvas(projectileCtx); // Redraw the screen, passing the projectile context
+	}
+
+	requestAnimationFrame(gameLoop);
 }
 
 // Game initialization
@@ -83,6 +110,7 @@ function initializeGame() {
 	loadLevel(0);
 	setControls();
 	drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+	requestAnimationFrame(gameLoop); // Start the main game loop
 }
 
 // Run setup

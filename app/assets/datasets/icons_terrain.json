@@ -286,6 +286,78 @@
 			]
 		]
 	},
+	"alien_flowers": {
+		"name": "alien flowers",
+		"icon": [
+			"v"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
+				6,
+				3
+			],
+			[
+				5,
+				4
+			],
+			[
+				6,
+				4
+			],
+			[
+				7,
+				4
+			],
+			[
+				6,
+				5
+			],
+			[
+				7,
+				6
+			]
+		]
+	},
+	"alien_bush": {
+		"name": "alien bush",
+		"icon": [
+			"%"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
+				7,
+				3
+			],
+			[
+				5,
+				5
+			],
+			[
+				4,
+				3
+			],
+			[
+				6,
+				6
+			]
+		]
+	},
 	"bush_dead": {
 		"name": "dead bush",
 		"icon": [
@@ -371,6 +443,106 @@
 			[
 				3,
 				1
+			]
+		]
+	},
+	"alien_tree_purple": {
+		"name": "alien tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
+				0,
+				0
+			],
+			[
+				1,
+				1
+			],
+			[
+				1,
+				2
+			]
+		]
+	},
+	"alien_tree_green": {
+		"name": "alien tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
+				2,
+				1
+			],
+			[
+				2,
+				2
+			]
+		]
+	},
+	"alien_tree_blue": {
+		"name": "alien tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
+				2,
+				0
+			],
+			[
+				3,
+				2
+			]
+		]
+	},
+	"alien_tree_orange": {
+		"name": "alien tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
+				3,
+				3
+			],
+			[
+				3,
+				4
 			]
 		]
 	},

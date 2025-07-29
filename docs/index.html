@@ -7,7 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>CosmoTactics - Manual</title>
 	<link rel="stylesheet" href="./style.css">
-	<link rel="icon" href="../icons/icon.png" type="image/png">
+	<link rel="icon" href="./../app/icons/icon.png" type="image/png">
 	<!-- Restored the script to dynamically load your data -->
 	<script src="./displaydata.js" type="module"></script>
 </head>
@@ -16,7 +16,7 @@
 	<main>
 		<img src="./header.png" style="display: block;margin-left: auto;margin-right: auto;width: 50%;">
 		<h1>OPERATOR'S MANUAL</h1>
-
+		<p style="text-align: center;margin-top:0">Version: <span id="game-version"></span></p>
 		<nav>
 			<ul>
 				<li><a href="#intro">Introduction</a></li>
@@ -51,7 +51,8 @@
 
 			<h3>The Squad and Stances</h3>
 			<p>You only directly control one unit at a time. The rest of your squad operates based on their assigned
-				<b>Stance</b>. This is the heart of SEF squad command.</p>
+				<b>Stance</b>. This is the heart of SEF squad command.
+			</p>
 			<ul>
 				<li><code>Follow</code>: The default stance. The unit will attempt to follow the player-controlled unit,
 					maintaining squad cohesion. They will still engage enemies if one gets close.</li>
@@ -77,12 +78,12 @@
 			<p>The screen is divided into two main parts: the <strong>Game Map</strong> on the left, where the action
 				happens, and the <strong>Information Panel</strong> on the right, which displays unit stats, logs, and
 				interaction menus.</p>
-			<img src="./screen.png" id="screen_img">
+			<img src="./screen2.png" id="screen_img">
 		</section>
 
 		<section id="controls">
 			<h2>Controls</h2>
-			<p>The game can be fully played with either the keyboard, the mouse, or a combination of both.</p>
+			<p>The game can be fully played with either the keyboard, the mouse, or a combination.</p>
 			<table class="controls-table">
 				<tr>
 					<th>Key(s)</th>
@@ -90,7 +91,8 @@
 				</tr>
 				<tr>
 					<td><span class="key-char">↑</span> <span class="key-char">↓</span> <span class="key-char">←</span>
-						<span class="key-char">→</span></td>
+						<span class="key-char">→</span>
+					</td>
 					<td>Move the cursor/target reticle. Navigate menus.</td>
 				</tr>
 				<tr>
@@ -156,6 +158,38 @@
 			</table>
 		</section>
 
+		<section id="stats">
+			<h2>Stats & Skills</h2>
+			<p>Every unit, friendly or otherwise, is defined by a set of core statistics.</p>
+			<ul>
+				<li><b>Health:</b> The unit's life force. When this reaches zero, the unit is killed.</li>
+				<li><b>Armor / Defence:</b> Reduces incoming damage from attacks. This stat is primarily granted by
+					suits and helmets.</li>
+				<li><b>Attack:</b> The base damage for a unit's melee attacks (when unarmed). Weapon damage overrides
+					this.</li>
+				<li><b>Speed:</b> Determines how frequently a unit can act. A unit with a speed of 2 can act twice as
+					often as a unit with a speed of 1. Player units have a speed of 1.</li>
+				<li><b>Oxygen:</b> A global resource shared by your squad. It depletes slowly each turn. If it reaches
+					zero, your mission is a failure.</li>
+				<li><b>Gold:</b> Currency acquired during missions, likely for use between levels.</li>
+			</ul>
+		</section>
+
+		<section id="items">
+			<h2>Items & Pickups</h2>
+			<p>During your expeditions, you will find items and equipment. Use the <span class="key-char">U</span> key
+				or the GUI to interact with items on the ground when your cursor is over them.</p>
+			<ul>
+				<li><b>Oxygen Tank:</b> A consumable that instantly replenishes a portion of your squad's shared
+					<b>Oxygen</b> supply.
+				</li>
+				<li><b>Medkit:</b> A consumable that instantly heals a small amount of health for <b>every unit</b> in
+					your squad.</li>
+				<li><b>Stairs:</b> Not an item, but the objective. Move your whole squad near the stairs and use them to
+					descend to the next, more dangerous level.</li>
+			</ul>
+		</section>
+
 		<section id="units">
 			<h2>Unit Roster</h2>
 			<!-- Restored empty table for your script to populate -->
@@ -183,37 +217,6 @@
 			</div>
 			<!-- Restored empty table for your script to populate -->
 			<table id="weaponstable"></table>
-		</section>
-
-		<section id="stats">
-			<h2>Stats & Skills</h2>
-			<p>Every unit, friendly or otherwise, is defined by a set of core statistics.</p>
-			<ul>
-				<li><b>Health:</b> The unit's life force. When this reaches zero, the unit is killed.</li>
-				<li><b>Armor / Defence:</b> Reduces incoming damage from attacks. This stat is primarily granted by
-					suits and helmets.</li>
-				<li><b>Attack:</b> The base damage for a unit's melee attacks (when unarmed). Weapon damage overrides
-					this.</li>
-				<li><b>Speed:</b> Determines how frequently a unit can act. A unit with a speed of 2 can act twice as
-					often as a unit with a speed of 1. Player units have a speed of 1.</li>
-				<li><b>Oxygen:</b> A global resource shared by your squad. It depletes slowly each turn. If it reaches
-					zero, your mission is a failure.</li>
-				<li><b>Gold:</b> Currency acquired during missions, likely for use between levels.</li>
-			</ul>
-		</section>
-
-		<section id="items">
-			<h2>Items & Pickups</h2>
-			<p>During your expeditions, you will find items and equipment. Use the <span class="key-char">U</span> key
-				or the GUI to interact with items on the ground when your cursor is over them.</p>
-			<ul>
-				<li><b>Oxygen Tank:</b> A consumable that instantly replenishes a portion of your squad's shared
-					<b>Oxygen</b> supply.</li>
-				<li><b>Medkit:</b> A consumable that instantly heals a small amount of health for <b>every unit</b> in
-					your squad.</li>
-				<li><b>Stairs:</b> Not an item, but the objective. Move your whole squad near the stairs and use them to
-					descend to the next, more dangerous level.</li>
-			</ul>
 		</section>
 
 	</main>

@@ -51,6 +51,7 @@ const initial_vars = {
 	TARGET: [-1, -1],
 	SELECTED: null,
 	LEVEL: 0,
+	isAnimating: false,
 };
 export let VARS = JSON.parse(JSON.stringify(initial_vars));
 const initial_stats = {
@@ -58,6 +59,17 @@ const initial_stats = {
 	OXYGEN: 100,
 };
 export let STATS = JSON.parse(JSON.stringify(initial_stats));
+
+/**
+ * NEW: Updates game logic for animations, like projectiles.
+ * @param {number} deltaTime - The time elapsed since the last frame.
+ */
+export function updateGameLogic(deltaTime) {
+	// We iterate backwards to allow for safe removal of projectiles
+	for (let i = projectiles.length - 1; i >= 0; i--) {
+		projectiles[i].update(deltaTime);
+	}
+}
 
 /**
  * Checks if a tile at the specified coordinates is passable for general pathfinding (e.g., for LOS or basic AI without considering specific unit collisions).
@@ -90,12 +102,15 @@ export function checkLight(x, y) {
  * Processes a single game turn, updating entities and game state.
  */
 export function processTurn() {
-	// Wait for any active projectiles to finish moving
-	if (projectiles.length > 0) {
+	// 1. Check for active projectiles and wait if any are still flying
+	if (projectiles.length > 0 || VARS.isAnimating) {
+		// If there are projectiles, don't process the turn yet.
+		// Schedule this function to run again very soon.
 		setTimeout(processTurn, 50); // Check again in 50ms
-		return;
+		return; // Exit current execution
 	}
 
+	// If no projectiles, proceed with the turn.
 	// --- Start of AI and Player Squad Action Phase ---
 	const activeEntities = [...entities]; // Create a shallow copy to iterate over
 
