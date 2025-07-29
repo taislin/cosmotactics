@@ -286,6 +286,82 @@
 			]
 		]
 	},
+	"alien_flowers": {
+		"name": "alien flowers",
+		"icon": [
+			"v"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				2,
+				8
+			],
+			[
+				0,
+				9
+			],
+			[
+				1,
+				9
+			],
+			[
+				2,
+				9
+			],
+			[
+				3,
+				9
+			],
+			[
+				7,
+				9
+			]
+		]
+	},
+	"alien_bush": {
+		"name": "alien bush",
+		"icon": [
+			"%"
+		],
+		"color": [
+			"#335533"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				3,
+				8
+			],
+			[
+				4,
+				8
+			],
+			[
+				5,
+				8
+			],
+			[
+				5,
+				9
+			],
+			[
+				0,
+				8
+			]
+		]
+	},
 	"bush_dead": {
 		"name": "dead bush",
 		"icon": [
@@ -344,6 +420,38 @@
 	},
 	"tree": {
 		"name": "tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/terrain.png",
+		"tcoords": [
+			[
+				0,
+				1
+			],
+			[
+				1,
+				1
+			],
+			[
+				2,
+				1
+			],
+			[
+				3,
+				1
+			]
+		]
+	},
+	"alien_tree": {
+		"name": "alien tree",
 		"icon": [
 			"♠"
 		],

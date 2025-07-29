@@ -3,12 +3,16 @@
     "version": "0.2.18",
     "description": "A squad-based tactical roguelike game set in a gritty sci-fi universe.",
     "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "node server.js"
+    },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/taislin/cosmotactics.git"
     },
     "author": "taislin",
-    "license": "MIT",
+    "license": "CC-BY-NC-4.0",
     "bugs": {
         "url": "https://github.com/taislin/cosmotactics/issues"
     },

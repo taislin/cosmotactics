@@ -2,7 +2,7 @@ import {
 	importedUnits,
 	importedIcons,
 	importedItems,
-} from "../assets/datasets/imports.js";
+} from "../app/assets/datasets/imports.js";
 
 let unitstable = document.getElementById("unitstable");
 let _row = unitstable.insertRow();
@@ -98,7 +98,7 @@ wheaderList.forEach((h) => {
 // Assuming your `items_weapons.json` content is loaded into `importedItems` with direct keys
 // For simplicity, I'll keep the direct import here for weapons data, as the merged `importedItems`
 // in imports.js doesn't separate weapons out for easy iteration by themselves like `_importedItems_weapons`.
-import _importedItems_weapons_local from "../assets/datasets/items_weapons.json" with { type: "json" };
+import _importedItems_weapons_local from "../app/assets/datasets/items_weapons.json" with { type: "json" };
 
 for (var i of Object.keys(_importedItems_weapons_local)) { // Using the specific import for weapons
 	let counter = 0;

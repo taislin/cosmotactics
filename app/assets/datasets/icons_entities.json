@@ -376,5 +376,47 @@
 				1
 			]
 		]
+	},
+	"sludge_mimic": {
+		"name": "sludge mimic",
+		"icon": [
+			"≈"
+		],
+		"color": [
+			"#00ff00",
+			"#00aa00"
+		],
+		"background": [
+			"#330033"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				1,
+				8
+			]
+		]
+	},
+	"resonance_pylon": {
+		"name": "resonance pylon",
+		"icon": [
+			"⌂"
+		],
+		"color": [
+			"#00ffff",
+			"#00aaaa"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/entities.png",
+		"tcoords": [
+			[
+				2,
+				8
+			]
+		]
 	}
 }

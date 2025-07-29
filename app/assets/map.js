@@ -95,7 +95,9 @@ function generateOpenWorld() {
 
 		// Add some variety to the grass areas
 		if (terrainType === "grass" && ROT.RNG.getUniform() < 0.05) {
-			terrainType = "bush";
+			terrainType = "alien_bush";
+		} else if (terrainType === "grass" && ROT.RNG.getUniform() < 0.05) {
+			terrainType = "alien_flowers";
 		} else if (terrainType === "grass" && ROT.RNG.getUniform() < 0.03) {
 			terrainType = "dirt";
 		}

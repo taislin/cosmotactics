@@ -68,9 +68,11 @@ const server = http.createServer((request, response) => {
 	// For example, if your root `index.html` (the game launcher) is still in the root.
 	// If the game's actual `index.html` (where the game plays) is now in `app/`,
 	// then the root '/' should map to `app/index.html`.
-	if (requestUrl === "/" || requestUrl === "/index.test.html") {
-		requestUrl = "/index.test.html"; // The main game HTML file
-		baseDir = "app";
+	if (requestUrl === "/" || requestUrl === "/index.html") {
+		requestUrl = "/app/index.html"; // The main game HTML file
+		baseDir = ".";
+	} else if (requestUrl === "/docs/style.css") {
+		requestUrl = "/docs/style.css"; // Ensure this points to the correct location
 	} else if (requestUrl.startsWith("/docs")) {
 		// Keep docs in their original location
 		baseDir = "docs";
@@ -81,17 +83,10 @@ const server = http.createServer((request, response) => {
 		requestUrl.startsWith("/icons") ||
 		requestUrl.startsWith("/fonts")
 	) {
-		// Keep icons and fonts in their original root locations if they are referenced directly
-		// If these are only referenced from files *within* 'app/', then they should be
-		// handled relative to 'app/' or specific rules might be needed.
-		// For now, assuming direct root access is still needed for these top-level asset folders.
-		baseDir = "."; // Represents the root directory
+		baseDir = "./app/"; // Represents the root directory
+	} else if (requestUrl === "/package.json") {
+		baseDir = "./"; // Represents the root directory
 	}
-	// Add other top-level folders if they are not inside 'app' but need to be served.
-	// Example: If you have a `public/` folder at the root:
-	// else if (requestUrl.startsWith("/public")) {
-	//     baseDir = ".";
-	// }
 
 	// Construct the full file path.
 	// For files within 'app' or 'docs', path.join will correctly build it.
@@ -126,14 +121,16 @@ const server = http.createServer((request, response) => {
 			contentType = "text/html";
 		}
 	}
-
+	console.log(`Requested: ${requestUrl}`);
+	/*
 	console.log(
 		`Serving: ${filePath} (ContentType: ${contentType}) for URL: ${requestUrl}`
 	);
+	*/
 	serveFile(filePath, contentType, response);
 });
 
-const PORT = process.env.PORT || 8125; // Use process.env.PORT for dynamic port assignment (e.g., for Heroku)
+const PORT = process.env.PORT || 8125; // Use process.env.PORT for dynamic port assignment (e.g., for hosting)
 server.listen(PORT, () => {
 	console.log(`Server running at http://127.0.0.1:${PORT}/`);
 });

@@ -184,5 +184,51 @@
 			"melee": null,
 			"extra": null
 		}
+	},
+	"sludge_mimic": {
+		"name": "Sludge Mimic",
+		"desc": "Appears as an innocuous puddle of murky liquid until a unit approaches too closely. It then rapidly coalesces into a hostile, acidic form, attempting to ambush and dissolve its victim in melee. Immune to most ranged attacks while in puddle form.",
+		"type": "mob",
+		"icon": "sludge_mimic",
+		"ai": "basic",
+		"stats": {
+			"health": 70,
+			"attack": 20,
+			"defence": 0,
+			"range": 1,
+			"speed": 0.8,
+			"delay": 1,
+			"morale": 200
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
+	},
+	"resonance_pylon": {
+		"name": "Resonance Pylon",
+		"desc": "A crystalline, semi-organic structure that pulses with strange energy. It's stationary and defenseless, but passively generates a field that enhances the combat readiness of nearby alien lifeforms, increasing their speed and damage output.",
+		"type": "mob",
+		"icon": "resonance_pylon",
+		"ai": "basic",
+		"stats": {
+			"health": 120,
+			"attack": 0,
+			"defence": 10,
+			"range": 0,
+			"speed": 0,
+			"delay": 0,
+			"morale": 300
+		},
+		"slots": {
+			"head": null,
+			"suit": null,
+			"ranged": null,
+			"melee": null,
+			"extra": null
+		}
 	}
 }

@@ -78,6 +78,7 @@ For a comprehensive guide on game mechanics, controls, units, and items, please 
 
 -   **HTML5, CSS3, JavaScript:** Core web technologies.
 -   **ROT.js:** Robust roguelike toolkit for display, map generation, FOV, pathfinding, and RNG.
+-   **Neutralino.js:** Used for the executable, basically a small, self-contained browser app.
 
 ## 🤝 Contributing
 
