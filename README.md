@@ -27,7 +27,22 @@ A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your
 
 ## 🚀 Getting Started
 
-To run CosmoTactics locally:
+To run CosmoTactics locally, just download a release and run the executable for your operating system (MacOS, Windows, Linux). They are all included in the repository.
+
+|          Filename          |   OS    | CPU architecture |             Type              |
+| :------------------------: | :-----: | :--------------: | :---------------------------: |
+|   cosmotactics-linux_x64   |  Linux  |      x86_64      |      Application binary       |
+|  cosmotactics-linux_armhf  |  Linux  |      armhf       |      Application binary       |
+|  cosmotactics-linux_arm64  |  Linux  |      arm64       |      Application binary       |
+|    cosmotactics-mac_x64    |  macOS  |      x86_64      |  Application binary (Intel)   |
+| cosmotactics-mac_universal |  macOS  | x86_64 and arm64 |      Application binary       |
+|   cosmotactics-mac_arm64   |  macOS  |      arm64       | Application binary (M1/M2/M3) |
+|    cosmotactics-win_x64    | Windows |      x86_64      |      Application binary       |
+
+[!NOTE]
+If for some reason you are using Windows 32bit, you won't be able to use the executable. You will need to follow the development steps below.
+
+### If you want to help in the development
 
 1.  **Clone the repository:**
 
@@ -36,20 +51,18 @@ To run CosmoTactics locally:
     cd CosmoTactics
     ```
 
-    Or you can download it manually or through GitHub Desktop.
-
 2.  **Install Server:**
     This project has no dependencies (the only real dependency is [rot.js](https://ondras.github.io/rot.js/hp/), which is included in a minified version). All you need is a webserver, three options below:
 
-    2.1. You can install Node.js from [the official website](https://nodejs.org/en/download), then run the game on the console:
+    -   You can install Node.js from [the official website](https://nodejs.org/en/download), then run the game on the console:
 
-    `node server.js`
+        `node server.js`
 
-    2.2. If you have Python installed, you can run it with:
+    -   If you have Python installed, you can run it with:
 
-    `python -m http.server -b localhost 8125`
+        `python -m http.server -b localhost 8125`
 
-    2.3. Download one of the many webserver tools around (they're small executables), and put it on the main directory.
+    -   Download one of the many webserver tools around (they're small executables), and put it on the main directory.
 
     This will start a server, usually accessible at `http://127.0.0.1:8125/`. Open this URL in your web browser.
 
