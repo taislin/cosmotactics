@@ -72,7 +72,7 @@ CosmoTactics is fully playable using either keyboard, mouse, or a combination.
 
 For a comprehensive guide on game mechanics, controls, units, and items, please refer to the **Operator's Manual** (which is also hosted on GitHub Pages):
 
-[**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/docs/index.html)
+[**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/)
 
 ## 🛠 Technologies Used
 

@@ -298,31 +298,31 @@
 			"transparent"
 		],
 		"passable": true,
-		"tileset": "./icons/terrain.png",
+		"tileset": "./icons/trees.png",
 		"tcoords": [
 			[
-				2,
-				8
+				6,
+				3
 			],
 			[
-				0,
-				9
+				5,
+				4
 			],
 			[
-				1,
-				9
-			],
-			[
-				2,
-				9
-			],
-			[
-				3,
-				9
+				6,
+				4
 			],
 			[
 				7,
-				9
+				4
+			],
+			[
+				6,
+				5
+			],
+			[
+				7,
+				6
 			]
 		]
 	},
@@ -332,33 +332,29 @@
 			"%"
 		],
 		"color": [
-			"#335533"
+			"transparent"
 		],
 		"background": [
 			"transparent"
 		],
 		"passable": true,
-		"tileset": "./icons/terrain.png",
+		"tileset": "./icons/trees.png",
 		"tcoords": [
 			[
-				3,
-				8
+				7,
+				3
+			],
+			[
+				5,
+				5
 			],
 			[
 				4,
-				8
+				3
 			],
 			[
-				5,
-				8
-			],
-			[
-				5,
-				9
-			],
-			[
-				0,
-				8
+				6,
+				6
 			]
 		]
 	},
@@ -450,7 +446,7 @@
 			]
 		]
 	},
-	"alien_tree": {
+	"alien_tree_purple": {
 		"name": "alien tree",
 		"icon": [
 			"♠"
@@ -462,23 +458,91 @@
 			"transparent"
 		],
 		"passable": false,
-		"tileset": "./icons/terrain.png",
+		"tileset": "./icons/trees.png",
 		"tcoords": [
 			[
 				0,
-				1
+				0
 			],
 			[
 				1,
 				1
 			],
 			[
+				1,
+				2
+			]
+		]
+	},
+	"alien_tree_green": {
+		"name": "alien tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
 				2,
 				1
 			],
 			[
+				2,
+				2
+			]
+		]
+	},
+	"alien_tree_blue": {
+		"name": "alien tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
+				2,
+				0
+			],
+			[
 				3,
-				1
+				2
+			]
+		]
+	},
+	"alien_tree_orange": {
+		"name": "alien tree",
+		"icon": [
+			"♠"
+		],
+		"color": [
+			"transparent"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": false,
+		"tileset": "./icons/trees.png",
+		"tcoords": [
+			[
+				3,
+				3
+			],
+			[
+				3,
+				4
 			]
 		]
 	},
