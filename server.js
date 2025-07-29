@@ -2,7 +2,10 @@ import http from "http";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import pkg from "./package.json" with { type: "json" };
+
+// Import package.json directly
+import packageJson from "./package.json" with { type: "json" };
+
 // __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,12 +16,12 @@ const CONTENT_TYPES = {
 	".json": "application/json",
 	".png": "image/png",
 	".jpg": "image/jpg",
-	".jpeg": "image/jpeg", // Added common image type
-	".gif": "image/gif", // Added common image type
-	".svg": "image/svg+xml", // Added common image type
+	".jpeg": "image/jpeg",
+	".gif": "image/gif",
+	".svg": "image/svg+xml",
 	".wav": "audio/wav",
-	".mp3": "audio/mpeg", // Added common audio type
-	".woff": "font/woff", // Added font types
+	".mp3": "audio/mpeg",
+	".woff": "font/woff",
 	".woff2": "font/woff2",
 	".ttf": "font/ttf",
 	".otf": "font/otf",
@@ -28,13 +31,13 @@ function getContentType(ext) {
 	return CONTENT_TYPES[ext] || "text/html";
 }
 
-function serveFile(filePath, contentType, response) {
+function serveFile(filePath, contentType, response, processHtml = false) {
 	fs.readFile(filePath, (error, content) => {
 		if (error) {
 			if (error.code === "ENOENT") {
-				// File not found, serve 404.html from the new 'app' directory
+				// File not found, serve 404.html from the 'app' directory
 				fs.readFile(
-					path.join(__dirname, "app", "404.html"), // Corrected path to 404.html
+					path.join(__dirname, "app", "404.html"),
 					(err404, content404) => {
 						if (err404) {
 							response.writeHead(500);
@@ -51,87 +54,63 @@ function serveFile(filePath, contentType, response) {
 				response.writeHead(500);
 				response.end(`Server Error: ${error.code}\n`);
 			}
-		} else {
-			response.writeHead(200, { "Content-Type": contentType });
-			response.end(content, "utf-8");
 		}
 	});
 }
 
 const server = http.createServer((request, response) => {
 	let requestUrl = request.url;
-
-	// Determine the base directory for the requested file
-	let baseDir = "app"; // Default to serving from the 'app' directory
-
-	// Handle specific root-level requests that might not be in 'app'
-	// For example, if your root `index.html` (the game launcher) is still in the root.
-	// If the game's actual `index.html` (where the game plays) is now in `app/`,
-	// then the root '/' should map to `app/index.html`.
-	if (requestUrl === "/" || requestUrl === "/index.html") {
-		requestUrl = "/app/index.html"; // The main game HTML file
-		baseDir = ".";
-	} else if (requestUrl === "/docs/style.css") {
-		requestUrl = "/docs/style.css"; // Ensure this points to the correct location
-	} else if (requestUrl.startsWith("/docs")) {
-		// Keep docs in their original location
-		baseDir = "docs";
-		if (requestUrl === "/docs" || requestUrl === "/docs/") {
-			requestUrl = "/docs/index.html";
-		}
-	} else if (
-		requestUrl.startsWith("/icons") ||
-		requestUrl.startsWith("/fonts")
-	) {
-		baseDir = "./app/"; // Represents the root directory
-	} else if (requestUrl === "/package.json") {
-		baseDir = "./"; // Represents the root directory
-	}
-
-	// Construct the full file path.
-	// For files within 'app' or 'docs', path.join will correctly build it.
-	// For files at the root (like /icons/...), requestUrl already contains the full path from root.
 	let filePath;
-	if (baseDir === ".") {
-		filePath = path.join(__dirname, requestUrl);
-	} else {
-		// This handles requests like `/index.js` becoming `app/index.js`
-		// or `/assets/classes/items.js` becoming `app/assets/classes/items.js`
-		filePath = path.join(__dirname, baseDir, requestUrl);
-	}
+	let processHtml = false;
+
+	// Trim leading slash for easier path manipulation
+	let cleanUrl = requestUrl.startsWith('/') ? requestUrl.substring(1) : requestUrl;
+
+	if (cleanUrl === "" || cleanUrl === "index.html") {
+		// If requesting root or main game HTML (e.g., / or /index.html)
+		// Assume the primary game HTML is in 'app/index.html'
+		// This means your game's entry point HTML should be in `app/`
+		filePath = path.join(__dirname, "app", cleanUrl === "" ? "index.html" : cleanUrl);
+	} else if (cleanUrl.startsWith("docs/")) {
+		// Requests specifically for the 'docs' directory
+		filePath = path.join(__dirname, cleanUrl); // Path is already relative from root
+		if (cleanUrl === "docs/" || cleanUrl === "docs/index.html") {
+            processHtml = true; // Only process docs/index.html
+        }
+	} else if (cleanUrl.startsWith("app/")) {
+		// Requests specifically for the 'app' directory (e.g. app/assets/...)
+		filePath = path.join(__dirname, cleanUrl); // Path is already relative from root
+	} else if (
+		// Root-level assets that are NOT in app/ or docs/ but might exist (e.g. fonts, icons, package.json)
+        // Adjust these conditions based on what truly sits at your project root.
+        cleanUrl.startsWith("fonts/") || // Fonts likely in app/fonts, but maybe root too
+        cleanUrl.startsWith("icons/") || // Icons likely in app/icons, but maybe root too
+        cleanUrl === "package.json" // package.json is at root
+    ) {
+        filePath = path.join(__dirname, cleanUrl);
+    } else {
+        // Fallback for other requests, assume they might be in 'app/'
+        // This is important for requests like /assets/something.js becoming /app/assets/something.js
+        filePath = path.join(__dirname, "app", cleanUrl);
+    }
 
 	// Handle directory requests (e.g., /docs/ should serve /docs/index.html)
-	// This specific check ensures that if /docs is requested, it tries index.html within docs.
-	// The `requestUrl.startsWith("/docs")` block above already handles this for /docs,
-	// but this pattern is useful if you have other directories that need an implicit index.html.
 	if (fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()) {
 		filePath = path.join(filePath, "index.html");
+        // If the implicit index.html is for docs, process it.
+        if (filePath.includes(path.join("docs", "index.html"))) {
+            processHtml = true;
+        }
 	}
 
 	const extname = path.extname(filePath);
 	let contentType = getContentType(extname);
 
-	// Special handling for paths that don't have an extension but might be directories,
-	// or specific root requests that should default to HTML.
-	if (!extname && !fs.existsSync(filePath)) {
-		// If no extension and file doesn't exist, assume it might be a directory or default HTML
-		if (filePath.endsWith("docs")) {
-			// For example, if someone types `http://localhost:8125/docs`
-			filePath = path.join(filePath, "index.html");
-			contentType = "text/html";
-		}
-	}
-	//console.log(`Requested: ${requestUrl}`);
-	/*
-	console.log(
-		`Serving: ${filePath} (ContentType: ${contentType}) for URL: ${requestUrl}`
-	);
-	*/
-	serveFile(filePath, contentType, response);
+	console.log(`Requested: ${requestUrl} -> Serving: ${filePath} (ContentType: ${contentType}, HTML Process: ${processHtml})`);
+	serveFile(filePath, contentType, response, processHtml);
 });
 
-const PORT = process.env.PORT || 8125; // Use process.env.PORT for dynamic port assignment (e.g., for hosting)
+const PORT = process.env.PORT || 8125;
 server.listen(PORT, () => {
-	console.log(`\x1b[32mCosmoTactics\x1b[0m (\x1b[93m${pkg.version}\x1b[0m)`);
-	console.log(`Server running at \x1b[93mhttp://127.0.0.1:${PORT}/\x1b[0m`);
+	console.log(`Server running at http://127.0.0.1:${PORT}/`);
 });

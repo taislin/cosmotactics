@@ -7,7 +7,7 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>CosmoTactics - Manual</title>
 	<link rel="stylesheet" href="./style.css">
-	<link rel="icon" href="../icons/icon.png" type="image/png">
+	<link rel="icon" href="./../app/icons/icon.png" type="image/png">
 	<!-- Restored the script to dynamically load your data -->
 	<script src="./displaydata.js" type="module"></script>
 </head>
@@ -16,7 +16,7 @@
 	<main>
 		<img src="./header.png" style="display: block;margin-left: auto;margin-right: auto;width: 50%;">
 		<h1>OPERATOR'S MANUAL</h1>
-
+		<p style="text-align: center;margin-top:0">Version: <span id="game-version"></span></p>
 		<nav>
 			<ul>
 				<li><a href="#intro">Introduction</a></li>
@@ -83,7 +83,7 @@
 
 		<section id="controls">
 			<h2>Controls</h2>
-			<p>The game can be fully played with either the keyboard, the mouse, or a combination of both.</p>
+			<p>The game can be fully played with either the keyboard, the mouse, or a combination.</p>
 			<table class="controls-table">
 				<tr>
 					<th>Key(s)</th>
@@ -158,35 +158,6 @@
 			</table>
 		</section>
 
-		<section id="units">
-			<h2>Unit Roster</h2>
-			<!-- Restored empty table for your script to populate -->
-			<table id="unitstable"></table>
-		</section>
-
-		<section id="weapons">
-			<h2>Weapon Systems</h2>
-			<p>Understanding your equipment is key to survival. Every weapon has unique stats that define its
-				performance in combat.</p>
-
-			<div class="note">
-				<strong>Weapon Stats Explained:</strong>
-				<ul>
-					<li><b>Type:</b> The category of the weapon (e.g., Laser Pistol, Projectile Rifle). Some enemies may
-						be resistant to certain types.</li>
-					<li><b>Damage:</b> The average damage dealt on a successful hit, before armor is applied. The actual
-						damage will vary slightly per shot.</li>
-					<li><b>Range:</b> The maximum number of tiles the weapon can effectively fire.</li>
-					<li><b>Ammo:</b> The number of shots currently in the weapon / The maximum number of shots the
-						weapon can hold.</li>
-					<li><b>Reload:</b> The number of turns it takes to perform a full reload.</li>
-					<li><b>Accuracy:</b> The base chance to hit a target. This is modified by distance.</li>
-				</ul>
-			</div>
-			<!-- Restored empty table for your script to populate -->
-			<table id="weaponstable"></table>
-		</section>
-
 		<section id="stats">
 			<h2>Stats & Skills</h2>
 			<p>Every unit, friendly or otherwise, is defined by a set of core statistics.</p>
@@ -217,6 +188,35 @@
 				<li><b>Stairs:</b> Not an item, but the objective. Move your whole squad near the stairs and use them to
 					descend to the next, more dangerous level.</li>
 			</ul>
+		</section>
+
+		<section id="units">
+			<h2>Unit Roster</h2>
+			<!-- Restored empty table for your script to populate -->
+			<table id="unitstable"></table>
+		</section>
+
+		<section id="weapons">
+			<h2>Weapon Systems</h2>
+			<p>Understanding your equipment is key to survival. Every weapon has unique stats that define its
+				performance in combat.</p>
+
+			<div class="note">
+				<strong>Weapon Stats Explained:</strong>
+				<ul>
+					<li><b>Type:</b> The category of the weapon (e.g., Laser Pistol, Projectile Rifle). Some enemies may
+						be resistant to certain types.</li>
+					<li><b>Damage:</b> The average damage dealt on a successful hit, before armor is applied. The actual
+						damage will vary slightly per shot.</li>
+					<li><b>Range:</b> The maximum number of tiles the weapon can effectively fire.</li>
+					<li><b>Ammo:</b> The number of shots currently in the weapon / The maximum number of shots the
+						weapon can hold.</li>
+					<li><b>Reload:</b> The number of turns it takes to perform a full reload.</li>
+					<li><b>Accuracy:</b> The base chance to hit a target. This is modified by distance.</li>
+				</ul>
+			</div>
+			<!-- Restored empty table for your script to populate -->
+			<table id="weaponstable"></table>
 		</section>
 
 	</main>

@@ -41,7 +41,7 @@ for (var i of Object.keys(importedUnits)) {
 	const ctx = canvas.getContext("2d");
 	let img2 = document.createElement("img");
 	// This path adjustment is critical for images loaded in the /docs/ context
-	img2.src = iconSrc.tileset.replace("./", "../");
+	img2.src = iconSrc.tileset.replace("./", "./../app/");
 	img2.addEventListener("load", (e) => {
 		ctx.drawImage(
 			img2,
@@ -114,7 +114,7 @@ for (var i of Object.keys(_importedItems_weapons_local)) { // Using the specific
 	const ctx = canvas.getContext("2d");
 	var img = document.createElement("img");
 	// This path adjustment is critical for images loaded in the /docs/ context
-	img.src = iconSrc.tileset.replace("./", "../");
+	img.src = iconSrc.tileset.replace("./", "../app/");
 	img.addEventListener("load", (e) => {
 		ctx.drawImage(
 			img,
@@ -205,3 +205,56 @@ function table_sort() {
 }
 
 table_sort();
+
+
+// NEW CODE FOR LOADING VERSION FROM package.json
+document.addEventListener('DOMContentLoaded', () => {
+    const versionSpan = document.getElementById('game-version');
+    if (versionSpan) {
+        // Define an array of potential paths to package.json
+        // Prioritize the most likely path first
+        const potentialPaths = [
+            '../../package.json', // From docs/ to repo root (e.g., project page from /docs)
+            '/cosmotactics/package.json', // Absolute path from domain root, assuming 'cosmotactics' is the repo name
+            '/package.json' // Absolute path from domain root (e.g., if gh-pages branch itself is the root)
+        ];
+
+        // Function to attempt fetching from a list of paths
+        const fetchPackageJson = (paths, index = 0) => {
+            if (index >= paths.length) {
+                // All paths tried, none worked
+                versionSpan.textContent = 'Error (Version N/A)';
+                console.error('Could not load package.json: All potential paths failed.');
+                return;
+            }
+
+            const currentPath = paths[index];
+            fetch(currentPath)
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        // If current path fails, try the next one
+                        console.warn(`Failed to load package.json from ${currentPath}. Status: ${response.status}. Trying next path.`);
+                        return Promise.reject(new Error(`Failed to load from ${currentPath}`));
+                    }
+                })
+                .then(data => {
+                    if (data && data.version) {
+                        versionSpan.textContent = data.version;
+                        console.log(`Successfully loaded version from ${currentPath}`);
+                    } else {
+                        versionSpan.textContent = 'N/A (Version data not found)';
+                        console.warn(`package.json found at ${currentPath} but no version property.`);
+                    }
+                })
+                .catch(error => {
+                    // Try the next path in the array
+                    fetchPackageJson(paths, index + 1);
+                });
+        };
+
+        // Start fetching from the first potential path
+        fetchPackageJson(potentialPaths);
+    }
+});
