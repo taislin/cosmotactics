@@ -2,7 +2,7 @@ import http from "http";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-
+import pkg from "./package.json" with { type: "json" };
 // __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -132,5 +132,6 @@ const server = http.createServer((request, response) => {
 
 const PORT = process.env.PORT || 8125; // Use process.env.PORT for dynamic port assignment (e.g., for hosting)
 server.listen(PORT, () => {
-	console.log(`Server running at http://127.0.0.1:${PORT}/`);
+	console.log(`\x1b[32mCosmoTactics\x1b[0m (\x1b[93m${pkg.version}\x1b[0m)`);
+	console.log(`Server running at \x1b[93mhttp://127.0.0.1:${PORT}/\x1b[0m`);
 });

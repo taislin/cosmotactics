@@ -15,9 +15,7 @@ import {
 	gameDisplay,
 	menuDisplay,
 	msgDisplay,
-	gameDisplayConfig,
-	menuDisplayConfig,
-	msgDisplayConfig,
+	setupProjectileCanvas,
 } from "../index.js";
 import { world, world_grid, nextLevel } from "./map.js";
 import { Projectile } from "./classes/projectile.js";
@@ -48,7 +46,6 @@ export function setControls() {
 			menuDisplayConfig.fontSize = e.key === "+" ? 32 : 16;
 			msgDisplay.setOptions(msgDisplayConfig);
 			menuDisplay.setOptions(menuDisplayConfig);
-			updateCanvas();
 			return;
 		}
 		// Lost screen
@@ -73,7 +70,7 @@ export function setControls() {
 				document
 					.getElementById("terminal")
 					.appendChild(gameDisplay.getContainer());
-				// The game loop is now started in index.js, so no setInterval here
+				setupProjectileCanvas(); // Initialize the projectile canvas
 			}
 			drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 			return;
@@ -81,7 +78,6 @@ export function setControls() {
 		// Game controls
 		if (!loaded) {
 			loaded = true;
-			// No setInterval needed
 		}
 		const draw_interval = [
 			selected.x - VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
@@ -206,7 +202,6 @@ export function setControls() {
 			default:
 				break;
 		}
-		// No need to call updateCanvas() here, the main loop handles it.
 	}
 
 	function handleArrow(direction, draw_interval) {
@@ -300,11 +295,9 @@ export function setControls() {
 	}
 
 	function handleClick(e) {
-		// --- ADD THIS BLOCK ---
 		if (VARS.isAnimating) {
 			return; // Block input if an animation is in progress
 		}
-		// --- END BLOCK ---
 
 		if (VARS.GAMEWINDOW === "LOST") {
 			sleep(2000);
@@ -324,13 +317,12 @@ export function setControls() {
 				document
 					.getElementById("terminal")
 					.appendChild(gameDisplay.getContainer());
-				// No setInterval needed
+				setupProjectileCanvas(); // Initialize the projectile canvas
 			}
 			return;
 		}
 		if (!loaded) {
 			loaded = true;
-			// No setInterval needed
 		}
 		const coordsm = msgDisplay.eventToPosition(e);
 		if (
@@ -363,7 +355,6 @@ export function setControls() {
 		)
 			return;
 		clicks(currentLoc, draw_interval, this);
-		// No need to call updateCanvas() here
 	}
 }
 
@@ -433,7 +424,6 @@ function clicks(currentLoc, draw_interval, O) {
 		} else {
 			VARS.TARGET[0] = currentLoc[0];
 			VARS.TARGET[1] = currentLoc[1];
-			// No updateCanvas() call needed
 		}
 	} else if (VARS.MODE == "none") {
 		// Use the new, more robust passability check for Dijkstra
@@ -514,7 +504,6 @@ function clicks(currentLoc, draw_interval, O) {
 			locEnt.push({ name: "stairs (down)", type: "stairs" });
 		}
 		VARS.MENU_LENGTH = locEnt.length;
-		// No updateCanvas() call needed
 	}
 }
 export function reload(unit) {
@@ -629,7 +618,6 @@ function clickGUI(coords) {
 			// If it's intended to navigate somewhere, define it or remove this branch.
 		}
 	}
-	// No updateCanvas() call needed
 }
 async function doMoves(path) {
 	let curr = path.shift();
@@ -643,7 +631,6 @@ async function doMoves(path) {
 	currentLoc[0] = curr[0];
 	currentLoc[1] = curr[1];
 	processTurn();
-	// No updateCanvas() call needed
 	await sleep(200);
 	if (path.length > 0) {
 		doMoves(path);
@@ -663,7 +650,6 @@ function goToMainMenu() {
 			.getElementById("terminal")
 			.appendChild(menuDisplay.getContainer());
 	}
-	// No interval to clear
 	drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 }
 export function goToLostMenu() {
@@ -679,7 +665,6 @@ export function goToLostMenu() {
 			.getElementById("terminal")
 			.appendChild(menuDisplay.getContainer());
 	}
-	// No interval to clear
 	drawLostMenu(menuDisplay, gameDisplay, msgDisplay);
 }
 function showObjs() {

@@ -70,6 +70,18 @@ export const gameDisplay = new ROT.Display(gameDisplayConfig);
 export const menuDisplay = new ROT.Display(menuDisplayConfig);
 export const msgDisplay = new ROT.Display(msgDisplayConfig);
 
+// Projectile Canvas setup
+let projectileCanvas;
+let projectileCtx;
+
+export function setupProjectileCanvas() {
+	projectileCanvas = document.getElementById("projectile-canvas");
+	const rotCanvas = gameDisplay.getContainer();
+	projectileCanvas.width = rotCanvas.width;
+	projectileCanvas.height = rotCanvas.height;
+	projectileCtx = projectileCanvas.getContext("2d");
+}
+
 // Attach displays to DOM
 function attachDisplays() {
 	document.getElementById("terminal").appendChild(menuDisplay.getContainer());
@@ -84,7 +96,7 @@ function gameLoop(timestamp) {
 
 	if (VARS.GAMEWINDOW === "GAME") {
 		updateGameLogic(deltaTime); // Update projectiles and other animations
-		updateCanvas(); // Redraw the screen
+		updateCanvas(projectileCtx); // Redraw the screen, passing the projectile context
 	}
 
 	requestAnimationFrame(gameLoop);
