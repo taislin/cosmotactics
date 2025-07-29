@@ -4,7 +4,8 @@ import { loadIcons, _tileMap } from "./assets/classes/icons.js";
 import { loadLevel } from "./assets/map.js";
 import { loadItems } from "./assets/classes/items.js";
 import { drawMainMenu } from "./assets/mainmenu.js";
-import { icons } from "./assets/engine.js";
+import { icons, updateGameLogic, VARS } from "./assets/engine.js";
+import { updateCanvas } from "./assets/display.js";
 
 // Preload tile sets
 function preloadTileSets() {
@@ -75,6 +76,20 @@ function attachDisplays() {
 	document.getElementById("msg").appendChild(msgDisplay.getContainer());
 }
 
+// Main Game Loop
+let lastTime = 0;
+function gameLoop(timestamp) {
+	const deltaTime = timestamp - lastTime;
+	lastTime = timestamp;
+
+	if (VARS.GAMEWINDOW === "GAME") {
+		updateGameLogic(deltaTime); // Update projectiles and other animations
+		updateCanvas(); // Redraw the screen
+	}
+
+	requestAnimationFrame(gameLoop);
+}
+
 // Game initialization
 function initializeGame() {
 	loadIcons();
@@ -83,6 +98,7 @@ function initializeGame() {
 	loadLevel(0);
 	setControls();
 	drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+	requestAnimationFrame(gameLoop); // Start the main game loop
 }
 
 // Run setup

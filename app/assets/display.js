@@ -158,9 +158,10 @@ export function updateCanvas() {
 			} else if (projectiles[p].type == "projectile") {
 				projcolor = "#ccc";
 			}
+			// Draw using the new floating-point render coordinates
 			gameDisplay.draw(
-				projectiles[p].x - drawInterval[0],
-				projectiles[p].y - drawInterval[1],
+				Math.round(projectiles[p].px - drawInterval[0]),
+				Math.round(projectiles[p].py - drawInterval[1]),
 				icons["projectile_" + projectiles[p].dir],
 				projcolor,
 				"transparent"

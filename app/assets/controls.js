@@ -36,6 +36,10 @@ export function setControls() {
 	window.addEventListener("click", handleClick);
 
 	function handleKeyDown(e) {
+		if (VARS.isAnimating) {
+			return; // Block input if an animation is in progress
+		}
+
 		const code = e.code;
 		const selected = VARS.SELECTED;
 		// Font size controls
@@ -69,7 +73,7 @@ export function setControls() {
 				document
 					.getElementById("terminal")
 					.appendChild(gameDisplay.getContainer());
-				window._updateCanvasIntervalId = setInterval(updateCanvas, 100); // Store interval ID
+				// The game loop is now started in index.js, so no setInterval here
 			}
 			drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 			return;
@@ -77,7 +81,7 @@ export function setControls() {
 		// Game controls
 		if (!loaded) {
 			loaded = true;
-			window._updateCanvasIntervalId = setInterval(updateCanvas, 100); // Store interval ID
+			// No setInterval needed
 		}
 		const draw_interval = [
 			selected.x - VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
@@ -202,7 +206,7 @@ export function setControls() {
 			default:
 				break;
 		}
-		updateCanvas();
+		// No need to call updateCanvas() here, the main loop handles it.
 	}
 
 	function handleArrow(direction, draw_interval) {
@@ -296,6 +300,12 @@ export function setControls() {
 	}
 
 	function handleClick(e) {
+		// --- ADD THIS BLOCK ---
+		if (VARS.isAnimating) {
+			return; // Block input if an animation is in progress
+		}
+		// --- END BLOCK ---
+
 		if (VARS.GAMEWINDOW === "LOST") {
 			sleep(2000);
 			goToMainMenu();
@@ -314,13 +324,13 @@ export function setControls() {
 				document
 					.getElementById("terminal")
 					.appendChild(gameDisplay.getContainer());
-				window._updateCanvasIntervalId = setInterval(updateCanvas, 100); // Store interval ID
+				// No setInterval needed
 			}
 			return;
 		}
 		if (!loaded) {
 			loaded = true;
-			window._updateCanvasIntervalId = setInterval(updateCanvas, 100); // Store interval ID
+			// No setInterval needed
 		}
 		const coordsm = msgDisplay.eventToPosition(e);
 		if (
@@ -353,7 +363,7 @@ export function setControls() {
 		)
 			return;
 		clicks(currentLoc, draw_interval, this);
-		updateCanvas();
+		// No need to call updateCanvas() here
 	}
 }
 
@@ -423,7 +433,7 @@ function clicks(currentLoc, draw_interval, O) {
 		} else {
 			VARS.TARGET[0] = currentLoc[0];
 			VARS.TARGET[1] = currentLoc[1];
-			updateCanvas();
+			// No updateCanvas() call needed
 		}
 	} else if (VARS.MODE == "none") {
 		// Use the new, more robust passability check for Dijkstra
@@ -504,7 +514,7 @@ function clicks(currentLoc, draw_interval, O) {
 			locEnt.push({ name: "stairs (down)", type: "stairs" });
 		}
 		VARS.MENU_LENGTH = locEnt.length;
-		updateCanvas();
+		// No updateCanvas() call needed
 	}
 }
 export function reload(unit) {
@@ -619,7 +629,7 @@ function clickGUI(coords) {
 			// If it's intended to navigate somewhere, define it or remove this branch.
 		}
 	}
-	updateCanvas();
+	// No updateCanvas() call needed
 }
 async function doMoves(path) {
 	let curr = path.shift();
@@ -633,7 +643,7 @@ async function doMoves(path) {
 	currentLoc[0] = curr[0];
 	currentLoc[1] = curr[1];
 	processTurn();
-	updateCanvas();
+	// No updateCanvas() call needed
 	await sleep(200);
 	if (path.length > 0) {
 		doMoves(path);
@@ -653,11 +663,7 @@ function goToMainMenu() {
 			.getElementById("terminal")
 			.appendChild(menuDisplay.getContainer());
 	}
-	if (window._updateCanvasIntervalId) {
-		// Check if the ID exists before clearing
-		clearInterval(window._updateCanvasIntervalId);
-		window._updateCanvasIntervalId = null; // Clear the stored ID
-	}
+	// No interval to clear
 	drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 }
 export function goToLostMenu() {
@@ -673,10 +679,7 @@ export function goToLostMenu() {
 			.getElementById("terminal")
 			.appendChild(menuDisplay.getContainer());
 	}
-	if (window._updateCanvasIntervalId) {
-		clearInterval(window._updateCanvasIntervalId);
-		window._updateCanvasIntervalId = null;
-	}
+	// No interval to clear
 	drawLostMenu(menuDisplay, gameDisplay, msgDisplay);
 }
 function showObjs() {
