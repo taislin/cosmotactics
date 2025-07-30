@@ -12,11 +12,14 @@
 A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your **_Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
 
 <p align="center">
-<a href="https://taislin.github.io/cosmotactics/">📖 GAME MANUAL</a>
+┏━━━━━━━━━┳━━━━━━━━━━━┓<br>
+┃<a href="https://taislin.github.io/cosmotactics/app/"><b>🎮 PLAY GAME 🎮</b></a>┃
+<a href="https://taislin.github.io/cosmotactics/docs/"><b>📖 GAME MANUAL 📖</b></a>┃<br>
+┗━━━━━━━━━┻━━━━━━━━━━━┛
 </p>
 
 <p align="center">
-<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" max-width="49%" height="350"/><img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen2.png" alt="gameplay screenshot" max-width="49%" height="350"/>
+<img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="250"/><img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen2.png" alt="gameplay screenshot" height="250"/>
 </p>
 
 ## 📜 Features
@@ -76,7 +79,7 @@ CosmoTactics is fully playable using either keyboard, mouse, or a combination.
 
 For a comprehensive guide on game mechanics, controls, units, and items, please refer to the **Operator's Manual** (which is also hosted on GitHub Pages):
 
-[**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/)
+[**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/docs/)
 
 ## 🛠 Technologies Used
 
