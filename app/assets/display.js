@@ -381,11 +381,12 @@ function drawMenu() {
 	if (VARS.GAMEWINDOW == "MENU" || VARS.GAMEWINDOW == "LOST") {
 		return;
 	}
+	const PANEL_WIDTH = 48; // Define a constant for the new width
 	msgDisplay.clear();
 	msgDisplay.drawText(
 		0,
 		1,
-		"║ %c{orange}MENU%c{} ║%c{#35b59b}  COSMOTACTICS   %c{}║ %c{orange}OBJ %c{}"
+		"║ %c{orange}MENU%c{} ║%c{#35b59b}         COSMOTACTICS           %c{}║ %c{orange}OBJ %c{}" // Added spacing
 	);
 	msgDisplay.drawText(
 		2,
@@ -397,6 +398,7 @@ function drawMenu() {
 	);
 
 	msgDisplay.drawText(2, 4, "%c{grey}" + VARS.SELECTED.typename);
+	// Health and Armor bars can be made longer
 	let phealth = Math.max(Math.floor(VARS.SELECTED.mob.stats.health / 5), 0);
 	let parmour = Math.max(Math.floor(VARS.SELECTED.mob.stats.defence / 5), 0);
 	let shealth = "X".repeat(phealth);
@@ -407,8 +409,8 @@ function drawMenu() {
 	if (!sarmour) {
 		sarmour = "";
 	}
-	let shextra = 20 - phealth;
-	let saextra = 20 - parmour;
+	let shextra = 30 - phealth; // Increased bar length
+	let saextra = 30 - parmour; // Increased bar length
 	let shextras = "%b{#580000}%c{#580000}" + "X".repeat(shextra);
 	let saextras = "%b{#000058}%c{#000058}" + "X".repeat(saextra);
 	msgDisplay.drawText(
@@ -428,7 +430,7 @@ function drawMenu() {
 	if (!srad) {
 		srad = "";
 	}
-	let srextra = 20 - prad;
+	let srextra = 30 - prad; // Increased bar length
 	let srextras = "%b{#005800}%c{#005800}" + "X".repeat(srextra);
 
 	msgDisplay.drawText(
@@ -439,30 +441,46 @@ function drawMenu() {
 	msgDisplay.drawText(10, 7, "%c{#ccc}" + STATS.OXYGEN);
 	msgDisplay.drawText(2, 8, "Gold: %c{yellow}" + STATS.GOLD);
 	msgDisplay.drawText(
-		24 - VARS.TURN.toString().length,
+		PANEL_WIDTH - 2 - ("Turn: " + VARS.TURN).length, // Adjusted for new width
 		8,
 		"Turn: %c{orange}" + VARS.TURN
 	);
 
 	for (var i = 1; i < 40; i++) {
 		msgDisplay.drawText(0, i, "║");
-		msgDisplay.drawText(31, i, "║");
+		msgDisplay.drawText(PANEL_WIDTH - 1, i, "║"); // Adjusted for new width
 	}
 
-	msgDisplay.drawText(0, 0, "╔══════╦═════════════════╦═════╗");
-	msgDisplay.drawText(0, 2, "╠══════╩═════════════════╩═════╣");
-	msgDisplay.drawText(0, 9, "╟───────────┬─────────┬────────╢");
+	msgDisplay.drawText(
+		0,
+		0,
+		"╔══════╦════════════════════════════════╦══════╗"
+	); // Adjusted for new width
+	msgDisplay.drawText(
+		0,
+		2,
+		"╠══════╩════════════════════════════════╩══════╣"
+	);
+	msgDisplay.drawText(
+		0,
+		9,
+		"╟────────────┬─────────────┬───────────────────╢"
+	); // Adjusted for new width
 	let submenus =
-		"║%c{#cc8400}%b{#ccc}1.%c{#000}EQUIPMENT%c{}%b{}│%c{orange}2.%c{}OBSERVE│%c{orange} 3.%c{}LOGS ║";
+		"║%c{#cc8400}%b{#ccc}1.%c{#000}EQUIPMENT %c{}%b{}│%c{orange}2.%c{}OBSERVE    │%c{orange} 3.%c{}LOGS     ║"; // Adjusted spacing
 	if (VARS.SUBMENU == "INSPECT") {
 		submenus =
-			"║%c{orange}1.%c{}EQUIPMENT│%c{#cc8400}%b{#ccc}2.%c{#000}OBSERVE%c{}%b{}│%c{orange} 3.%c{}LOGS ║";
+			"║%c{orange}1.%c{}EQUIPMENT │%c{#cc8400}%b{#ccc}2.%c{#000}OBSERVE    %c{}%b{}│%c{orange} 3.%c{}LOGS     ║";
 	} else if (VARS.SUBMENU == "LOGS") {
 		submenus =
-			"║%c{orange}1.%c{}EQUIPMENT│%c{orange}2.%c{}OBSERVE│%c{#cc8400}%b{#ccc} 3.%c{#000}LOGS %c{}%b{}║";
+			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE    │%c{#cc8400}%b{#ccc} 3.%c{#000}LOGS     %c{}%b{}║";
 	}
 	msgDisplay.drawText(0, 10, submenus);
-	msgDisplay.drawText(0, 11, "╟───────────┴─────────┴────────╢");
+	msgDisplay.drawText(
+		0,
+		11,
+		"╟────────────┴─────────────┴───────────────────╢"
+	);
 	if (VARS.SUBMENU == "LOGS") {
 		let parsedlog = "";
 		if (VARS.GAMELOG.length > 0) {
@@ -474,7 +492,7 @@ function drawMenu() {
 				}
 			}
 		}
-		msgDisplay.drawText(2, 13, parsedlog, 29);
+		msgDisplay.drawText(2, 13, parsedlog, PANEL_WIDTH - 4); // Adjusted for new width
 	} else if (VARS.SUBMENU == "INSPECT") {
 		if (
 			!(
@@ -502,7 +520,7 @@ function drawMenu() {
 					"," +
 					VARS.TARGET[1] +
 					")",
-				28
+				PANEL_WIDTH - 4 // Adjusted for new width
 			);
 			let getpass = world_grid[VARS.TARGET[1]][VARS.TARGET[0]];
 			if (getpass == 1) {
@@ -515,9 +533,9 @@ function drawMenu() {
 				13,
 				"%c{grey}Terrain:%c{} " +
 					world[VARS.TARGET[0] + "," + VARS.TARGET[1]].icon.name,
-				28
+				PANEL_WIDTH - 4 // Adjusted for new width
 			);
-			msgDisplay.drawText(2, 14, getpass, 28);
+			msgDisplay.drawText(2, 14, getpass, PANEL_WIDTH - 4);
 			let br = "%c{green}SAFE";
 			let notbr = "%c{red}NOT SAFE";
 			msgDisplay.drawText(2, 15, "%c{grey}Atmosphere: " + notbr);
@@ -562,7 +580,7 @@ function drawMenu() {
 								2,
 								25,
 								"%c{grey}" + locEnt[i].mob.desc,
-								28
+								PANEL_WIDTH - 4 // Adjusted for new width
 							); // Draw description at the bottom
 						}
 					}
@@ -580,7 +598,12 @@ function drawMenu() {
 				}
 			}
 		} else {
-			msgDisplay.drawText(2, 12, "%c{grey}Location not visible", 28);
+			msgDisplay.drawText(
+				2,
+				12,
+				"%c{grey}Location not visible",
+				PANEL_WIDTH - 4
+			);
 		}
 	} else if (VARS.SUBMENU == "EQUIPMENT") {
 		if (VARS.SELECTED.mob.slots.ranged) {
@@ -707,43 +730,55 @@ function drawMenu() {
 		}
 	}
 
-	//│║ ┬ ─ ┴ ╥ ╤ ╦ ╩
-	msgDisplay.drawText(0, 32, "╠══════╦══════╦══════╦═════════╣");
+	// Bottom Control Bar
+	msgDisplay.drawText(
+		0,
+		32,
+		"╠══════════╦══════════╦══════════╦═════════════╣"
+	); // Adjusted
 	let sstring =
-		"║ %c{orange}M%c{}OVE ║ %c{orange}F%c{}IRE ║ %c{orange}L%c{}OOK ║I%c{orange}N%c{}TERACT ║";
+		"║   %c{orange}M%c{}OVE   ║   %c{orange}F%c{}IRE   ║   %c{orange}L%c{}OOK   ║  %c{orange}N%c{}EXT UNIT  ║"; // Adjusted
 	if (VARS.MODE == "none") {
 		sstring =
-			"║%b{#ccc} %c{#cc8400}M%c{#000}OVE %b{}%c{}║ %c{orange}F%c{}IRE ║ %c{orange}L%c{}OOK ║%c{orange}N%c{}EXT UNIT║";
+			"║%b{#ccc}   %c{#cc8400}M%c{#000}OVE   %b{}%c{}║   %c{orange}F%c{}IRE   ║   %c{orange}L%c{}OOK   ║  %c{orange}N%c{}EXT UNIT  ║";
 	} else if (VARS.MODE == "look") {
 		sstring =
-			"║ %c{orange}M%c{}OVE ║ %c{orange}F%c{}IRE ║%b{#ccc} %c{#cc8400}L%c{#000}OOK %b{}%c{}║%c{orange}N%c{}EXT UNIT║";
+			"║   %c{orange}M%c{}OVE   ║   %c{orange}F%c{}IRE   ║%b{#ccc}   %c{#cc8400}L%c{#000}OOK   %b{}%c{}║  %c{orange}N%c{}EXT UNIT  ║";
 	} else if (VARS.MODE == "targeting") {
 		sstring =
-			"║ %c{orange}M%c{}OVE ║%b{#ccc}%c{#cc8400} F%c{#000}IRE %c{}%b{}║ %c{orange}L%c{}OOK ║%c{orange}N%c{}EXT UNIT║";
+			"║   %c{orange}M%c{}OVE   ║%b{#ccc}%c{#cc8400}   F%c{#000}IRE   %c{}%b{}║   %c{orange}L%c{}OOK   ║  %c{orange}N%c{}EXT UNIT  ║";
 	}
 	msgDisplay.drawText(0, 33, sstring);
-	msgDisplay.drawText(0, 34, "╠══════╬══════╩═╦════╩═╦═══════╣");
-	let autof = "AUTOFIRE";
+	msgDisplay.drawText(
+		0,
+		34,
+		"╠══════════╬══════════╩═╦════════╩══╦══════════╣"
+	); // Adjusted
+	let autof = "AUTOFIRE%c{orange}(O)%c{}";
 	let behav = "FOLLOW";
 	if (VARS.SELECTED && VARS.SELECTED.mob.autofire == true) {
-		autof = "%b{#ccc}%c{#000}AUTOFIRE%b{}%c{}";
+		autof = "%b{#ccc}%c{#000}AUTOFIRE%b{}%c{orange}(O)%c{}";
 	}
 	if (VARS.SELECTED && VARS.SELECTED.mob.stance == "follow") {
-		behav = "%b{#ccc}%c{#000}FOLLOW%b{}%c{}";
+		behav = "%b{#ccc}%c{#000}FOLLOW%b{}%c{orange}(P)%c{}";
 	} else if (VARS.SELECTED && VARS.SELECTED.mob.stance == "hold") {
-		behav = "%b{#ccc}%c{#000} HOLD %b{}%c{}";
+		behav = "%b{#ccc}%c{#000}HOLD%b{}  %c{orange}(P)%c{}";
 	}
 	msgDisplay.drawText(
 		0,
 		35,
-		"║ WAI%c{orange}T%c{} ║" +
+		"║   WAI%c{orange}T%c{}   ║ " +
 			autof +
-			"║" +
+			"║ " +
 			behav +
-			"║%c{orange}R%c{}ELOAD ║"
+			" ║  %c{orange}R%c{}ELOAD  ║" // Adjusted
 	);
 
-	msgDisplay.drawText(0, 36, "╠══════╩════════╩══════╩═══════╣");
+	msgDisplay.drawText(
+		0,
+		36,
+		"╠══════════╩════════════╩═══════════╩══════════╣"
+	); // Adjusted
 
 	let locs = world[Number(currentLoc[0]) + "," + Number(currentLoc[1])];
 
@@ -763,11 +798,23 @@ function drawMenu() {
 				"%c{grey}" + locs.icon.name + " (" + locs.x + "," + locs.y + ")"
 			);
 		}
-		msgDisplay.drawText(31 - atmo_unsafe.length + 11, 38, atmo_unsafe);
-		msgDisplay.drawText(31 - tmp.length, 37, "%c{yellow}" + tmp);
+		msgDisplay.drawText(
+			PANEL_WIDTH - atmo_unsafe.length + 9,
+			38,
+			atmo_unsafe
+		); // Adjusted
+		msgDisplay.drawText(
+			PANEL_WIDTH - tmp.length - 1,
+			37,
+			"%c{yellow}" + tmp
+		); // Adjusted
 	}
 
-	msgDisplay.drawText(0, 39, "╚══════════════════════════════╝");
+	msgDisplay.drawText(
+		0,
+		39,
+		"╚══════════════════════════════════════════════╝"
+	); // Adjusted
 }
 
 function updateFOV(player) {

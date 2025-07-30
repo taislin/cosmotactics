@@ -46,7 +46,7 @@ export const gameDisplayConfig = {
 	tileColorize: true,
 };
 export const msgDisplayConfig = {
-	width: 32,
+	width: 48,
 	height: 40,
 	forceSquareRatio: false,
 	fontSize: 16,

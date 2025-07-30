@@ -178,6 +178,9 @@ export function setControls() {
 			case "Digit3":
 				VARS.SUBMENU = "LOGS";
 				break;
+			case "Digit4":
+				VARS.SUBMENU = "SQUAD";
+				break;
 			case "KeyM":
 				VARS.MODE = "none";
 				break;
@@ -327,7 +330,7 @@ export function setControls() {
 		const coordsm = msgDisplay.eventToPosition(e);
 		if (
 			coordsm[0] >= 0 &&
-			coordsm[0] < 32 &&
+			coordsm[0] < 48 && // Use new width
 			coordsm[1] >= 0 &&
 			coordsm[1] < 40
 		) {
@@ -530,18 +533,24 @@ export function reload(unit) {
 	processTurn();
 }
 function clickGUI(coords) {
-	debugLog("GUI: " + coords);
+	// ADDED: console.log for debugging all GUI clicks
+	console.log(`GUI Click Detected at: x=${coords[0]}, y=${coords[1]}`);
+
+	// Submenu Tabs (y=10)
 	if (coords[1] == 10) {
-		if (coords[0] >= 1 && coords[0] <= 11) {
+		if (coords[0] >= 1 && coords[0] <= 12) {
 			VARS.SUBMENU = "EQUIPMENT";
-		} else if (coords[0] >= 13 && coords[0] <= 21) {
+		} else if (coords[0] >= 14 && coords[0] <= 26) {
 			VARS.MODE = "look";
 			VARS.SUBMENU = "INSPECT";
-		} else if (coords[0] >= 23 && coords[0] <= 30) {
+		} else if (coords[0] >= 28 && coords[0] <= 37) {
 			VARS.SUBMENU = "LOGS";
+		} else if (coords[0] >= 39 && coords[0] <= 46) {
+			VARS.SUBMENU = "SQUAD";
 		}
-		//click the list
-	} else if (coords[1] >= 19 && coords[1] <= 19 && VARS.MODE == "look") {
+	}
+	// Item list in "Inspect" mode (y=19 and above)
+	else if (coords[1] >= 19 && coords[1] <= 24 && VARS.MODE == "look") {
 		let locEnt = [];
 		for (var e of entities) {
 			if (e.x == VARS.TARGET[0] && e.y == VARS.TARGET[1]) {
@@ -567,38 +576,42 @@ function clickGUI(coords) {
 		if (VARS.MENU_LENGTH == 0) {
 			return;
 		}
-		for (var i = 0; i < locEnt.length; i++) {
-			if (VARS.MENU_ITEM == i + 1) {
-				if (
-					locEnt[i].type == "stairs" &&
-					locEnt[i].name == "stairs (down)" &&
-					canProceedToNextLevel()
-				) {
-					proceedToNextLevel();
-				}
+		const clickedItemIndex = coords[1] - 19; // 0 for the first item, 1 for the second, etc.
+		if (clickedItemIndex < locEnt.length) {
+			const selectedItem = locEnt[clickedItemIndex];
+			// This logic assumes a "double-click" behavior: first click selects, second click uses
+			// For simplicity, we'll just check if the click corresponds to the currently selected MENU_ITEM
+			VARS.MENU_ITEM = clickedItemIndex + 1; // Update selected item based on click
+			if (
+				selectedItem.type == "stairs" &&
+				selectedItem.name == "stairs (down)" &&
+				canProceedToNextLevel()
+			) {
+				proceedToNextLevel();
 			}
 		}
-	} else if (coords[1] == 33) {
-		if (coords[0] >= 1 && coords[0] <= 6) {
+	}
+	// Bottom Control Bar - Main Actions (y=33)
+	else if (coords[1] == 33) {
+		if (coords[0] >= 1 && coords[0] <= 11) {
 			VARS.MODE = "none";
-		} else if (coords[0] >= 8 && coords[0] <= 13) {
+		} else if (coords[0] >= 13 && coords[0] <= 23) {
 			VARS.MODE = "targeting";
-		} else if (coords[0] >= 15 && coords[0] <= 20) {
+		} else if (coords[0] >= 25 && coords[0] <= 35) {
 			VARS.MODE = "look";
-		} else if (coords[0] >= 22 && coords[0] <= 30) {
-			//next unit
+		} else if (coords[0] >= 37 && coords[0] <= 46) {
 			getNextUnit();
 		}
-	} else if (coords[1] == 35) {
-		if (coords[0] >= 1 && coords[0] <= 6) {
+	}
+	// Bottom Control Bar - Secondary Actions (y=35)
+	else if (coords[1] == 35) {
+		if (coords[0] >= 1 && coords[0] <= 11) {
 			processTurn();
-		} else if (coords[0] >= 8 && coords[0] <= 15) {
-			//autofire toggle
+		} else if (coords[0] >= 13 && coords[0] <= 24) {
 			if (VARS.SELECTED) {
 				VARS.SELECTED.mob.autofire = !VARS.SELECTED.mob.autofire;
 			}
-		} else if (coords[0] >= 17 && coords[0] <= 22) {
-			//stance
+		} else if (coords[0] >= 26 && coords[0] <= 35) {
 			if (VARS.SELECTED) {
 				if (VARS.SELECTED.mob.stance == "follow") {
 					VARS.SELECTED.mob.stance = "hold";
@@ -606,16 +619,17 @@ function clickGUI(coords) {
 					VARS.SELECTED.mob.stance = "follow";
 				}
 			}
-		} else if (coords[0] >= 24 && coords[0] <= 30) {
+		} else if (coords[0] >= 37 && coords[0] <= 46) {
 			reload(VARS.SELECTED);
 			processTurn();
 		}
-	} else if (coords[1] == 1) {
+	}
+	// Top Bar (y=1)
+	else if (coords[1] == 1) {
 		if (coords[0] >= 1 && coords[0] <= 6) {
 			goToMainMenu();
-		} else if (coords[0] >= 26 && coords[0] <= 30) {
-			// goToMap is not defined in the provided files.
-			// If it's intended to navigate somewhere, define it or remove this branch.
+		} else if (coords[0] >= 42 && coords[0] <= 46) {
+			// This was the OBJ button, can be implemented later
 		}
 	}
 }
