@@ -12,10 +12,10 @@
 A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your **_Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
 
 <p align="center">
-┏━━━━━━━━━┳━━━━━━━━━━━┓<br>
-┃<a href="https://taislin.github.io/cosmotactics/app/"><b>🎮 PLAY GAME 🎮</b></a>┃
+┏━━━━━━━━━━┳┳━━━━━━━━━━┓<br>
+┃&nbsp;&nbsp;<a href="https://taislin.github.io/cosmotactics/app/"><b>🎮 PLAY GAME 🎮</b></a>&nbsp;&nbsp;┃┃&nbsp;
 <a href="https://taislin.github.io/cosmotactics/docs/quick-start.html"><b>📖 QUICK START 📖</b></a>┃<br>
-┗━━━━━━━━━┻━━━━━━━━━━━┛
+┗━━━━━━━━━━┻┻━━━━━━━━━━┛
 </p>
 
 <p align="center">

@@ -3,6 +3,7 @@
 @font-face {
 	font-family: "Space Mono";
 	src: url(../app/fonts/SpaceMono-Regular.ttf) format("truetype");
+	font-weight: normal;
 }
 @font-face {
 	font-family: "Space Mono";
@@ -12,13 +13,13 @@
 @font-face {
 	font-family: "Space Mono";
 	src: url(../app/fonts/SpaceMono-Italic.ttf) format("truetype");
-	font-style: italic, oblique;
+	font-style: italic;
 }
 @font-face {
 	font-family: "Space Mono";
 	src: url(../app/fonts/SpaceMono-BoldItalic.ttf) format("truetype");
 	font-weight: bold;
-	font-style: italic, oblique;
+	font-style: italic;
 }
 @font-face {
 	font-family: "Nova Mono";
@@ -66,7 +67,7 @@ h3 {
 }
 h1 {
 	text-align: center;
-	font-size: 2.5em;
+	font-size: 2.8em;
 	border-bottom: none;
 	margin-bottom: 10px; /* Adjusted for version P tag */
 }
@@ -79,23 +80,6 @@ p.manual-intro {
 	border: 1px dashed #444;
 	border-radius: 5px;
 	background-color: rgba(30, 30, 30, 0.5);
-}
-.button-link {
-	display: inline-block;
-	background-color: #35b59b; /* Greenish button */
-	color: #0d0d0d;
-	padding: 8px 15px;
-	margin: 0 5px;
-	text-decoration: none;
-	border-radius: 3px;
-	font-weight: bold;
-	font-size: 0.9em;
-	transition: background-color 0.3s ease, transform 0.2s ease;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-.button-link:hover {
-	background-color: #4cd0b6;
-	transform: translateY(-1px);
 }
 
 nav ul {
@@ -227,7 +211,29 @@ a:hover {
 a:active {
 	color: #b37400;
 }
+.button-link {
+	display: inline-block;
+	background-color: #ffa500;
+	color: #0d0d0d;
+	font-weight: bold;
+	transition: background-color 0.3s ease, transform 0.2s ease;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+	border-radius: 4px;
+	text-align: center;
+	padding: 6px 6px;
+	margin: 0;
+	text-decoration: none;
+	font-size: 0.9em;
+}
+.button-link:hover {
+	background-color: #ffc04d;
+	transform: translateY(-2px);
+}
 
+.button-link:active {
+	background-color: #b37400;
+	transform: translateY(0);
+}
 img {
 	max-width: 100%;
 	display: block;
