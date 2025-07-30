@@ -540,12 +540,12 @@ function clickGUI(coords) {
 	if (coords[1] == 10) {
 		if (coords[0] >= 1 && coords[0] <= 12) {
 			VARS.SUBMENU = "EQUIPMENT";
-		} else if (coords[0] >= 14 && coords[0] <= 26) {
+		} else if (coords[0] >= 14 && coords[0] <= 23) {
 			VARS.MODE = "look";
 			VARS.SUBMENU = "INSPECT";
-		} else if (coords[0] >= 28 && coords[0] <= 37) {
+		} else if (coords[0] >= 25 && coords[0] <= 34) {
 			VARS.SUBMENU = "LOGS";
-		} else if (coords[0] >= 39 && coords[0] <= 46) {
+		} else if (coords[0] >= 36 && coords[0] <= 46) {
 			VARS.SUBMENU = "SQUAD";
 		}
 	}
@@ -593,25 +593,25 @@ function clickGUI(coords) {
 	}
 	// Bottom Control Bar - Main Actions (y=33)
 	else if (coords[1] == 33) {
-		if (coords[0] >= 1 && coords[0] <= 11) {
+		if (coords[0] >= 1 && coords[0] <= 10) {
 			VARS.MODE = "none";
-		} else if (coords[0] >= 13 && coords[0] <= 23) {
+		} else if (coords[0] >= 12 && coords[0] <= 21) {
 			VARS.MODE = "targeting";
-		} else if (coords[0] >= 25 && coords[0] <= 35) {
+		} else if (coords[0] >= 23 && coords[0] <= 32) {
 			VARS.MODE = "look";
-		} else if (coords[0] >= 37 && coords[0] <= 46) {
+		} else if (coords[0] >= 34 && coords[0] <= 46) {
 			getNextUnit();
 		}
 	}
 	// Bottom Control Bar - Secondary Actions (y=35)
 	else if (coords[1] == 35) {
-		if (coords[0] >= 1 && coords[0] <= 11) {
+		if (coords[0] >= 1 && coords[0] <= 10) {
 			processTurn();
-		} else if (coords[0] >= 13 && coords[0] <= 24) {
+		} else if (coords[0] >= 12 && coords[0] <= 23) {
 			if (VARS.SELECTED) {
 				VARS.SELECTED.mob.autofire = !VARS.SELECTED.mob.autofire;
 			}
-		} else if (coords[0] >= 26 && coords[0] <= 35) {
+		} else if (coords[0] >= 25 && coords[0] <= 35) {
 			if (VARS.SELECTED) {
 				if (VARS.SELECTED.mob.stance == "follow") {
 					VARS.SELECTED.mob.stance = "hold";

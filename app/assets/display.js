@@ -396,59 +396,86 @@ function drawMenu() {
 			(player_entities.indexOf(VARS.SELECTED) + 1) +
 			"]"
 	);
-
 	msgDisplay.drawText(2, 4, "%c{grey}" + VARS.SELECTED.typename);
-	// Health and Armor bars can be made longer
 	let phealth = Math.max(Math.floor(VARS.SELECTED.mob.stats.health / 5), 0);
-	let parmour = Math.max(Math.floor(VARS.SELECTED.mob.stats.defence / 5), 0);
 	let shealth = "X".repeat(phealth);
-	let sarmour = "X".repeat(parmour);
-	if (!shealth) {
-		shealth = "";
-	}
-	if (!sarmour) {
-		sarmour = "";
-	}
-	let shextra = 30 - phealth; // Increased bar length
-	let saextra = 30 - parmour; // Increased bar length
+	let shextra = 20 - phealth;
 	let shextras = "%b{#580000}%c{#580000}" + "X".repeat(shextra);
-	let saextras = "%b{#000058}%c{#000058}" + "X".repeat(saextra);
 	msgDisplay.drawText(
 		2,
 		5,
 		"Health: %b{#9F0000}%c{#9f0000}" + shealth + shextras
 	);
 	msgDisplay.drawText(10, 5, "%c{#ccc}" + VARS.SELECTED.mob.stats.health);
+
+	// Armor Bar
+	let parmour = Math.max(Math.floor(VARS.SELECTED.mob.stats.defence / 5), 0);
+	let sarmour = "X".repeat(parmour);
+	let saextra = 20 - parmour;
+	let saextras = "%b{#000058}%c{#000058}" + "X".repeat(saextra);
 	msgDisplay.drawText(
 		2,
 		6,
 		"Armour: %b{#00009f}%c{#00009f}" + sarmour + saextras
 	);
 	msgDisplay.drawText(10, 6, "%c{#ccc}" + VARS.SELECTED.mob.stats.defence);
+
+	// Oxygen Bar
 	let prad = Math.max(Math.floor(STATS.OXYGEN / 5), 0);
 	let srad = "X".repeat(prad);
-	if (!srad) {
-		srad = "";
-	}
-	let srextra = 30 - prad; // Increased bar length
+	let srextra = 20 - prad;
 	let srextras = "%b{#005800}%c{#005800}" + "X".repeat(srextra);
-
 	msgDisplay.drawText(
 		2,
 		7,
 		"Oxygen: %b{#009f00}%c{#009f00}" + srad + srextras
 	);
 	msgDisplay.drawText(10, 7, "%c{#ccc}" + STATS.OXYGEN);
+
+	// Gold and Turn
 	msgDisplay.drawText(2, 8, "Gold: %c{yellow}" + STATS.GOLD);
 	msgDisplay.drawText(
-		PANEL_WIDTH - 2 - ("Turn: " + VARS.TURN).length, // Adjusted for new width
+		PANEL_WIDTH - 2 - ("Turn: " + VARS.TURN).length,
 		8,
 		"Turn: %c{orange}" + VARS.TURN
 	);
 
+	// --- NEW: Core Combat Stats on the right of the bars ---
+	const STATS_X_POS = 26; // X-coordinate for the new stats column
+	// Ranged Damage
+	let rangedDmgText = "%c{grey}N/A";
+	if (VARS.SELECTED.mob.slots.ranged) {
+		const rWpn = VARS.SELECTED.mob.slots.ranged;
+		const minDmg = Math.floor(rWpn.stats.attack - rWpn.stats.attack * 0.1);
+		const maxDmg = Math.ceil(rWpn.stats.attack + rWpn.stats.attack * 0.1);
+		rangedDmgText = `%c{white}${minDmg}-${maxDmg} %c{grey}(${
+			rWpn.itemtype.split(" ")[0]
+		})`;
+	}
+	msgDisplay.drawText(STATS_X_POS, 5, `R-DMG: ${rangedDmgText}`);
+
+	// Melee Damage
+	let meleeDmgText = "%c{grey}N/A";
+	let meleeAttack = VARS.SELECTED.mob.stats.attack; // Base attack
+	if (VARS.SELECTED.mob.slots.melee) {
+		meleeAttack = VARS.SELECTED.mob.slots.melee.stats.attack; // Weapon attack
+	}
+	const minMelee = Math.floor(meleeAttack - meleeAttack * 0.1);
+	const maxMelee = Math.ceil(meleeAttack + meleeAttack * 0.1);
+	meleeDmgText = `%c{white}${minMelee}-${maxMelee}`;
+	msgDisplay.drawText(STATS_X_POS, 6, `M-DMG: ${meleeDmgText}`);
+
+	// Speed
+	msgDisplay.drawText(
+		STATS_X_POS,
+		7,
+		`Speed: %c{white}${VARS.SELECTED.mob.stats.speed.toFixed(2)}`
+	);
+
+	// --- BORDERS AND TABS ---
 	for (var i = 1; i < 40; i++) {
 		msgDisplay.drawText(0, i, "║");
-		msgDisplay.drawText(PANEL_WIDTH - 1, i, "║"); // Adjusted for new width
+		msgDisplay.drawText(PANEL_WIDTH - 1, i, "║");
 	}
 
 	msgDisplay.drawText(
@@ -464,22 +491,25 @@ function drawMenu() {
 	msgDisplay.drawText(
 		0,
 		9,
-		"╟────────────┬─────────────┬───────────────────╢"
-	); // Adjusted for new width
+		"╟────────────┬──────────┬──────────┬───────────╢"
+	);
 	let submenus =
-		"║%c{#cc8400}%b{#ccc}1.%c{#000}EQUIPMENT %c{}%b{}│%c{orange}2.%c{}OBSERVE    │%c{orange} 3.%c{}LOGS     ║"; // Adjusted spacing
+		"║%c{#cc8400}%b{#ccc}1.%c{#000}EQUIPMENT %c{}%b{}│%c{orange}2.%c{}OBSERVE │%c{orange} 3.%c{}LOGS   %b{}%c{}│ %c{orange}4.%c{}SQUAD   ║";
 	if (VARS.SUBMENU == "INSPECT") {
 		submenus =
-			"║%c{orange}1.%c{}EQUIPMENT │%c{#cc8400}%b{#ccc}2.%c{#000}OBSERVE    %c{}%b{}│%c{orange} 3.%c{}LOGS     ║";
+			"║%c{orange}1.%c{}EQUIPMENT │%c{#cc8400}%b{#ccc}2.%c{#000}OBSERVE %c{}%b{}│%c{orange} 3.%c{}LOGS   %b{}%c{}│ %c{orange}4.%c{}SQUAD   ║";
 	} else if (VARS.SUBMENU == "LOGS") {
 		submenus =
-			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE    │%c{#cc8400}%b{#ccc} 3.%c{#000}LOGS     %c{}%b{}║";
+			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE │%c{#cc8400}%b{#ccc} 3.%c{#000}LOGS   %b{}%c{}│ %c{orange}4.%c{}SQUAD   ║";
+	} else if (VARS.SUBMENU == "SQUAD") {
+		submenus =
+			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE │%c{orange} 3.%c{}LOGS   │%b{#ccc}%c{#000}4.SQUAD    %b{}%c{}║";
 	}
 	msgDisplay.drawText(0, 10, submenus);
 	msgDisplay.drawText(
 		0,
 		11,
-		"╟────────────┴─────────────┴───────────────────╢"
+		"╟────────────┴──────────┴──────────┴───────────╢"
 	);
 	if (VARS.SUBMENU == "LOGS") {
 		let parsedlog = "";
@@ -492,7 +522,7 @@ function drawMenu() {
 				}
 			}
 		}
-		msgDisplay.drawText(2, 13, parsedlog, PANEL_WIDTH - 4); // Adjusted for new width
+		msgDisplay.drawText(2, 13, parsedlog, 29);
 	} else if (VARS.SUBMENU == "INSPECT") {
 		if (
 			!(
@@ -520,7 +550,7 @@ function drawMenu() {
 					"," +
 					VARS.TARGET[1] +
 					")",
-				PANEL_WIDTH - 4 // Adjusted for new width
+				28
 			);
 			let getpass = world_grid[VARS.TARGET[1]][VARS.TARGET[0]];
 			if (getpass == 1) {
@@ -533,9 +563,9 @@ function drawMenu() {
 				13,
 				"%c{grey}Terrain:%c{} " +
 					world[VARS.TARGET[0] + "," + VARS.TARGET[1]].icon.name,
-				PANEL_WIDTH - 4 // Adjusted for new width
+				28
 			);
-			msgDisplay.drawText(2, 14, getpass, PANEL_WIDTH - 4);
+			msgDisplay.drawText(2, 14, getpass, 28);
 			let br = "%c{green}SAFE";
 			let notbr = "%c{red}NOT SAFE";
 			msgDisplay.drawText(2, 15, "%c{grey}Atmosphere: " + notbr);
@@ -580,7 +610,7 @@ function drawMenu() {
 								2,
 								25,
 								"%c{grey}" + locEnt[i].mob.desc,
-								PANEL_WIDTH - 4 // Adjusted for new width
+								28
 							); // Draw description at the bottom
 						}
 					}
@@ -598,12 +628,7 @@ function drawMenu() {
 				}
 			}
 		} else {
-			msgDisplay.drawText(
-				2,
-				12,
-				"%c{grey}Location not visible",
-				PANEL_WIDTH - 4
-			);
+			msgDisplay.drawText(2, 12, "%c{grey}Location not visible", 28);
 		}
 	} else if (VARS.SUBMENU == "EQUIPMENT") {
 		if (VARS.SELECTED.mob.slots.ranged) {
@@ -729,8 +754,50 @@ function drawMenu() {
 			);
 		}
 	}
+	// --- NEW: SQUAD PANEL DRAWING LOGIC ---
+	else if (VARS.SUBMENU == "SQUAD") {
+		let yPos = 13;
+		for (let i = 0; i < player_entities.length; i++) {
+			const unit = player_entities[i];
+			const isSelected = unit === VARS.SELECTED;
+			const nameColor = isSelected ? "%c{yellow}" : "%c{white}";
 
-	// Bottom Control Bar
+			// Draw Name and Designation
+			msgDisplay.drawText(
+				2,
+				yPos,
+				`${nameColor}[Alpha ${i + 1}] ${unit.name}`
+			);
+
+			// Draw Health
+			const hpText = `%c{grey}HP: %c{white}${unit.mob.stats.health}/${unit.originalHealth}`;
+			msgDisplay.drawText(4, yPos + 1, hpText);
+
+			// Draw Ammo
+			let ammoText = "%c{grey}AMMO: --/--";
+			if (unit.mob.slots.ranged) {
+				const wpn = unit.mob.slots.ranged;
+				ammoText = `%c{grey}AMMO: %c{white}${wpn.stats.ammo}/${wpn.stats.max_ammo}`;
+			}
+			msgDisplay.drawText(22, yPos + 1, ammoText);
+
+			// Draw Stance and Autofire
+			let stanceText = `%c{grey}STANCE: %c{white}${unit.mob.stance.toUpperCase()}`;
+			if (isSelected) {
+				stanceText = "%c{grey}STANCE: N/A (ACTIVE)";
+			}
+			msgDisplay.drawText(4, yPos + 2, stanceText);
+
+			let afText = unit.mob.autofire ? "%c{#00ff00}ON" : "%c{red}OFF";
+			msgDisplay.drawText(22, yPos + 2, `%c{grey}AUTOFIR: ${afText}`);
+
+			yPos += 4; // Move to the next unit's position
+		}
+	}
+
+	// --- BOTTOM CONTROL BAR ---
+
+	//│║ ┬ ─ ┴ ╥ ╤ ╦ ╩
 	msgDisplay.drawText(
 		0,
 		32,
@@ -754,15 +821,15 @@ function drawMenu() {
 		34,
 		"╠══════════╬══════════╩═╦════════╩══╦══════════╣"
 	); // Adjusted
-	let autof = "AUTOFIRE%c{orange}(O)%c{}";
+	let autof = "%b{#9F0000}%c{#FFF}AUTOFIRE%b{}%c{orange}(O)%c{}";
 	let behav = "FOLLOW";
 	if (VARS.SELECTED && VARS.SELECTED.mob.autofire == true) {
-		autof = "%b{#ccc}%c{#000}AUTOFIRE%b{}%c{orange}(O)%c{}";
+		autof = "%b{#005800}%c{#FFF}AUTOFIRE%b{}%c{orange}(O)%c{}";
 	}
 	if (VARS.SELECTED && VARS.SELECTED.mob.stance == "follow") {
-		behav = "%b{#ccc}%c{#000}FOLLOW%b{}%c{orange}(P)%c{}";
+		behav = "%b{#005800}%c{#FFF}FOLLOW%b{}%c{orange}(P)%c{}";
 	} else if (VARS.SELECTED && VARS.SELECTED.mob.stance == "hold") {
-		behav = "%b{#ccc}%c{#000}HOLD%b{}  %c{orange}(P)%c{}";
+		behav = "%b{#00009f}%c{#FFF} HOLD %b{}%c{orange}(P)%c{}";
 	}
 	msgDisplay.drawText(
 		0,
