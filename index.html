@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CosmoTactics - A Tactical Roguelike</title>
+    <link rel="icon" href="./app/icons/icon.png" type="image/png">
+    <style>
+        @font-face {
+            font-family: "Space Mono";
+            src: url(./app/fonts/SpaceMono-Regular.ttf) format("truetype");
+        }
+
+        @font-face {
+            font-family: "Space Mono";
+            src: url(./app/fonts/SpaceMono-Bold.ttf) format("truetype");
+            font-weight: bold;
+        }
+
+        @font-face {
+            font-family: "Space Mono";
+            src: url(./app/fonts/SpaceMono-Italic.ttf) format("truetype");
+            font-style: italic, oblique;
+        }
+
+        @font-face {
+            font-family: "Space Mono";
+            src: url(./app/fonts/SpaceMono-BoldItalic.ttf) format("truetype");
+            font-weight: bold;
+            font-style: italic, oblique;
+        }
+
+        @font-face {
+            font-family: "Nova Mono";
+            src: url(./app/fonts/NovaMono-Regular.ttf) format("truetype");
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #ccc;
+            font-family: 'Space Mono', monospace;
+            /* Using your game font if available */
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            background-image: url("./docs/background.png");
+            /* Reusing docs background */
+            background-size: auto;
+            background-attachment: fixed;
+            overflow: auto;
+            /* Allow scrolling if content is too long for viewport */
+        }
+
+        .container {
+            background-color: rgba(20, 20, 20, 0.95);
+            border: 1px solid #ffa500;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+            padding: 30px 30px;
+            max-width: 700px;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #ffa500;
+            font-family: 'Nova Mono', serif;
+            font-size: 3em;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: #35b59b;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5em;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .buttons {
+            margin-top: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #ffa500;
+            color: #0d0d0d;
+            padding: 12px 25px;
+            margin: 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:hover {
+            background-color: #ffc04d;
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            background-color: #b37400;
+            transform: translateY(0);
+        }
+
+        .logo {
+            max-width: 192px;
+            margin-bottom: 0;
+            border: 1px solid #ffa500;
+            border-radius: 4px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #888;
+        }
+    </style>
+    <!-- Preload fonts to ensure they load before the page renders, preventing FOUC -->
+    <link rel="preload" href="./app/fonts/SpaceMono-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+    <link rel="preload" href="./app/fonts/NovaMono-Regular.ttf" as="font" type="font/ttf" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <img src="./app/icons/icon.png" alt="CosmoTactics Logo" class="logo">
+        <h1>CosmoTactics</h1>
+        <h2>A Squad-Based Tactical Roguelike</h2>
+        <p>Lead your <b>Space Expeditionary Force</b> squad through hostile alien planets. Navigate treacherous
+            environments and battle myriad lifeforms in unique simultaneous turn-based combat.</p>
+        <div class="buttons">
+            <a href="./app/index.html" class="button">Play Game</a>
+            <a href="./docs/index.html" class="button">Operator's Manual</a>
+            <a href="https://github.com/taislin/cosmotactics" target="_blank" class="button">GitHub Repo</a>
+        </div>
+        <footer>
+            <p>Version: <span id="landing-version">Loading...</span></p>
+        </footer>
+    </div>
+
+    <script type="module">
+        // Basic script to dynamically load version from package.json for the landing page
+        document.addEventListener('DOMContentLoaded', () => {
+            const versionSpan = document.getElementById('landing-version');
+            if (versionSpan) {
+                // This path should work if package.json is at the repo root
+                fetch('./package.json')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data && data.version) {
+                            versionSpan.textContent = data.version;
+                        } else {
+                            versionSpan.textContent = 'N/A';
+                            console.warn('package.json found but no version property.');
+                        }
+                    })
+                    .catch(error => {
+                        versionSpan.textContent = 'Error';
+                        console.error('Could not load package.json for landing page version:', error);
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>
