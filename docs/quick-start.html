@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CosmoTactics - Quick Start Guide</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./../app/icons/icon.png" type="image/png">
+    <style>
+        /* Specific styles for quick start to make it more impactful */
+        .quick-start-container {
+            background-color: rgba(20, 20, 20, 0.98);
+            border: 1px solid #35b59b; /* A more "ready to play" color */
+            box-shadow: 0 0 20px rgba(0, 255, 200, 0.2); /* Glowing effect */
+            padding: 30px;
+            max-width: 800px;
+            margin: 50px auto;
+            text-align: left;
+        }
+        .quick-start-container h1 {
+            color: #35b59b; /* Greenish for go */
+            text-align: center;
+            border-bottom: 2px solid #35b59b;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.8em;
+        }
+        .quick-start-container h2 {
+            color: #ffa500;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+            border-bottom: 1px dashed #444;
+            padding-bottom: 5px;
+        }
+        .quick-start-container ul {
+            list-style: none; /* Remove default bullets */
+            padding-left: 0;
+        }
+        .quick-start-container li {
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            position: relative;
+            padding-left: 30px; /* Space for custom bullet */
+        }
+        .quick-start-container li::before {
+            content: '►'; /* Custom bullet icon */
+            color: #35b59b;
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.2em;
+        }
+        .quick-start-container .key-char {
+            background: #444;
+            color: #fff;
+            border: 1px solid #666;
+            text-shadow: none;
+        }
+        .quick-start-container p.note {
+            background-color: #303022;
+            border-left-color: #ffa500;
+            font-size: 1.05em;
+            margin-top: 30px;
+        }
+        .quick-start-container .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="quick-start-container">
+        <h1>QUICK START GUIDE</h1>
+
+        <p class="note">
+            Welcome, Commander! This guide will get you into the action immediately. For detailed rules and unit data,
+            consult the <a href="./index.html">Full Operator's Manual</a>.
+        </p>
+
+        <h2>1. Your Objective</h2>
+        <ul>
+            <li>Your mission: Explore alien planets and find the **Stairs Down (<span class="key-char">></span>)** to proceed to the next level.</li>
+            <li>Keep your **Oxygen** supply above zero!</li>
+            <li>Eliminate hostile alien lifeforms.</li>
+        </ul>
+
+        <h2>2. Basic Controls</h2>
+        <ul>
+            <li>**Movement:** Use <span class="key-char">W</span><span class="key-char">A</span><span class="key-char">S</span><span class="key-char">D</span> (or Numpad) to move your selected operative one tile.</li>
+            <li>**Action:** Press <span class="key-char">Enter</span> or <span class="key-char">Space</span> to confirm moves or fire at a target.</li>
+            <li>**Change Unit:** Press <span class="key-char">N</span> to cycle through your available squad members.</li>
+            <li>**Interact:** Press <span class="key-char">U</span> to pick up items or use the stairs.</li>
+            <li>**Pass Turn:** Press <span class="key-char">T</span> if your selected operative has no action.</li>
+        </ul>
+
+        <h2>3. Combat Essentials</h2>
+        <ul>
+            <li>**Simultaneous Turns:** When you move or fire with your selected unit, *all* other units (friendly AI and enemies) act at the same time!</li>
+            <li>**Firing:** Press <span class="key-char">F</span> to enter **Fire Mode**. Aim with arrow keys, then <span class="key-char">Enter</span> to shoot.</li>
+            <li>**Melee:** If you move adjacent to an enemy while in **Move Mode**, your operative will automatically engage in melee.</li>
+            <li>**Squad AI:** Your other squad members act autonomously based on their **Stance**.
+                <ul>
+                    <li><span class="key-char">P</span>: Toggle **Stance** (Follow / Hold).</li>
+                    <li><span class="key-char">O</span>: Toggle **Autofire** (On / Off).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>4. Important UI Elements</h2>
+        <ul>
+            <li>**Game Map (Left):** Your view of the world. Bright areas are currently visible. Dim areas have been explored.</li>
+            <li>**Info Panel (Right):** Displays selected unit's stats, game log, and equipment.</li>
+            <li>**Health:** (Red Bar) Your unit's HP.</li>
+            <li>**Oxygen:** (Green Bar) Shared squad resource. Depletes each turn. Collect Oxygen Tanks!</li>
+        </ul>
+        <p class="back-link">
+            <a href="./index.html">← Back to Full Operator's Manual</a>
+        </p>
+    </div>
+</body>
+</html>

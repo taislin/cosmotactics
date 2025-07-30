@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>CosmoTactics - Manual</title>
+	<title>CosmoTactics - Operator's Manual</title>
 	<link rel="stylesheet" href="./style.css">
 	<link rel="icon" href="./../app/icons/icon.png" type="image/png">
 	<!-- Restored the script to dynamically load your data -->
@@ -17,16 +17,28 @@
 		<img src="./header.png" style="display: block;margin-left: auto;margin-right: auto;width: 50%;">
 		<h1>OPERATOR'S MANUAL</h1>
 		<p style="text-align: center;margin-top:0">Version: <span id="game-version"></span></p>
+
+		<!-- NEW: Link to Quick Start Guide -->
+		<p class="manual-intro">
+			New to CosmoTactics? Get started quickly with the <a href="./quick-start.html" class="button-link">Quick
+				Start Guide</a>.
+			For in-depth information, continue reading below.
+		</p>
+		<!-- END NEW -->
+
 		<nav>
 			<ul>
 				<li><a href="#intro">Introduction</a></li>
-				<li><a href="#mechanics">Core Mechanics</a></li>
-				<li><a href="#screen">Game Screen</a></li>
-				<li><a href="#controls">Controls</a></li>
+				<li><a href="#screen">Game Screen</a></li> <!-- Reordered -->
+				<li><a href="#controls">Controls</a></li> <!-- Reordered -->
+				<li><a href="#mechanics">Core Mechanics</a></li> <!-- Reordered -->
 				<li><a href="#units">Unit Roster</a></li>
-				<li><a href="#weapons">Weapon Systems</a></li>
-				<li><a href="#stats">Stats & Skills</a></li>
+				<li><a href="#stats">Stats & Skills</a></li> <!-- Reordered -->
+				<li><a href="#weapons">Weapon Systems</a></li> <!-- Reordered -->
 				<li><a href="#items">Items & Pickups</a></li>
+				<li><a href="#hazards">Environmental Hazards</a></li> <!-- NEW section link -->
+				<li><a href="#tactics">Strategies & Tactics</a></li> <!-- NEW section link -->
+				<li><a href="#references">References</a></li> <!-- Point to tables -->
 			</ul>
 		</nav>
 
@@ -40,54 +52,44 @@
 				with a unique twist: simultaneous turns.</p>
 		</section>
 
-		<section id="mechanics">
-			<h2>Core Mechanics</h2>
-			<h3>Simultaneous Turns</h3>
-			<p>Unlike traditional turn-based games, you don't move your entire team and then wait for the enemy. In
-				CosmoTactics, you issue an order to <strong>one selected unit</strong>. Once you confirm that action
-				(moving, firing, waiting), <strong>all other units on the map (both friendly and hostile) will act
-					simultaneously</strong>. This makes every decision critical, as the entire battlefield can change in
-				an instant.</p>
-
-			<h3>The Squad and Stances</h3>
-			<p>You only directly control one unit at a time. The rest of your squad operates based on their assigned
-				<b>Stance</b>. This is the heart of SEF squad command.
-			</p>
-			<ul>
-				<li><code>Follow</code>: The default stance. The unit will attempt to follow the player-controlled unit,
-					maintaining squad cohesion. They will still engage enemies if one gets close.</li>
-				<li><code>Hold</code>: The unit will stay in its current position, creating a defensive line or holding
-					a chokepoint.</li>
-			</ul>
-			<p>You can also toggle <code>Autofire</code> for each unit. When enabled, a unit will automatically fire at
-				any visible enemy in range, whether they are in <code>Follow</code> or <code>Hold</code> stance. A unit
-				with Autofire disabled will only return fire or fight in melee.</p>
-
-			<h3>Field of View (FOV) & Fog of War</h3>
-			<p>You can only see what your squad members can see. The map is covered in a fog of war.</p>
-			<ul>
-				<li><b>Visible Area:</b> Brightly lit tiles are currently in a squad member's line of sight. You can see
-					enemies and real-time changes here.</li>
-				<li><b>Seen Area:</b> Dimly lit tiles are areas you have explored but cannot currently see. You will
-					remember the terrain, but you won't see enemies moving in the shadows.</li>
-			</ul>
-		</section>
-
 		<section id="screen">
-			<h2>Game Screen</h2>
+			<h2>Game Screen: Your Command Interface</h2>
 			<p>The screen is divided into two main parts: the <strong>Game Map</strong> on the left, where the action
 				happens, and the <strong>Information Panel</strong> on the right, which displays unit stats, logs, and
 				interaction menus.</p>
-			<img src="./screen2.png" id="screen_img">
+			<img src="./screen.png" id="screen_img" alt="CosmoTactics Game Screen">
+			<p><strong>Key UI Elements:</strong></p>
+			<ul>
+				<li><strong>Game Map:</strong> (Left side) Displays the terrain, your squad, enemies, and items.</li>
+				<li><strong>Information Panel:</strong> (Right side) Contains critical data.
+					<ul>
+						<li><strong>Selected Unit Info:</strong> (Top-right) Shows current Health, Armor, Oxygen, Gold,
+							and Turn count for your active operative.</li>
+						<li><strong>Sub-menus:</strong> (Middle-right) Toggle between Equipment (1), Observe (2), and
+							Logs (3) with number keys or mouse clicks.</li>
+						<li><strong>Game Log:</strong> (Middle-right, under sub-menus) Records important events, combat
+							results, and warnings.</li>
+						<li><strong>Control Bar:</strong> (Bottom-right) Displays current mode (Move, Fire, Look) and
+							quick action buttons.</li>
+					</ul>
+				</li>
+			</ul>
 		</section>
 
 		<section id="controls">
-			<h2>Controls</h2>
-			<p>The game can be fully played with either the keyboard, the mouse, or a combination.</p>
+			<h2>Controls: Directing Your Squad</h2>
+			<p>CosmoTactics is fully playable using either keyboard, mouse, or a combination. The selected unit is
+				always controlled directly; other squad members act according to their AI stances.</p>
 			<table class="controls-table">
 				<tr>
 					<th>Key(s)</th>
 					<th>Function</th>
+				</tr>
+				<!-- Added a mouse control row -->
+				<tr>
+					<td><span class="key-char">Left-Click</span></td>
+					<td>Move cursor/target reticle. Double-click on a valid tile/target to confirm Move or Fire action.
+						Select menu items.</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">↑</span> <span class="key-char">↓</span> <span class="key-char">←</span>
@@ -100,7 +102,7 @@
 							class="key-char">S</span><span class="key-char">D</span> <span
 							class="key-char">Q</span><span class="key-char">E</span><span class="key-char">Z</span><span
 							class="key-char">C</span> / Numpad</td>
-					<td>Move the selected unit one tile (in Move mode).</td>
+					<td>Move the selected unit one tile (in **Move** mode).</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">Enter</span> / <span class="key-char">Space</span></td>
@@ -108,15 +110,16 @@
 				</tr>
 				<tr>
 					<td><span class="key-char">M</span></td>
-					<td>Switch to <strong>Move</strong> mode.</td>
+					<td>Switch to <strong>Move</strong> mode (default). Used for unit movement and melee attacks.</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">F</span></td>
-					<td>Switch to <strong>Fire</strong> mode.</td>
+					<td>Switch to <strong>Fire</strong> mode. Used for ranged attacks.</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">L</span></td>
-					<td>Switch to <strong>Inspect (Look)</strong> mode.</td>
+					<td>Switch to <strong>Inspect (Look)</strong> mode. Used to examine map tiles, units, and items.
+					</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">N</span></td>
@@ -124,11 +127,11 @@
 				</tr>
 				<tr>
 					<td><span class="key-char">O</span></td>
-					<td>Toggle <strong>Autofire</strong> for the selected unit.</td>
+					<td>Toggle <strong>Autofire</strong> for the selected unit. (AI only)</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">P</span></td>
-					<td>Toggle Stance (<strong>Follow/Hold</strong>) for the selected unit.</td>
+					<td>Toggle Stance (<strong>Follow/Hold</strong>) for the selected unit. (AI only)</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">T</span></td>
@@ -136,7 +139,7 @@
 				</tr>
 				<tr>
 					<td><span class="key-char">R</span></td>
-					<td><strong>Reload</strong> the selected unit's ranged weapon. This takes a turn.</td>
+					<td><strong>Reload</strong> the selected unit's ranged weapon. This consumes their turn.</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">Shift</span> / <span class="key-char">Ctrl</span></td>
@@ -145,77 +148,210 @@
 				<tr>
 					<td><span class="key-char">U</span></td>
 					<td><strong>Use / Interact</strong> with an object at the cursor's location (e.g., pick up items,
-						use stairs).</td>
+						use stairs). Only available in Inspect mode or when cursor is over the object.</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">0</span>-<span class="key-char">3</span></td>
-					<td>Quick-select tabs in the Information Panel.</td>
+					<td>Quick-select tabs in the Information Panel: 0=Objectives (future), 1=Equipment, 2=Observe,
+						3=Logs.</td>
 				</tr>
 				<tr>
 					<td><span class="key-char">Esc</span></td>
-					<td>Return to the Main Menu.</td>
+					<td>Return to the Main Menu (quits current mission).</td>
 				</tr>
 			</table>
 		</section>
 
-		<section id="stats">
-			<h2>Stats & Skills</h2>
-			<p>Every unit, friendly or otherwise, is defined by a set of core statistics.</p>
-			<ul>
-				<li><b>Health:</b> The unit's life force. When this reaches zero, the unit is killed.</li>
-				<li><b>Armor / Defence:</b> Reduces incoming damage from attacks. This stat is primarily granted by
-					suits and helmets.</li>
-				<li><b>Attack:</b> The base damage for a unit's melee attacks (when unarmed). Weapon damage overrides
-					this.</li>
-				<li><b>Speed:</b> Determines how frequently a unit can act. A unit with a speed of 2 can act twice as
-					often as a unit with a speed of 1. Player units have a speed of 1.</li>
-				<li><b>Oxygen:</b> A global resource shared by your squad. It depletes slowly each turn. If it reaches
-					zero, your mission is a failure.</li>
-				<li><b>Gold:</b> Currency acquired during missions, likely for use between levels.</li>
-			</ul>
-		</section>
+		<section id="mechanics">
+			<h2>Core Mechanics: Understanding the Battlefield</h2>
+			<h3>Simultaneous Turns: Every Decision Counts</h3>
+			<p>Unlike traditional turn-based games, you don't move your entire team and then wait for the enemy. In
+				CosmoTactics, you issue an order to <strong>one selected unit</strong>. Once you confirm that action
+				(moving, firing, waiting), <strong>all other units on the map (both friendly and hostile) will act
+					simultaneously</strong>. This makes every decision critical, as the entire battlefield can change in
+				an instant.</p>
 
-		<section id="items">
-			<h2>Items & Pickups</h2>
-			<p>During your expeditions, you will find items and equipment. Use the <span class="key-char">U</span> key
-				or the GUI to interact with items on the ground when your cursor is over them.</p>
+			<h3>The Squad and Stances: Cohesive Operations</h3>
+			<p>You only directly control one unit at a time. The rest of your squad operates based on their assigned
+				<b>Stance</b>. This is the heart of SEF squad command.
+			</p>
 			<ul>
-				<li><b>Oxygen Tank:</b> A consumable that instantly replenishes a portion of your squad's shared
-					<b>Oxygen</b> supply.
-				</li>
-				<li><b>Medkit:</b> A consumable that instantly heals a small amount of health for <b>every unit</b> in
-					your squad.</li>
-				<li><b>Stairs:</b> Not an item, but the objective. Move your whole squad near the stairs and use them to
-					descend to the next, more dangerous level.</li>
+				<li><code>Follow</code>: (Default) The unit will attempt to follow the player-controlled unit,
+					maintaining squad cohesion. They will still engage visible enemies if one gets close or if Autofire
+					is enabled.</li>
+				<li><code>Hold</code>: The unit will stay in its current position, creating a defensive line or holding
+					a chokepoint. They will engage visible enemies if one gets close or if Autofire is enabled.</li>
 			</ul>
+			<p>You can also toggle <code>Autofire</code> for each unit using the <span class="key-char">O</span> key.
+				When enabled, a unit will automatically fire at
+				any visible enemy in range, whether they are in <code>Follow</code> or <code>Hold</code> stance. A unit
+				with Autofire disabled will only return fire if attacked, or engage in melee if an enemy enters their
+				adjacent tile.</p>
+
+			<h3>Field of View (FOV) & Fog of War: Unveiling the Unknown</h3>
+			<p>You can only see what your squad members can see. The map is covered in a fog of war.</p>
+			<ul>
+				<li><b>Visible Area:</b> Brightly lit tiles are currently in a squad member's line of sight. You can see
+					enemies and real-time changes here.</li>
+				<li><b>Seen Area:</b> Dimly lit tiles are areas you have explored but cannot currently see. You will
+					remember the terrain, but you won't see enemies moving in the shadows. Enemies in seen areas are
+					hidden until they enter a visible area.</li>
+			</ul>
+			<h3>Simultaneous Projectiles: Witnessing Combat</h3>
+			<p>Projectiles travel across the map in real-time, one tile at a time. While projectiles are in flight, you
+				cannot issue new commands. Wait for all projectiles to resolve before planning your next move. This
+				ensures clarity in the simultaneous turn system.</p>
 		</section>
 
 		<section id="units">
-			<h2>Unit Roster</h2>
-			<!-- Restored empty table for your script to populate -->
+			<h2>Unit Roster: Your Allies & Enemies</h2>
+			<p>Learn about the various operatives of the Space Expeditionary Force (SEF) you can command, and the
+				diverse alien lifeforms you will encounter.</p>
 			<table id="unitstable"></table>
+			<p class="small-text">For detailed stats explanation, refer to the <a href="#stats">Stats & Skills</a>
+				section.</p>
+		</section>
+
+		<section id="stats">
+			<h2>Stats & Skills: The Numbers Behind the Combat</h2>
+			<p>Every unit, friendly or otherwise, is defined by a set of core statistics:</p>
+			<ul>
+				<li><b>Health:</b> The unit's life force. When this reaches zero, the unit is killed. Max health is
+					determined by unit type.</li>
+				<li><b>Armor / Defence:</b> Reduces incoming damage from attacks. This stat is primarily granted by
+					suits and helmets. Damage reduction is applied directly to incoming damage.</li>
+				<li><b>Attack:</b> The base damage for a unit's melee attacks (when unarmed). Weapon damage overrides
+					this if a melee weapon is equipped.</li>
+				<li><b>Speed:</b> Determines how frequently a unit can act. A unit with a speed of 2 can act twice as
+					often as a unit with a speed of 1. All player units have a base speed of 1. Faster units get more
+					actions per turn cycle.</li>
+				<li><b>Morale:</b> Represents a unit's psychological resilience. Low morale (often due to taking heavy
+					damage or seeing allies fall) can cause units to flee or become suppressed (future feature).</li>
+			</ul>
+			<p><b>Global Resources:</b></p>
+			<ul>
+				<li><b>Oxygen:</b> A shared resource for your squad. It depletes slowly each turn. If it reaches
+					zero, your mission is a failure. Replenish with Oxygen Tanks.</li>
+				<li><b>Gold:</b> Currency acquired during missions by picking up valuable items from defeated enemies or
+					caches. Used for upgrades or purchases between levels (future feature).</li>
+			</ul>
 		</section>
 
 		<section id="weapons">
-			<h2>Weapon Systems</h2>
+			<h2>Weapon Systems: Your Tools for Survival</h2>
 			<p>Understanding your equipment is key to survival. Every weapon has unique stats that define its
-				performance in combat.</p>
+				performance in combat. Ensure your operatives are equipped with the right tools for the job.</p>
 
 			<div class="note">
 				<strong>Weapon Stats Explained:</strong>
 				<ul>
-					<li><b>Type:</b> The category of the weapon (e.g., Laser Pistol, Projectile Rifle). Some enemies may
-						be resistant to certain types.</li>
+					<li><b>Type:</b> The category of the weapon (e.g., Laser Pistol, Projectile Rifle). This can
+						sometimes influence effectiveness against certain enemy types.</li>
 					<li><b>Damage:</b> The average damage dealt on a successful hit, before armor is applied. The actual
 						damage will vary slightly per shot.</li>
-					<li><b>Range:</b> The maximum number of tiles the weapon can effectively fire.</li>
+					<li><b>Range:</b> The maximum number of tiles the weapon can effectively fire. Beyond this, accuracy
+						drops significantly.</li>
 					<li><b>Ammo:</b> The number of shots currently in the weapon / The maximum number of shots the
 						weapon can hold.</li>
 					<li><b>Reload:</b> The number of turns it takes to perform a full reload.</li>
-					<li><b>Accuracy:</b> The base chance to hit a target. This is modified by distance.</li>
+					<li><b>Accuracy:</b> The base chance to hit a target. This is modified by distance (closer shots are
+						more accurate).</li>
 				</ul>
 			</div>
-			<!-- Restored empty table for your script to populate -->
+			<table id="weaponstable"></table>
+			<p class="small-text">For a list of specific weapon types and their general characteristics, see <a
+					href="#weapon-types">Weapon Types (future section)</a>.</p>
+		</section>
+
+		<section id="items">
+			<h2>Items & Pickups: Scavenge for Survival</h2>
+			<p>During your expeditions, you will find items and equipment scattered across the environment or dropped by
+				defeated enemies. Use the <span class="key-char">U</span> key
+				or the GUI to interact with items on the ground when your cursor is over them.</p>
+			<ul>
+				<li><b>Oxygen Tank:</b> A consumable that instantly replenishes a portion of your squad's shared
+					<b>Oxygen</b> supply. Found as cylindrical canisters.
+				</li>
+				<li><b>Medkit (Small/Large):</b> A consumable that instantly heals a small/large amount of health for
+					<b>every unit</b> in
+					your squad. Appears as a red cross box.</li>
+				<li><b>Stairs (Down):</b> Not an item, but the objective. Found at the end of each level. Move your
+					whole squad near the stairs and use them to
+					descend to the next, more dangerous level. Appears as a downward arrow.</li>
+				<li><b>Equipment:</b> Includes various helmets and suits (e.g., EXO-Helmet, Heavy EXO-Suit) that provide
+					additional Armor / Defence. These are automatically equipped if superior to current gear, or stored
+					(future feature).</li>
+				<li><b>Weapons:</b> New ranged and melee weapons can be found. Automatically equipped if superior.</li>
+				<li><b>Credits (Gold):</b> Drops from some enemies or found in caches. Automatically added to your
+					total.</li>
+			</ul>
+		</section>
+
+		<!-- NEW SECTION: Environmental Hazards -->
+		<section id="hazards">
+			<h2>Environmental Hazards: Dangers of the Alien World</h2>
+			<p>Alien planets are fraught with environmental dangers that can impede your progress or harm your squad.
+				Always be aware of your surroundings.</p>
+			<ul>
+				<li><b>Acid Pool (<span class="key-char">~</span>):</b> Pools of corrosive alien liquid. Units standing
+					in acid pools will take damage each turn. Avoid traversing them if possible.</li>
+				<li><b>Rubble Pile (<span class="key-char">#</span>):</b> Piles of debris or unstable rock formations.
+					These are impassable and will block movement and line of sight.</li>
+				<li><b>Dense Flora:</b> (e.g., Alien Trees, Bushes) Can block movement or line of sight, providing cover
+					for enemies.</li>
+				<!-- Add more hazards as you implement them (e.g., toxic gas, unstable ground, traps) -->
+			</ul>
+		</section>
+
+		<!-- NEW SECTION: Strategies & Tactics -->
+		<section id="tactics">
+			<h2>Strategies & Tactics: Leading Your SEF Squad</h2>
+			<p>CosmoTactics challenges you to think strategically. Here are some fundamental tactics to increase your
+				squad's chances of survival:</p>
+			<ul>
+				<li><strong>Stick Together:</strong> Use the <span class="key-char">P</span> key to set non-controlled
+					units to 'Follow' mode. A cohesive squad can support each other and focus fire more effectively.
+					Spreading out too much can lead to isolated units being overwhelmed.</li>
+				<li><strong>Use Cover & Line of Sight:</strong> Position your units behind solid obstacles (walls, large
+					trees) to break enemy line of sight. Conversely, ensure your units have clear sight lines to engage
+					threats.</li>
+				<li><strong>Prioritize Targets:</strong> Not all enemies are created equal. Identify high-threat targets
+					(e.g., ranged attackers, high-damage melee units) and focus your squad's fire to eliminate them
+					quickly.</li>
+				<li><strong>Manage Oxygen:</strong> Keep a constant eye on your Oxygen supply. Explore thoroughly but
+					efficiently to find Oxygen Tanks. Don't linger in explored areas.</li>
+				<li><strong>Leverage Autofire:</strong> For non-controlled units, 'Autofire' (<span
+						class="key-char">O</span> key) can provide continuous suppression or damage. Consider turning it
+					off for stealth or to conserve ammo.</li>
+				<li><strong>Stance Mastery:</strong> 'Hold' stance (<span class="key-char">P</span> key) is excellent
+					for creating a defensive perimeter, holding chokepoints, or setting up ambushes. Use 'Follow' for
+					general exploration.</li>
+				<li><strong>Check Equipment:</strong> Regularly check your squad's equipment (Info Panel: <span
+						class="key-char">1</span>) to ensure they have the best gear available.</li>
+			</ul>
+		</section>
+
+		<!-- NEW SECTION: References -->
+		<section id="references">
+			<h2>References: Comprehensive Data</h2>
+			<p>This section provides detailed lists and statistics for all known units and weapon systems encountered in
+				the field.</p>
+			<p class="small-text">Use the sortable table headers (<span class="key-char">▲</span>/<span
+					class="key-char">▼</span>) to organize data as needed.</p>
+			<a href="#unitstable">Go to Unit Roster Table</a> | <a href="#weaponstable">Go to Weapon Systems Table</a>
+			<!-- The tables themselves are already placed by your JS, just link to them -->
+		</section>
+
+		<!-- Place the actual tables where they logically belong now, or keep them near the bottom -->
+		<!-- You already have these populated by displaydata.js -->
+		<!-- Moved them to the end of main for cleaner HTML flow, but you can put them under #references -->
+		<section>
+			<h2 style="display:none;">Unit Roster (Table)</h2> <!-- Hidden as already linked above -->
+			<table id="unitstable"></table>
+		</section>
+
+		<section>
+			<h2 style="display:none;">Weapon Systems (Table)</h2> <!-- Hidden as already linked above -->
 			<table id="weaponstable"></table>
 		</section>
 

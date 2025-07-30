@@ -14,7 +14,7 @@ A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your
 <p align="center">
 ┏━━━━━━━━━┳━━━━━━━━━━━┓<br>
 ┃<a href="https://taislin.github.io/cosmotactics/app/"><b>🎮 PLAY GAME 🎮</b></a>┃
-<a href="https://taislin.github.io/cosmotactics/docs/"><b>📖 GAME MANUAL 📖</b></a>┃<br>
+<a href="https://taislin.github.io/cosmotactics/docs/quick-start.html"><b>📖 QUICK START 📖</b></a>┃<br>
 ┗━━━━━━━━━┻━━━━━━━━━━━┛
 </p>
 
