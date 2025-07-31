@@ -19,7 +19,7 @@ import {
 } from "../index.js";
 import { world, world_grid, nextLevel } from "./map.js";
 import { Projectile } from "./classes/projectile.js";
-import { drawMainMenu, drawLostMenu } from "./mainmenu.js";
+import { drawMainMenu, drawLostMenu, drawQuickGuide } from "./mainmenu.js";
 // Import from new utils file for shared logic
 import { findMobCoords, isTilePassableForMovement } from "./utils/gameUtils.js";
 
@@ -33,12 +33,7 @@ export function setControls() {
 	// Mouse controls
 	window.addEventListener("click", handleClick);
 
-	function handleKeyDown(e) {
-		if (VARS.isAnimating) {
-			return; // Block input if an animation is in progress
-		}
-
-		const code = e.code;
+	function handleGameKeys(code) {
 		const selected = VARS.SELECTED;
 		// Font size controls
 		if (e.key === "+" || e.key === "-") {
@@ -48,37 +43,7 @@ export function setControls() {
 			menuDisplay.setOptions(menuDisplayConfig);
 			return;
 		}
-		// Lost screen
-		if (VARS.GAMEWINDOW === "LOST") {
-			sleep(2000);
-			goToMainMenu();
-			resetGame();
-			return;
-		}
-		// Menu navigation
-		if (VARS.GAMEWINDOW === "MENU") {
-			if (code === "ArrowUp")
-				VARS.MENU_ITEM = Math.max(VARS.MENU_ITEM - 1, 1);
-			if (code === "ArrowDown")
-				VARS.MENU_ITEM = Math.min(VARS.MENU_ITEM + 1, 2);
-			if (code === "Enter" && VARS.MENU_ITEM === 1) {
-				VARS.GAMEWINDOW = "GAME";
-				loaded = true;
-				document
-					.getElementById("terminal")
-					.removeChild(menuDisplay.getContainer());
-				document
-					.getElementById("terminal")
-					.appendChild(gameDisplay.getContainer());
-				setupProjectileCanvas(); // Initialize the projectile canvas
-			}
-			drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
-			return;
-		}
-		// Game controls
-		if (!loaded) {
-			loaded = true;
-		}
+
 		const draw_interval = [
 			selected.x - VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
 			selected.y - VARS.MAP_DISPLAY_Y / VARS.ZOOM_LEVEL,
@@ -207,6 +172,71 @@ export function setControls() {
 		}
 	}
 
+	// Now, the main handleKeyDown function becomes a clean router.
+	function handleKeyDown(e) {
+		if (VARS.isAnimating) {
+			return;
+		}
+		const code = e.code;
+
+		switch (VARS.GAMEWINDOW) {
+			case "GUIDE":
+				if (code === "Escape" || code === "Enter") {
+					VARS.GAMEWINDOW = "MENU";
+					drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+				}
+				break;
+
+			case "LOST":
+				sleep(2000);
+				goToMainMenu();
+				resetGame();
+				break;
+
+			case "MENU":
+				if (code === "ArrowUp")
+					VARS.MENU_ITEM = Math.max(VARS.MENU_ITEM - 1, 1);
+				else if (code === "ArrowDown")
+					VARS.MENU_ITEM = Math.min(VARS.MENU_ITEM + 1, 3);
+				else if (code === "Enter") {
+					if (VARS.MENU_ITEM === 1) {
+						// New Game
+						VARS.GAMEWINDOW = "GAME";
+						loaded = true;
+						document
+							.getElementById("terminal")
+							.removeChild(menuDisplay.getContainer());
+						document
+							.getElementById("terminal")
+							.appendChild(gameDisplay.getContainer());
+						setupProjectileCanvas();
+						// NOTE: We don't redraw the menu here because we are leaving this state.
+						return;
+					}
+					if (VARS.MENU_ITEM === 2) {
+						// Quick Guide
+						VARS.GAMEWINDOW = "GUIDE";
+						drawQuickGuide(menuDisplay, msgDisplay);
+						// NOTE: We don't redraw the menu here because we are leaving this state.
+						return;
+					}
+				}
+
+				// If we get here, it means we're still in the menu (e.g., arrow key press)
+				drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+				break;
+
+			case "GAME":
+				// Check for initial loaded state
+				if (!loaded) {
+					loaded = true;
+				}
+				// Delegate all game-related key presses to the other function
+				handleGameKeys(code);
+				break;
+		}
+	}
+
 	function handleArrow(direction, draw_interval) {
 		if (VARS.TARGET[0] <= -1 || VARS.TARGET[1] <= -1) {
 			VARS.TARGET = [VARS.SELECTED.x, VARS.SELECTED.y];
@@ -309,20 +339,45 @@ export function setControls() {
 			return;
 		}
 		if (VARS.GAMEWINDOW === "MENU") {
-			const coordsm = menuDisplay.eventToPosition(e);
-			if (coordsm[1] === 9 && coordsm[0] >= 5 && coordsm[0] <= 12) {
-				gameDisplay._options.layout = "tile";
-				VARS.GAMEWINDOW = "GAME";
-				loaded = true;
-				document
-					.getElementById("terminal")
-					.removeChild(menuDisplay.getContainer());
-				document
-					.getElementById("terminal")
-					.appendChild(gameDisplay.getContainer());
-				setupProjectileCanvas(); // Initialize the projectile canvas
+			let stateChanged = false; // Flag to track if we're leaving the menu
+
+			if (code === "ArrowUp") {
+				VARS.MENU_ITEM = Math.max(VARS.MENU_ITEM - 1, 1);
+			} else if (code === "ArrowDown") {
+				VARS.MENU_ITEM = Math.min(VARS.MENU_ITEM + 1, 3);
+			} else if (code === "Enter") {
+				if (VARS.MENU_ITEM === 1) {
+					// New Game
+					VARS.GAMEWINDOW = "GAME";
+					loaded = true;
+					document
+						.getElementById("terminal")
+						.removeChild(menuDisplay.getContainer());
+					document
+						.getElementById("terminal")
+						.appendChild(gameDisplay.getContainer());
+					setupProjectileCanvas();
+					stateChanged = true;
+				} else if (VARS.MENU_ITEM === 2) {
+					// Quick Guide
+					VARS.GAMEWINDOW = "GUIDE";
+					drawQuickGuide(menuDisplay, msgDisplay);
+					stateChanged = true;
+				} else if (VARS.MENU_ITEM === 3) {
+					// Settings
+					// Handle settings later if you wish
+					console.log("Settings selected (not implemented)");
+					// Note: stateChanged remains false, so menu will just redraw
+				}
 			}
-			return;
+
+			// Only redraw the main menu if the state has NOT changed to something else.
+			// This correctly handles arrow keys while allowing Enter to switch screens.
+			if (!stateChanged) {
+				drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+			}
+
+			return; // Block further input processing
 		}
 		if (!loaded) {
 			loaded = true;

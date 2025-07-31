@@ -12,17 +12,30 @@
 A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your **_Space Expeditionary Force_** (SEF) squad through hostile alien planets, navigating treacherous environments and battling myriad lifeforms in unique simultaneous turn-based combat.
 
 <p align="center">
-┏━━━━━━━━━━┳┳━━━━━━━━━━┓<br>
-┃&nbsp;&nbsp;<a href="https://taislin.github.io/cosmotactics/app/"><b>🎮 PLAY GAME 🎮</b></a>&nbsp;&nbsp;┃┃&nbsp;
-<a href="https://taislin.github.io/cosmotactics/docs/quick-start.html"><b>📖 QUICK START 📖</b></a>┃<br>
-┗━━━━━━━━━━┻┻━━━━━━━━━━┛
+<a href="https://taislin.github.io/cosmotactics/app/">>><b>🎮 PLAY GAME 🎮</b><<</a>&nbsp;┃&nbsp;
+<a href="https://taislin.github.io/cosmotactics/docs/quick-start.html">>><b>📖 QUICK START 📖</b><<</a>
 </p>
+
+## 📖 Table of Contents
+
+-   [CosmoTactics](#cosmotactics)
+    -   [📖 Table of Contents](#-table-of-contents)
+    -   [📜 Features](#-features)
+    -   [🚀 Getting Started](#-getting-started)
+    -   [🎮 How to Play](#-how-to-play)
+    -   [🛠 Technologies Used](#-technologies-used)
+    -   [🤝 Contributing](#-contributing)
+    -   [📄 License](#-license)
+    -   [🙏 Credits and Attributions](#-credits-and-attributions)
+        -   [⚙️ Core Development](#️-core-development)
+        -   [🛠 Libraries \& Engines](#-libraries--engines)
+        -   [🎨 Graphics \& Tilesets](#-graphics--tilesets)
+
+## 📜 Features
 
 <p align="center">
 <img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="250"/><img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen2.png" alt="gameplay screenshot" height="250"/>
 </p>
-
-## 📜 Features
 
 -   **Simultaneous Turn System:** Make every decision count as all units (friendly and hostile) act concurrently after you issue an order to your selected operative.
 -   **Squad Command:** Control one unit directly while the rest of your squad operates autonomously based on assigned Stances (Follow/Hold) and Autofire settings.
@@ -49,7 +62,23 @@ To run CosmoTactics locally, just download a release and run the executable for 
 > [!NOTE]
 > If for some reason you are using Windows 32bit, you won't be able to use the executable. You will need to follow the development steps below.
 
-### If you want to help in the development
+## 🎮 How to Play
+
+CosmoTactics is fully playable using either keyboard, mouse, or a combination.
+
+For a comprehensive guide on game mechanics, controls, units, and items, please refer to the **Operator's Manual** (which is also hosted on GitHub Pages):
+
+[**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/docs/)
+
+## 🛠 Technologies Used
+
+-   **HTML5, CSS3, JavaScript:** Core web technologies.
+-   **ROT.js:** Robust roguelike toolkit for display, map generation, FOV, pathfinding, and RNG.
+-   **Neutralino.js:** Used for the executable, basically a small, self-contained browser app.
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have suggestions for new features, bug fixes, or improvements to the codebase, please open an issue or submit a pull request.
 
 1.  **Clone the repository:**
 
@@ -73,24 +102,6 @@ To run CosmoTactics locally, just download a release and run the executable for 
 
     This will start a server, usually accessible at `http://127.0.0.1:8125/`. Open this URL in your web browser.
 
-## 🎮 How to Play
-
-CosmoTactics is fully playable using either keyboard, mouse, or a combination.
-
-For a comprehensive guide on game mechanics, controls, units, and items, please refer to the **Operator's Manual** (which is also hosted on GitHub Pages):
-
-[**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/docs/)
-
-## 🛠 Technologies Used
-
--   **HTML5, CSS3, JavaScript:** Core web technologies.
--   **ROT.js:** Robust roguelike toolkit for display, map generation, FOV, pathfinding, and RNG.
--   **Neutralino.js:** Used for the executable, basically a small, self-contained browser app.
-
-## 🤝 Contributing
-
-Contributions are welcome! If you have suggestions for new features, bug fixes, or improvements to the codebase, please open an issue or submit a pull request.
-
 ## 📄 License
 
 This project is licensed under the **Creative Commons BY NC 4.0 License**.
@@ -98,3 +109,24 @@ This project is licensed under the **Creative Commons BY NC 4.0 License**.
 This license enables reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator.
 
 See the [LICENSE](LICENSE) file for details.
+
+## 🙏 Credits and Attributions
+
+CosmoTactics is made possible by the hard work of its creator and the generous contributions of the open-source and creative communities.
+
+### ⚙️ Core Development
+
+-   **Game Design, Programming, and Art:** [taislin](https://github.com/taislin) _(Unless specified otherwise)_. Licensed under [CC0 BY NC 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/).
+
+### 🛠 Libraries & Engines
+
+-   **[ROT.js](https://ondras.github.io/rot.js/hp/)** by Ondřej Žára - The core roguelike toolkit. Licensed under [BSD-3-Clause](https://opensource.org/license/bsd-3-clause).
+-   **[Neutralino.js](https://neutralino.js.org/)** - For the cross-platform desktop application wrapper. Licensed under [MIT License](https://opensource.org/license/mit).
+
+### 🎨 Graphics & Tilesets
+
+-   **[Hexany's Roguelike Tiles](https://hexany-ives.itch.io/hexanys-roguelike-tiles)** by _Hexany_. Licensed under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
+
+-   **[Kenney's 1-bit pack](https://www.kenney.nl/assets/1-bit-pack)** by _Kenney_. Licensed under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
+
+-   **[Urizen 1-bit tileset](https://vurmux.itch.io/urizen-onebit-tileset)** by _Varmux_. Licensed under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).

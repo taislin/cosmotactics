@@ -23,6 +23,10 @@
 	font-family: "Nova Mono";
 	src: url(fonts/NovaMono-Regular.ttf) format("truetype");
 }
+@font-face {
+	font-family: "Input Mono";
+	src: url(fonts/Input-Regular.ttf) format("truetype");
+}
 body {
 	background-color: #000000;
 	color: #ccc;

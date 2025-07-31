@@ -36,7 +36,7 @@ export const gameDisplayConfig = {
 	height: 20,
 	forceSquareRatio: false,
 	fontSize: 16,
-	fontFamily: "Noto Sans Mono, monospace",
+	fontFamily: "Input Mono, Noto Sans Mono, monospace",
 	layout: "tile-gl",
 	bg: "#222",
 	tileWidth: 32,
@@ -52,7 +52,7 @@ export const msgDisplayConfig = {
 	fontSize: 16,
 	bg: "#222",
 	fg: "#fff",
-	fontFamily: "Noto Sans Mono, monospace",
+	fontFamily: "Input Mono, Noto Sans Mono, monospace",
 	spacing: 1,
 };
 export const menuDisplayConfig = {
