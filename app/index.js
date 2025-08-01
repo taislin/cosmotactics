@@ -1,6 +1,6 @@
 // Import modules and functions
 import { setControls } from "./assets/controls.js";
-import { loadIcons, _tileMap } from "./assets/classes/icons.js";
+import { loadIcons } from "./assets/classes/icons.js";
 import { loadLevel } from "./assets/map.js";
 import { loadItems } from "./assets/classes/items.js";
 import { drawMainMenu } from "./assets/mainmenu.js";
@@ -42,7 +42,9 @@ export const gameDisplayConfig = {
 	tileWidth: 32,
 	tileHeight: 32,
 	tileSet: tileSets,
-	tileMap: _tileMap,
+	// The `tileMap` property is not needed for the 'tile-gl' backend when icon
+	// objects with their own `tcoords` are passed directly to `draw()`. The
+	// previous `_tileMap` implementation was buggy and has been removed.
 	tileColorize: true,
 };
 export const msgDisplayConfig = {

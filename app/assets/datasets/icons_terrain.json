@@ -176,6 +176,7 @@
 			"transparent"
 		],
 		"passable": false,
+		"transparent": false,
 		"tileset": "./icons/terrain.png",
 		"tcoords": [
 			[

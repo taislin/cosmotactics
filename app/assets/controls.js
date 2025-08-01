@@ -33,7 +33,7 @@ export function setControls() {
 	// Mouse controls
 	window.addEventListener("click", handleClick);
 
-	function handleGameKeys(code) {
+	function handleGameKeys(e) {
 		const selected = VARS.SELECTED;
 		// Font size controls
 		if (e.key === "+" || e.key === "-") {
@@ -51,6 +51,7 @@ export function setControls() {
 			selected.y + VARS.MAP_DISPLAY_Y / VARS.ZOOM_LEVEL,
 		];
 		// Navigation and actions
+		const code = e.code;
 		switch (code) {
 			case "Escape":
 				goToMainMenu();
@@ -232,7 +233,7 @@ export function setControls() {
 					loaded = true;
 				}
 				// Delegate all game-related key presses to the other function
-				handleGameKeys(code);
+				handleGameKeys(e);
 				break;
 		}
 	}
@@ -331,7 +332,7 @@ export function setControls() {
 		if (VARS.isAnimating) {
 			return; // Block input if an animation is in progress
 		}
-
+		const code = e.code;
 		if (VARS.GAMEWINDOW === "LOST") {
 			sleep(2000);
 			goToMainMenu();
@@ -366,7 +367,7 @@ export function setControls() {
 				} else if (VARS.MENU_ITEM === 3) {
 					// Settings
 					// Handle settings later if you wish
-					console.log("Settings selected (not implemented)");
+					//console.log("Settings selected (not implemented)");
 					// Note: stateChanged remains false, so menu will just redraw
 				}
 			}
@@ -589,7 +590,7 @@ export function reload(unit) {
 }
 function clickGUI(coords) {
 	// ADDED: console.log for debugging all GUI clicks
-	console.log(`GUI Click Detected at: x=${coords[0]}, y=${coords[1]}`);
+	debugLog(`GUI Click Detected at: x=${coords[0]}, y=${coords[1]}`, "info");
 
 	// Submenu Tabs (y=10)
 	if (coords[1] == 10) {

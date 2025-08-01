@@ -66,7 +66,6 @@ export function drawMainMenu(menuDisplay, gameDisplay, msgDisplay) {
 	msgDisplay.clear();
 	gameDisplay.clear();
 	menuDisplay.drawText(2, 3, "%c{#35b59b}COSMOTACTICS");
-	console.log("[MAINMENU] drawMainMenu called.");
 	// Draw menu items
 	MENU_ITEMS.forEach((item, idx) => {
 		const isSelected = VARS.MENU_ITEM === idx + 1;
@@ -114,7 +113,6 @@ export function drawLostMenu(menuDisplay, gameDisplay, msgDisplay) {
 export function drawQuickGuide(menuDisplay, msgDisplay) {
 	menuDisplay.clear();
 	msgDisplay.clear();
-	console.log("[MAINMENU] drawQuickGuide called. Clearing displays.");
 	// Title on the left panel
 	menuDisplay.drawText(2, 3, "%c{#35b59b}QUICK GUIDE");
 	menuDisplay.drawText(1, 18, "%c{orange}Press ESC or");

@@ -158,5 +158,110 @@
                 2
             ]
         ]
+    },
+    "shuttle": {
+        "name": "shuttle",
+        "icon": [
+            "Û"
+        ],
+        "color": [
+            "transparent"
+        ],
+        "background": [
+            null
+        ],
+        "passable": false,
+        "transparent": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                2,
+                2
+            ]
+        ]
+    },
+    "shuttle_nw": {
+        "name": "shuttle",
+        "icon": [
+            "Û"
+        ],
+        "color": [
+            "transparent"
+        ],
+        "background": [
+            null
+        ],
+        "passable": false,
+        "transparent": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                6,
+                2
+            ]
+        ]
+    },
+    "shuttle_ne": {
+        "name": "shuttle",
+        "icon": [
+            "Û"
+        ],
+        "color": [
+            "transparent"
+        ],
+        "background": [
+            null
+        ],
+        "passable": false,
+        "transparent": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                7,
+                2
+            ]
+        ]
+    },
+    "shuttle_sw": {
+        "name": "shuttle",
+        "icon": [
+            "Û"
+        ],
+        "color": [
+            "transparent"
+        ],
+        "background": [
+            null
+        ],
+        "passable": false,
+        "transparent": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                6,
+                3
+            ]
+        ]
+    },
+    "shuttle_se": {
+        "name": "shuttle",
+        "icon": [
+            "Û"
+        ],
+        "color": [
+            "transparent"
+        ],
+        "background": [
+            null
+        ],
+        "passable": false,
+        "transparent": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                7,
+                3
+            ]
+        ]
     }
 }

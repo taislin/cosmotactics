@@ -1,7 +1,7 @@
 import { items, icons } from "../engine.js";
 import { WIcon } from "./icons.js";
 import { importedItems } from "../datasets/imports.js";
-
+import { debugLog } from "../engine.js";
 /**
  * Represents an item in the game.
  */
@@ -80,7 +80,10 @@ function assignIcon(icon) {
 	} else if (icons[icon]) {
 		return JSON.parse(JSON.stringify(icons[icon]));
 	} else {
-		console.log("\x1b[31mERROR:\x1b[0m " + "icon " + icon + " not found!");
+		debugLog(
+			"\x1b[31mERROR:\x1b[0m " + "icon " + icon + " not found!",
+			"error"
+		);
 		return JSON.parse(JSON.stringify(icons["?"]));
 	}
 }

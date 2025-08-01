@@ -37,13 +37,13 @@ A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your
 <img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen.png" alt="gameplay screenshot" height="250"/><img src="https://github.com/taislin/cosmotactics/raw/master/docs/screen2.png" alt="gameplay screenshot" height="250"/>
 </p>
 
--   **Simultaneous Turn System:** Make every decision count as all units (friendly and hostile) act concurrently after you issue an order to your selected operative.
--   **Squad Command:** Control one unit directly while the rest of your squad operates autonomously based on assigned Stances (Follow/Hold) and Autofire settings.
--   **Dynamic Environments:** Explore procedurally generated maze-like dungeons with varying terrain types and environmental hazards.
--   **Fog of War:** Uncover hidden areas and spot lurking threats using your squad's combined field of view.
--   **Resource Management:** Keep an eye on your squad's oxygen supply and scavenge for valuable gold and supplies.
--   **Diverse Roster:** Encounter various alien enemies and command different SEF Trooper archetypes, each with unique stats and equipment.
--   **Deep Mechanics:** Engage with detailed unit stats, weapon systems, and consumable items.
+-   🚀 **Simultaneous Turn System:** Make every decision count as all units (friendly and hostile) act concurrently after you issue an order to your selected operative.
+-   👥 **Squad Command:** Control one unit directly while the rest of your squad operates autonomously based on assigned Stances (Follow/Hold) and Autofire settings.
+-   🌍 **Dynamic Environments:** Explore procedurally generated maze-like dungeons with varying terrain types and environmental hazards.
+-   🌫️ **Fog of War:** Uncover hidden areas and spot lurking threats using your squad's combined field of view.
+-   🛠️ **Resource Management:** Keep an eye on your squad's oxygen supply and scavenge for valuable gold and supplies.
+-   👾 **Diverse Roster:** Encounter various alien enemies and command different SEF Trooper archetypes, each with unique stats and equipment.
+-   🔍 **Deep Mechanics:** Engage with detailed unit stats, weapon systems, and consumable items.
 
 ## 🚀 Getting Started
 
@@ -116,7 +116,7 @@ CosmoTactics is made possible by the hard work of its creator and the generous c
 
 ### ⚙️ Core Development
 
--   **Game Design, Programming, and Art:** [taislin](https://github.com/taislin) _(Unless specified otherwise)_. Licensed under [CC0 BY NC 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/).
+-   **Game Design, Programming, and Art:** [taislin](https://github.com/taislin) _(Unless specified otherwise)_. Licensed under [CC BY-NC 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/).
 
 ### 🛠 Libraries & Engines
 
@@ -130,3 +130,5 @@ CosmoTactics is made possible by the hard work of its creator and the generous c
 -   **[Kenney's 1-bit pack](https://www.kenney.nl/assets/1-bit-pack)** by _Kenney_. Licensed under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
 
 -   **[Urizen 1-bit tileset](https://vurmux.itch.io/urizen-onebit-tileset)** by _Varmux_. Licensed under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
+
+-   **[32Rogues](https://sethbb.itch.io/32rogues)** by _Seth_. Licensed under a Proprietary License (open-source), see files for more information.

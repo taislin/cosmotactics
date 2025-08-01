@@ -83,19 +83,37 @@ export function checkMove(x, y) {
 }
 
 /**
- * Checks if a tile at the specified coordinates has light.
- * This function relies on `world_grid` which directly reflects terrain passability for light.
+ * Checks if a tile at the specified coordinates allows light to pass through.
+ * Used by the FOV calculator.
  * @param {number} x - The x-coordinate to check.
  * @param {number} y - The y-coordinate to check.
- * @returns {boolean} True if the tile has light (i.e., is not a blocking wall), false otherwise.
+ * @returns {boolean} True if the tile is transparent to light, false otherwise.
  */
 export function checkLight(x, y) {
-	if (world_grid[y] && world_grid[y][x] === 1) {
-		// 1 typically means passable for light
-		return true;
-	} else {
+	// Check for out-of-bounds coordinates first
+	if (x < 0 || y < 0 || x >= VARS.MAP_X || y >= VARS.MAP_Y) {
+		return false;
+  }
+
+	const tile = world[x + "," + y];
+	if (!tile) {
+		// If for some reason the tile doesn't exist in the world object, treat as a wall.
 		return false;
 	}
+
+	// A tile is transparent if its icon definition explicitly says so.
+	if (tile.icon && tile.icon.transparent === true) {
+		return true;
+	}
+	
+	// Fallback for all other tiles:
+	// A tile is transparent if it is passable for movement (e.g., floor, grass).
+	// This maintains the original behavior for walls and other obstacles.
+	if (world_grid[y] && world_grid[y][x] === 1) {
+		return true;
+	}
+
+	return false; // Otherwise, it blocks light.
 }
 
 /**
@@ -293,6 +311,7 @@ export function debugLog(text, type = "log") {
 		}
 		if (type === "log") {
 			typecolor = "green";
+			console.log(text);
 		} else if (type === "error") {
 			console.error(text);
 			typecolor = "red";

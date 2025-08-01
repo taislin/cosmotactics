@@ -254,6 +254,7 @@ export function loadLevel(level = 0) {
 	// --- 4. Place Player & Objective ---
 	const playerStartPos = findClearAreaForPlayer();
 	addPlayerUnits(playerStartPos.x, playerStartPos.y);
+	placeShuttle(playerStartPos.x, playerStartPos.y);
 	placeStairs(playerStartPos.x, playerStartPos.y);
 
 	// --- 5. Spawn Enemies and Items based on Map Type ---
@@ -587,6 +588,70 @@ function createPlayerUnit(x, y, unitName) {
 		for (const slotKey in unitData.slots) {
 			if (unitData.slots[slotKey])
 				equipItem(Player, unitData.slots[slotKey], slotKey);
+		}
+	}
+}
+
+/**
+ * Places a 2x2 shuttle object on the map near the player's starting point.
+ * This function overwrites existing terrain and makes the tiles impassable.
+ * @param {number} playerStartX - The x-coordinate of the player's starting position.
+ * @param {number} playerStartY - The y-coordinate of the player's starting position.
+ */
+function placeShuttle(playerStartX, playerStartY) {
+	debugLog(
+		`Placing shuttle near player at (${playerStartX}, ${playerStartY})`,
+		"info"
+	);
+
+	// Define the shuttle's shape and the icon for each part.
+	// This makes it easy to read and modify.
+	const shuttleShape = [
+		{ x: 0, y: 0, iconKey: "shuttle_nw" }, // Top-left
+		{ x: 1, y: 0, iconKey: "shuttle_ne" }, // Top-right
+		{ x: 0, y: 1, iconKey: "shuttle_sw" }, // Bottom-left
+		{ x: 1, y: 1, iconKey: "shuttle_se" }, // Bottom-right
+	];
+
+	// Determine the top-left coordinate of the shuttle.
+	// We'll place it just to the left of the player's squad.
+	const shuttleTopLeftX = playerStartX - 3;
+	const shuttleTopLeftY = playerStartY;
+	for (const part of shuttleShape) {
+		// Find the specific icon data for this part of the shuttle.
+		const shuttleIconData = icons[part.iconKey];
+
+		// A quick safety check to ensure the icon exists.
+		if (!shuttleIconData) {
+			debugLog(
+				`Icon data for '${part.iconKey}' not found! Skipping this part.`,
+				"error"
+			);
+			continue;
+		}
+
+		const placeX = shuttleTopLeftX + part.x;
+		const placeY = shuttleTopLeftY + part.y;
+
+		// Skip any part that would be off-map.
+		if (
+			placeX < 0 ||
+			placeY < 0 ||
+			placeX >= VARS.MAP_X ||
+			placeY >= VARS.MAP_Y
+		) {
+			continue;
+		}
+
+		// Stamp the shuttle part onto the world map.
+		if (world[`${placeX},${placeY}`]) {
+			// Overwrite the tile's icon with the correct shuttle part icon.
+			world[`${placeX},${placeY}`].icon = JSON.parse(
+				JSON.stringify(shuttleIconData)
+			);
+
+			// The passability should be defined in the icon data itself, but we'll enforce it here.
+			_setWorldGridTile(placeX, placeY, false);
 		}
 	}
 }
