@@ -1,0 +1,23 @@
+{
+  "retrieve_artifact": {
+    "name": "Retrieve Artifact",
+    "description": "An anomalous energy signature has been detected. Secure the source and return to the shuttle for analysis.",
+    "type": "RETRIEVE_AND_EVAC",
+    "difficulty_modifier": 1.0,
+    "reward_gold_base": 100
+  },
+  "assassinate_target": {
+    "name": "Eliminate HVT",
+    "description": "A high-value alien bioform is commanding local forces. Neutralize it to disrupt their command structure.",
+    "type": "ASSASSINATE",
+    "difficulty_modifier": 1.2,
+    "reward_gold_base": 150
+  },
+  "exterminate_hive": {
+    "name": "Clear and Secure",
+    "description": "Hostile nests have been located. Destroy all of them to secure the sector.",
+    "type": "EXTERMINATE",
+    "difficulty_modifier": 0.9,
+    "reward_gold_base": 80
+  }
+}
