@@ -75,22 +75,23 @@ export function updateGameLogic(deltaTime) {
 }
 
 /**
- * Checks if a tile at the specified coordinates is passable for general pathfinding (e.g., for LOS or basic AI without considering specific unit collisions).
- * This function now uses the more robust `isTilePassableForMovement` from `gameUtils.js` by passing `null` for the moving unit.
- * @param {number} x - The x-coordinate to check.
- * @param {number} y - The y-coordinate to check.
- * @returns {boolean} True if the tile is generally passable, false otherwise.
+ * Determines if the tile at the given coordinates is passable for general movement or pathfinding.
+ * @param {number} x - The x-coordinate of the tile.
+ * @param {number} y - The y-coordinate of the tile.
+ * @returns {boolean} True if the tile is passable, false otherwise.
  */
 export function checkMove(x, y) {
 	return isTilePassableForMovement(x, y, null);
 }
 
 /**
- * Checks if a tile at the specified coordinates allows light to pass through.
- * Used by the FOV calculator.
- * @param {number} x - The x-coordinate to check.
- * @param {number} y - The y-coordinate to check.
- * @returns {boolean} True if the tile is transparent to light, false otherwise.
+ * Determines whether a tile at the given coordinates is transparent to light.
+ *
+ * Returns false if the coordinates are out of bounds or the tile does not exist. Returns true if the tile's icon explicitly marks it as transparent, or if the tile is passable for movement according to the world grid. Otherwise, returns false.
+ *
+ * @param {number} x - The x-coordinate of the tile.
+ * @param {number} y - The y-coordinate of the tile.
+ * @returns {boolean} True if light can pass through the tile; false otherwise.
  */
 export function checkLight(x, y) {
 	// Check for out-of-bounds coordinates first
@@ -302,9 +303,12 @@ function log(event) {
 }
 
 /**
- * Logs a debug message to the console and the in-game debug log.
- * @param {string|Object} text - The message to log.
- * @param {string} [type="log"] - The type of log message (log, error, warn, info, debug).
+ * Outputs a debug message to both the browser console and the in-game debug log when debugging is enabled.
+ * 
+ * Supports log types: "log", "error", "warn", "info", and "debug", each with distinct formatting and console output. Messages are timestamped and colour-coded in the in-game log.
+ * 
+ * @param {string|Object} text - The message or object to log.
+ * @param {string} [type="log"] - The log type, affecting formatting and console method.
  */
 export function debugLog(text, type = "log") {
 	let typecolor = "white";

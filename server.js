@@ -28,6 +28,16 @@ function getContentType(ext) {
 	return CONTENT_TYPES[ext] || "text/html";
 }
 
+/**
+ * Serves a static file over HTTP, handling 404 and server errors with appropriate responses.
+ * 
+ * If the requested file does not exist, attempts to serve a custom 404 page. Responds with HTTP 500 if the 404 page is also missing or if other file read errors occur.
+ * 
+ * @param {string} filePath - The absolute path to the file to serve.
+ * @param {string} contentType - The MIME type to use for the response.
+ * @param {http.ServerResponse} response - The HTTP response object.
+ * @param {boolean} [processHtml=false] - Unused flag for potential HTML processing.
+ */
 function serveFile(filePath, contentType, response, processHtml = false) {
 	fs.readFile(filePath, (error, content) => {
 		if (error) {

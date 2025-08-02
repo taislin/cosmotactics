@@ -627,6 +627,14 @@ function _placeUnit(x, y, unitName, faction) {
 	return null;
 }
 
+/**
+ * Creates and adds a player-controlled unit at the specified coordinates.
+ *
+ * The unit is initialised with properties and equipment defined in the imported unit data, assigned a generated name, and added to both the player and global entity lists.
+ * @param {number} x - The x-coordinate for the unit's position.
+ * @param {number} y - The y-coordinate for the unit's position.
+ * @param {string} unitName - The key identifying the unit type to create.
+ */
 function createPlayerUnit(x, y, unitName) {
 	const unitData = importedUnits[unitName];
 	if (!unitData) return;
