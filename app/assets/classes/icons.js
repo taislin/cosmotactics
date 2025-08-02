@@ -59,8 +59,8 @@ export class WIcon {
 }
 
 /**
- * Loads icons from imported data.
- * @returns {Object} The loaded icons object.
+ * Instantiates and registers world icon objects from imported icon data.
+ * @returns {Object} An object mapping icon names to their corresponding WIcon instances.
  */
 export function loadIcons() {
 	for (const tmp_icon in importedIcons) {

@@ -377,6 +377,11 @@ function drawEffects(drawInterval) {
 	}
 }
 
+/**
+ * Renders the main game menu panel, displaying player stats, equipment, logs, squad information, and controls.
+ *
+ * The menu adapts its content based on the current submenu selection, showing detailed information such as health, armour, oxygen, combat stats, equipment, recent logs, tile inspection, and squad status for all player-controlled units. It also draws interactive controls and contextual information about the current location and entities present.
+ */
 function drawMenu() {
 	if (VARS.GAMEWINDOW == "MENU" || VARS.GAMEWINDOW == "LOST") {
 		return;
@@ -884,6 +889,11 @@ function drawMenu() {
 	); // Adjusted
 }
 
+/**
+ * Updates the field of view (FOV) for player-controlled entities, marking visible and seen tiles, entities, and items.
+ * 
+ * Resets visibility for all tiles, entities, and items, then uses a shadowcasting algorithm to determine which map areas are visible to player entities. Marks tiles, entities, and items as visible or seen based on their presence within the computed FOV radius.
+ */
 function updateFOV(player) {
 	for (var tile in world) {
 		world[tile].visible = false;

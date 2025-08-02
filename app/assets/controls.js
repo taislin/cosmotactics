@@ -25,7 +25,11 @@ import { findMobCoords, isTilePassableForMovement } from "./utils/gameUtils.js";
 
 let loaded = false;
 let lastMoveTime = 0;
-const MOVE_DELAY = 300; // 300ms delay between moves
+const MOVE_DELAY = 300; /**
+ * Registers global keyboard and mouse event listeners to handle all user input for the game, including gameplay, menu navigation, and UI interactions.
+ *
+ * Sets up internal handlers to process key and mouse events according to the current game state, enabling movement, targeting, menu selection, mode switching, and in-game actions. Ensures input is appropriately routed and throttled, and manages state transitions between gameplay, menus, and guide screens.
+ */
 
 export function setControls() {
 	// Keyboard controls
@@ -33,6 +37,12 @@ export function setControls() {
 	// Mouse controls
 	window.addEventListener("click", handleClick);
 
+	/**
+	 * Handles keyboard input for in-game actions during gameplay.
+	 *
+	 * Processes movement, targeting, mode switching, submenu navigation, unit commands, and other gameplay-related key events based on the current game state and selected unit. Supports both standard and numpad keys for movement, toggles between targeting and look modes, manages equipment and squad submenus, and executes actions such as reloading, stance toggling, and turn processing.
+	 * @param {KeyboardEvent} e - The keyboard event to handle.
+	 */
 	function handleGameKeys(e) {
 		const selected = VARS.SELECTED;
 		// Font size controls
@@ -173,7 +183,12 @@ export function setControls() {
 		}
 	}
 
-	// Now, the main handleKeyDown function becomes a clean router.
+	/**
+	 * Routes keyboard events to the appropriate handler based on the current game window state.
+	 *
+	 * Handles menu navigation, state transitions, and delegates gameplay key events to `handleGameKeys`. In the guide and lost screens, processes exit or reset actions. In the menu, manages item selection and transitions to game or guide screens.
+	 * @param {KeyboardEvent} e - The keyboard event to process.
+	 */
 	function handleKeyDown(e) {
 		if (VARS.isAnimating) {
 			return;
@@ -238,6 +253,11 @@ export function setControls() {
 		}
 	}
 
+	/**
+	 * Moves the targeting cursor in the specified direction and updates path visualisation.
+	 * @param {string} direction - The direction to move the targeting cursor ('up', 'down', 'left', 'right').
+	 * @param {number} draw_interval - The interval used for drawing path visualisation.
+	 */
 	function handleArrow(direction, draw_interval) {
 		if (VARS.TARGET[0] <= -1 || VARS.TARGET[1] <= -1) {
 			VARS.TARGET = [VARS.SELECTED.x, VARS.SELECTED.y];
@@ -328,6 +348,13 @@ export function setControls() {
 		}
 	}
 
+	/**
+	 * Handles mouse click events based on the current game window state.
+	 *
+	 * In the "LOST" state, returns to the main menu and resets the game after a delay.  
+	 * In the "MENU" state, processes menu navigation and selection, updating the game window or redrawing the menu as needed.  
+	 * In the "GAME" state, translates click positions to map or GUI coordinates, processes GUI interactions, and, if the clicked map tile is valid and visible, delegates further handling to the `clicks` function.
+	 */
 	function handleClick(e) {
 		if (VARS.isAnimating) {
 			return; // Block input if an animation is in progress
@@ -565,6 +592,11 @@ function clicks(currentLoc, draw_interval, O) {
 		VARS.MENU_LENGTH = locEnt.length;
 	}
 }
+/**
+ * Reloads the selected unit's ranged weapon to its maximum ammo capacity if possible, logs the action, and processes the turn.
+ * 
+ * The weapon is only reloaded if it has a reload capability, is not already at maximum ammo, and the unit is currently selected.
+ */
 export function reload(unit) {
 	if (unit.mob.slots.ranged) {
 		if (
@@ -588,6 +620,12 @@ export function reload(unit) {
 	}
 	processTurn();
 }
+/**
+ * Handles GUI click events by mapping screen coordinates to in-game actions and UI navigation.
+ *
+ * Depending on the clicked area, this function switches submenus, selects or uses items in inspect mode, triggers main or secondary actions (such as mode switching, turn processing, autofire toggle, stance toggle, reload), cycles units, or returns to the main menu. In inspect mode, clicking on stairs and meeting progression conditions advances to the next level.
+ * @param {number[]} coords - The [x, y] coordinates of the click within the GUI grid.
+ */
 function clickGUI(coords) {
 	// ADDED: console.log for debugging all GUI clicks
 	debugLog(`GUI Click Detected at: x=${coords[0]}, y=${coords[1]}`, "info");
