@@ -762,6 +762,7 @@ export function changeLevel(targetLevel, targetCoords) {
 	saveCurrentLevelState();
 	loadLevel(targetLevel, targetCoords); // Pass the stairs' location as the new entry point
 }
+
 export function nextLevel(level_nr) {
 	VARS.LEVEL = level_nr;
 	loadLevel(VARS.LEVEL); // Changed from loadWorld_maze

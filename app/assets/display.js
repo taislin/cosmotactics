@@ -783,7 +783,6 @@ function drawMenu() {
 			msgDisplay.drawText(22, yPos + 1, ammoText);
 
 			// Draw Stance and Autofire
-			// Draw Stance and Autofire
 			let tempcolor = "white";
 			if (unit.mob.stance.toUpperCase() == "HOLD") {
 				tempcolor = "#006aff";
