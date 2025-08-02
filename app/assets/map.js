@@ -190,8 +190,10 @@ function generateCaveWorld(level) {
 }
 
 /**
- * RENAMED & REFACTORED: Master function to load a new level.
- * It decides which map type to generate and then populates it.
+ * Loads and generates a new game level, including terrain, player units, shuttle, stairs, enemies, and items.
+ * 
+ * Determines the map type (forest or cave) based on the level number, generates the corresponding terrain, and populates the world state. Places player units in a clear area, positions the shuttle and stairs, and spawns enemies and items appropriate to the environment. Displays a thematic entry message for the new level.
+ * 
  * @param {number} level - The level number to generate.
  */
 export function loadLevel(level = 0) {
@@ -254,6 +256,7 @@ export function loadLevel(level = 0) {
 	// --- 4. Place Player & Objective ---
 	const playerStartPos = findClearAreaForPlayer();
 	addPlayerUnits(playerStartPos.x, playerStartPos.y);
+	placeShuttle(playerStartPos.x, playerStartPos.y);
 	placeStairs(playerStartPos.x, playerStartPos.y);
 
 	// --- 5. Spawn Enemies and Items based on Map Type ---
@@ -557,6 +560,14 @@ function _placeUnit(x, y, unitName, faction) {
 	return null;
 }
 
+/**
+ * Creates and adds a player-controlled unit at the specified coordinates.
+ *
+ * The unit is initialised with properties and equipment defined in the imported unit data, assigned a generated name, and added to both the player and global entity lists.
+ * @param {number} x - The x-coordinate for the unit's position.
+ * @param {number} y - The y-coordinate for the unit's position.
+ * @param {string} unitName - The key identifying the unit type to create.
+ */
 function createPlayerUnit(x, y, unitName) {
 	const unitData = importedUnits[unitName];
 	if (!unitData) return;
@@ -591,6 +602,76 @@ function createPlayerUnit(x, y, unitName) {
 	}
 }
 
+/**
+ * Places a 2x2 shuttle object adjacent to the player's starting position, overwriting existing terrain and making the affected tiles impassable.
+ * 
+ * The shuttle is positioned three tiles to the left of the player's start X coordinate and aligned vertically. Each shuttle part uses a specific icon and is only placed if within map bounds and the icon data exists.
+ * 
+ * @param {number} playerStartX - The x-coordinate of the player's starting position.
+ * @param {number} playerStartY - The y-coordinate of the player's starting position.
+ */
+function placeShuttle(playerStartX, playerStartY) {
+	debugLog(
+		`Placing shuttle near player at (${playerStartX}, ${playerStartY})`,
+		"info"
+	);
+
+	// Define the shuttle's shape and the icon for each part.
+	// This makes it easy to read and modify.
+	const shuttleShape = [
+		{ x: 0, y: 0, iconKey: "shuttle_nw" }, // Top-left
+		{ x: 1, y: 0, iconKey: "shuttle_ne" }, // Top-right
+		{ x: 0, y: 1, iconKey: "shuttle_sw" }, // Bottom-left
+		{ x: 1, y: 1, iconKey: "shuttle_se" }, // Bottom-right
+	];
+
+	// Determine the top-left coordinate of the shuttle.
+	// We'll place it just to the left of the player's squad.
+	const shuttleTopLeftX = playerStartX - 3;
+	const shuttleTopLeftY = playerStartY;
+	for (const part of shuttleShape) {
+		// Find the specific icon data for this part of the shuttle.
+		const shuttleIconData = icons[part.iconKey];
+
+		// A quick safety check to ensure the icon exists.
+		if (!shuttleIconData) {
+			debugLog(
+				`Icon data for '${part.iconKey}' not found! Skipping this part.`,
+				"error"
+			);
+			continue;
+		}
+
+		const placeX = shuttleTopLeftX + part.x;
+		const placeY = shuttleTopLeftY + part.y;
+
+		// Skip any part that would be off-map.
+		if (
+			placeX < 0 ||
+			placeY < 0 ||
+			placeX >= VARS.MAP_X ||
+			placeY >= VARS.MAP_Y
+		) {
+			continue;
+		}
+
+		// Stamp the shuttle part onto the world map.
+		if (world[`${placeX},${placeY}`]) {
+			// Overwrite the tile's icon with the correct shuttle part icon.
+			world[`${placeX},${placeY}`].icon = JSON.parse(
+				JSON.stringify(shuttleIconData)
+			);
+
+			// The passability should be defined in the icon data itself, but we'll enforce it here.
+			_setWorldGridTile(placeX, placeY, false);
+		}
+	}
+}
+
+/**
+ * Advances the game to the specified level, regenerating the world and entities for that level.
+ * @param {number} level_nr - The level number to load.
+ */
 export function nextLevel(level_nr) {
 	VARS.LEVEL = level_nr;
 	loadLevel(VARS.LEVEL); // Changed from loadWorld_maze

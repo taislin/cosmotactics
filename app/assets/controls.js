@@ -19,13 +19,17 @@ import {
 } from "../index.js";
 import { world, world_grid, nextLevel } from "./map.js";
 import { Projectile } from "./classes/projectile.js";
-import { drawMainMenu, drawLostMenu } from "./mainmenu.js";
+import { drawMainMenu, drawLostMenu, drawQuickGuide } from "./mainmenu.js";
 // Import from new utils file for shared logic
 import { findMobCoords, isTilePassableForMovement } from "./utils/gameUtils.js";
 
 let loaded = false;
 let lastMoveTime = 0;
-const MOVE_DELAY = 300; // 300ms delay between moves
+const MOVE_DELAY = 300; /**
+ * Registers global keyboard and mouse event listeners to handle all user input for the game, including gameplay, menu navigation, and UI interactions.
+ *
+ * Sets up internal handlers to process key and mouse events according to the current game state, enabling movement, targeting, menu selection, mode switching, and in-game actions. Ensures input is appropriately routed and throttled, and manages state transitions between gameplay, menus, and guide screens.
+ */
 
 export function setControls() {
 	// Keyboard controls
@@ -33,12 +37,13 @@ export function setControls() {
 	// Mouse controls
 	window.addEventListener("click", handleClick);
 
-	function handleKeyDown(e) {
-		if (VARS.isAnimating) {
-			return; // Block input if an animation is in progress
-		}
-
-		const code = e.code;
+	/**
+	 * Handles keyboard input for in-game actions during gameplay.
+	 *
+	 * Processes movement, targeting, mode switching, submenu navigation, unit commands, and other gameplay-related key events based on the current game state and selected unit. Supports both standard and numpad keys for movement, toggles between targeting and look modes, manages equipment and squad submenus, and executes actions such as reloading, stance toggling, and turn processing.
+	 * @param {KeyboardEvent} e - The keyboard event to handle.
+	 */
+	function handleGameKeys(e) {
 		const selected = VARS.SELECTED;
 		// Font size controls
 		if (e.key === "+" || e.key === "-") {
@@ -48,37 +53,7 @@ export function setControls() {
 			menuDisplay.setOptions(menuDisplayConfig);
 			return;
 		}
-		// Lost screen
-		if (VARS.GAMEWINDOW === "LOST") {
-			sleep(2000);
-			goToMainMenu();
-			resetGame();
-			return;
-		}
-		// Menu navigation
-		if (VARS.GAMEWINDOW === "MENU") {
-			if (code === "ArrowUp")
-				VARS.MENU_ITEM = Math.max(VARS.MENU_ITEM - 1, 1);
-			if (code === "ArrowDown")
-				VARS.MENU_ITEM = Math.min(VARS.MENU_ITEM + 1, 2);
-			if (code === "Enter" && VARS.MENU_ITEM === 1) {
-				VARS.GAMEWINDOW = "GAME";
-				loaded = true;
-				document
-					.getElementById("terminal")
-					.removeChild(menuDisplay.getContainer());
-				document
-					.getElementById("terminal")
-					.appendChild(gameDisplay.getContainer());
-				setupProjectileCanvas(); // Initialize the projectile canvas
-			}
-			drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
-			return;
-		}
-		// Game controls
-		if (!loaded) {
-			loaded = true;
-		}
+
 		const draw_interval = [
 			selected.x - VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
 			selected.y - VARS.MAP_DISPLAY_Y / VARS.ZOOM_LEVEL,
@@ -86,6 +61,7 @@ export function setControls() {
 			selected.y + VARS.MAP_DISPLAY_Y / VARS.ZOOM_LEVEL,
 		];
 		// Navigation and actions
+		const code = e.code;
 		switch (code) {
 			case "Escape":
 				goToMainMenu();
@@ -178,6 +154,9 @@ export function setControls() {
 			case "Digit3":
 				VARS.SUBMENU = "LOGS";
 				break;
+			case "Digit4":
+				VARS.SUBMENU = "SQUAD";
+				break;
 			case "KeyM":
 				VARS.MODE = "none";
 				break;
@@ -204,6 +183,81 @@ export function setControls() {
 		}
 	}
 
+	/**
+	 * Routes keyboard events to the appropriate handler based on the current game window state.
+	 *
+	 * Handles menu navigation, state transitions, and delegates gameplay key events to `handleGameKeys`. In the guide and lost screens, processes exit or reset actions. In the menu, manages item selection and transitions to game or guide screens.
+	 * @param {KeyboardEvent} e - The keyboard event to process.
+	 */
+	function handleKeyDown(e) {
+		if (VARS.isAnimating) {
+			return;
+		}
+		const code = e.code;
+
+		switch (VARS.GAMEWINDOW) {
+			case "GUIDE":
+				if (code === "Escape" || code === "Enter") {
+					VARS.GAMEWINDOW = "MENU";
+					drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+				}
+				break;
+
+			case "LOST":
+				sleep(2000);
+				goToMainMenu();
+				resetGame();
+				break;
+
+			case "MENU":
+				if (code === "ArrowUp")
+					VARS.MENU_ITEM = Math.max(VARS.MENU_ITEM - 1, 1);
+				else if (code === "ArrowDown")
+					VARS.MENU_ITEM = Math.min(VARS.MENU_ITEM + 1, 3);
+				else if (code === "Enter") {
+					if (VARS.MENU_ITEM === 1) {
+						// New Game
+						VARS.GAMEWINDOW = "GAME";
+						loaded = true;
+						document
+							.getElementById("terminal")
+							.removeChild(menuDisplay.getContainer());
+						document
+							.getElementById("terminal")
+							.appendChild(gameDisplay.getContainer());
+						setupProjectileCanvas();
+						// NOTE: We don't redraw the menu here because we are leaving this state.
+						return;
+					}
+					if (VARS.MENU_ITEM === 2) {
+						// Quick Guide
+						VARS.GAMEWINDOW = "GUIDE";
+						drawQuickGuide(menuDisplay, msgDisplay);
+						// NOTE: We don't redraw the menu here because we are leaving this state.
+						return;
+					}
+				}
+
+				// If we get here, it means we're still in the menu (e.g., arrow key press)
+				drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+				break;
+
+			case "GAME":
+				// Check for initial loaded state
+				if (!loaded) {
+					loaded = true;
+				}
+				// Delegate all game-related key presses to the other function
+				handleGameKeys(e);
+				break;
+		}
+	}
+
+	/**
+	 * Moves the targeting cursor in the specified direction and updates path visualisation.
+	 * @param {string} direction - The direction to move the targeting cursor ('up', 'down', 'left', 'right').
+	 * @param {number} draw_interval - The interval used for drawing path visualisation.
+	 */
 	function handleArrow(direction, draw_interval) {
 		if (VARS.TARGET[0] <= -1 || VARS.TARGET[1] <= -1) {
 			VARS.TARGET = [VARS.SELECTED.x, VARS.SELECTED.y];
@@ -294,11 +348,18 @@ export function setControls() {
 		}
 	}
 
+	/**
+	 * Handles mouse click events based on the current game window state.
+	 *
+	 * In the "LOST" state, returns to the main menu and resets the game after a delay.  
+	 * In the "MENU" state, processes menu navigation and selection, updating the game window or redrawing the menu as needed.  
+	 * In the "GAME" state, translates click positions to map or GUI coordinates, processes GUI interactions, and, if the clicked map tile is valid and visible, delegates further handling to the `clicks` function.
+	 */
 	function handleClick(e) {
 		if (VARS.isAnimating) {
 			return; // Block input if an animation is in progress
 		}
-
+		const code = e.code;
 		if (VARS.GAMEWINDOW === "LOST") {
 			sleep(2000);
 			goToMainMenu();
@@ -306,20 +367,45 @@ export function setControls() {
 			return;
 		}
 		if (VARS.GAMEWINDOW === "MENU") {
-			const coordsm = menuDisplay.eventToPosition(e);
-			if (coordsm[1] === 9 && coordsm[0] >= 5 && coordsm[0] <= 12) {
-				gameDisplay._options.layout = "tile";
-				VARS.GAMEWINDOW = "GAME";
-				loaded = true;
-				document
-					.getElementById("terminal")
-					.removeChild(menuDisplay.getContainer());
-				document
-					.getElementById("terminal")
-					.appendChild(gameDisplay.getContainer());
-				setupProjectileCanvas(); // Initialize the projectile canvas
+			let stateChanged = false; // Flag to track if we're leaving the menu
+
+			if (code === "ArrowUp") {
+				VARS.MENU_ITEM = Math.max(VARS.MENU_ITEM - 1, 1);
+			} else if (code === "ArrowDown") {
+				VARS.MENU_ITEM = Math.min(VARS.MENU_ITEM + 1, 3);
+			} else if (code === "Enter") {
+				if (VARS.MENU_ITEM === 1) {
+					// New Game
+					VARS.GAMEWINDOW = "GAME";
+					loaded = true;
+					document
+						.getElementById("terminal")
+						.removeChild(menuDisplay.getContainer());
+					document
+						.getElementById("terminal")
+						.appendChild(gameDisplay.getContainer());
+					setupProjectileCanvas();
+					stateChanged = true;
+				} else if (VARS.MENU_ITEM === 2) {
+					// Quick Guide
+					VARS.GAMEWINDOW = "GUIDE";
+					drawQuickGuide(menuDisplay, msgDisplay);
+					stateChanged = true;
+				} else if (VARS.MENU_ITEM === 3) {
+					// Settings
+					// Handle settings later if you wish
+					//console.log("Settings selected (not implemented)");
+					// Note: stateChanged remains false, so menu will just redraw
+				}
 			}
-			return;
+
+			// Only redraw the main menu if the state has NOT changed to something else.
+			// This correctly handles arrow keys while allowing Enter to switch screens.
+			if (!stateChanged) {
+				drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+			}
+
+			return; // Block further input processing
 		}
 		if (!loaded) {
 			loaded = true;
@@ -327,7 +413,7 @@ export function setControls() {
 		const coordsm = msgDisplay.eventToPosition(e);
 		if (
 			coordsm[0] >= 0 &&
-			coordsm[0] < 32 &&
+			coordsm[0] < 48 && // Use new width
 			coordsm[1] >= 0 &&
 			coordsm[1] < 40
 		) {
@@ -506,6 +592,11 @@ function clicks(currentLoc, draw_interval, O) {
 		VARS.MENU_LENGTH = locEnt.length;
 	}
 }
+/**
+ * Reloads the selected unit's ranged weapon to its maximum ammo capacity if possible, logs the action, and processes the turn.
+ * 
+ * The weapon is only reloaded if it has a reload capability, is not already at maximum ammo, and the unit is currently selected.
+ */
 export function reload(unit) {
 	if (unit.mob.slots.ranged) {
 		if (
@@ -529,19 +620,31 @@ export function reload(unit) {
 	}
 	processTurn();
 }
+/**
+ * Handles GUI click events by mapping screen coordinates to in-game actions and UI navigation.
+ *
+ * Depending on the clicked area, this function switches submenus, selects or uses items in inspect mode, triggers main or secondary actions (such as mode switching, turn processing, autofire toggle, stance toggle, reload), cycles units, or returns to the main menu. In inspect mode, clicking on stairs and meeting progression conditions advances to the next level.
+ * @param {number[]} coords - The [x, y] coordinates of the click within the GUI grid.
+ */
 function clickGUI(coords) {
-	debugLog("GUI: " + coords);
+	// ADDED: console.log for debugging all GUI clicks
+	debugLog(`GUI Click Detected at: x=${coords[0]}, y=${coords[1]}`, "info");
+
+	// Submenu Tabs (y=10)
 	if (coords[1] == 10) {
-		if (coords[0] >= 1 && coords[0] <= 11) {
+		if (coords[0] >= 1 && coords[0] <= 12) {
 			VARS.SUBMENU = "EQUIPMENT";
-		} else if (coords[0] >= 13 && coords[0] <= 21) {
+		} else if (coords[0] >= 14 && coords[0] <= 23) {
 			VARS.MODE = "look";
 			VARS.SUBMENU = "INSPECT";
-		} else if (coords[0] >= 23 && coords[0] <= 30) {
+		} else if (coords[0] >= 25 && coords[0] <= 34) {
 			VARS.SUBMENU = "LOGS";
+		} else if (coords[0] >= 36 && coords[0] <= 46) {
+			VARS.SUBMENU = "SQUAD";
 		}
-		//click the list
-	} else if (coords[1] >= 19 && coords[1] <= 19 && VARS.MODE == "look") {
+	}
+	// Item list in "Inspect" mode (y=19 and above)
+	else if (coords[1] >= 19 && coords[1] <= 24 && VARS.MODE == "look") {
 		let locEnt = [];
 		for (var e of entities) {
 			if (e.x == VARS.TARGET[0] && e.y == VARS.TARGET[1]) {
@@ -567,38 +670,42 @@ function clickGUI(coords) {
 		if (VARS.MENU_LENGTH == 0) {
 			return;
 		}
-		for (var i = 0; i < locEnt.length; i++) {
-			if (VARS.MENU_ITEM == i + 1) {
-				if (
-					locEnt[i].type == "stairs" &&
-					locEnt[i].name == "stairs (down)" &&
-					canProceedToNextLevel()
-				) {
-					proceedToNextLevel();
-				}
+		const clickedItemIndex = coords[1] - 19; // 0 for the first item, 1 for the second, etc.
+		if (clickedItemIndex < locEnt.length) {
+			const selectedItem = locEnt[clickedItemIndex];
+			// This logic assumes a "double-click" behavior: first click selects, second click uses
+			// For simplicity, we'll just check if the click corresponds to the currently selected MENU_ITEM
+			VARS.MENU_ITEM = clickedItemIndex + 1; // Update selected item based on click
+			if (
+				selectedItem.type == "stairs" &&
+				selectedItem.name == "stairs (down)" &&
+				canProceedToNextLevel()
+			) {
+				proceedToNextLevel();
 			}
 		}
-	} else if (coords[1] == 33) {
-		if (coords[0] >= 1 && coords[0] <= 6) {
+	}
+	// Bottom Control Bar - Main Actions (y=33)
+	else if (coords[1] == 33) {
+		if (coords[0] >= 1 && coords[0] <= 10) {
 			VARS.MODE = "none";
-		} else if (coords[0] >= 8 && coords[0] <= 13) {
+		} else if (coords[0] >= 12 && coords[0] <= 21) {
 			VARS.MODE = "targeting";
-		} else if (coords[0] >= 15 && coords[0] <= 20) {
+		} else if (coords[0] >= 23 && coords[0] <= 32) {
 			VARS.MODE = "look";
-		} else if (coords[0] >= 22 && coords[0] <= 30) {
-			//next unit
+		} else if (coords[0] >= 34 && coords[0] <= 46) {
 			getNextUnit();
 		}
-	} else if (coords[1] == 35) {
-		if (coords[0] >= 1 && coords[0] <= 6) {
+	}
+	// Bottom Control Bar - Secondary Actions (y=35)
+	else if (coords[1] == 35) {
+		if (coords[0] >= 1 && coords[0] <= 10) {
 			processTurn();
-		} else if (coords[0] >= 8 && coords[0] <= 15) {
-			//autofire toggle
+		} else if (coords[0] >= 12 && coords[0] <= 23) {
 			if (VARS.SELECTED) {
 				VARS.SELECTED.mob.autofire = !VARS.SELECTED.mob.autofire;
 			}
-		} else if (coords[0] >= 17 && coords[0] <= 22) {
-			//stance
+		} else if (coords[0] >= 25 && coords[0] <= 35) {
 			if (VARS.SELECTED) {
 				if (VARS.SELECTED.mob.stance == "follow") {
 					VARS.SELECTED.mob.stance = "hold";
@@ -606,16 +713,17 @@ function clickGUI(coords) {
 					VARS.SELECTED.mob.stance = "follow";
 				}
 			}
-		} else if (coords[0] >= 24 && coords[0] <= 30) {
+		} else if (coords[0] >= 37 && coords[0] <= 46) {
 			reload(VARS.SELECTED);
 			processTurn();
 		}
-	} else if (coords[1] == 1) {
+	}
+	// Top Bar (y=1)
+	else if (coords[1] == 1) {
 		if (coords[0] >= 1 && coords[0] <= 6) {
 			goToMainMenu();
-		} else if (coords[0] >= 26 && coords[0] <= 30) {
-			// goToMap is not defined in the provided files.
-			// If it's intended to navigate somewhere, define it or remove this branch.
+		} else if (coords[0] >= 42 && coords[0] <= 46) {
+			// This was the OBJ button, can be implemented later
 		}
 	}
 }

@@ -28,6 +28,16 @@ function getContentType(ext) {
 	return CONTENT_TYPES[ext] || "text/html";
 }
 
+/**
+ * Serves a static file over HTTP, handling 404 and server errors with appropriate responses.
+ * 
+ * If the requested file does not exist, attempts to serve a custom 404 page. Responds with HTTP 500 if the 404 page is also missing or if other file read errors occur.
+ * 
+ * @param {string} filePath - The absolute path to the file to serve.
+ * @param {string} contentType - The MIME type to use for the response.
+ * @param {http.ServerResponse} response - The HTTP response object.
+ * @param {boolean} [processHtml=false] - Unused flag for potential HTML processing.
+ */
 function serveFile(filePath, contentType, response, processHtml = false) {
 	fs.readFile(filePath, (error, content) => {
 		if (error) {
@@ -51,6 +61,9 @@ function serveFile(filePath, contentType, response, processHtml = false) {
 				response.writeHead(500);
 				response.end(`Server Error: ${error.code}\n`);
 			}
+		} else {
+			response.writeHead(200, { "Content-Type": contentType });
+			response.end(content, "utf-8");
 		}
 	});
 }
@@ -66,41 +79,29 @@ const server = http.createServer((request, response) => {
 		: requestUrl;
 
 	if (cleanUrl === "" || cleanUrl === "index.html") {
-		// If requesting root or main game HTML (e.g., / or /index.html)
-		// Assume the primary game HTML is in 'app/index.html'
-		// This means your game's entry point HTML should be in `app/`
-		filePath = path.join(
-			__dirname,
-			"app",
-			cleanUrl === "" ? "index.html" : cleanUrl
-		);
-	} else if (cleanUrl.startsWith("docs/") || cleanUrl.startsWith("docs")) {
-		// Requests specifically for the 'docs' directory
-		filePath = path.join(__dirname, cleanUrl); // Path is already relative from root
-		if (cleanUrl === "docs/" || cleanUrl === "docs/index.html") {
-			processHtml = true; // Only process docs/index.html
-		}
-	} else if (cleanUrl.startsWith("app/")) {
-		// Requests specifically for the 'app' directory (e.g. app/assets/...)
-		filePath = path.join(__dirname, cleanUrl); // Path is already relative from root
-	} else if (
-		// Root-level assets that are NOT in app/ or docs/ but might exist (e.g. fonts, icons, package.json)
-		// Adjust these conditions based on what truly sits at your project root.
-		cleanUrl.startsWith("fonts/") || // Fonts likely in app/fonts, but maybe root too
-		cleanUrl.startsWith("icons/") || // Icons likely in app/icons, but maybe root too
-		cleanUrl === "package.json" // package.json is at root
-	) {
+		// Serve the new landing page from the root
+		filePath = path.join(__dirname, "index.html");
+	} else if (cleanUrl.startsWith("docs")) {
+		// Requests for the 'docs' directory
 		filePath = path.join(__dirname, cleanUrl);
+		if (
+			cleanUrl === "docs" ||
+			cleanUrl === "docs/" ||
+			cleanUrl === "docs/index.html"
+		) {
+			processHtml = true; // Mark docs/index.html for version processing
+		}
 	} else {
-		// Fallback for other requests, assume they might be in 'app/'
-		// This is important for requests like /assets/something.js becoming /app/assets/something.js
-		filePath = path.join(__dirname, "app", cleanUrl);
+		// For all other requests (app/, assets/, package.json etc.),
+		// build the path directly from the project root.
+		// This correctly handles /app/index.html, /app/assets/..., /package.json etc.
+		filePath = path.join(__dirname, cleanUrl);
 	}
 
-	// Handle directory requests (e.g., /docs/ should serve /docs/index.html)
+	// Handle directory requests (e.g., /docs -> /docs/index.html)
 	if (fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()) {
 		filePath = path.join(filePath, "index.html");
-		// If the implicit index.html is for docs, process it.
+		// Check if the directory's index is the one in docs
 		if (filePath.includes(path.join("docs", "index.html"))) {
 			processHtml = true;
 		}
@@ -109,9 +110,12 @@ const server = http.createServer((request, response) => {
 	const extname = path.extname(filePath);
 	let contentType = getContentType(extname);
 
-	console.log(
-		`Requested: ${requestUrl} -> Serving: ${filePath} (ContentType: ${contentType}, HTML Process: ${processHtml})`
-	);
+	// Special check for the root landing page, which needs version processing
+	if (filePath.endsWith(path.join(__dirname, "index.html"))) {
+		processHtml = true;
+	}
+
+	//console.log(`Requested: ${requestUrl} -> Serving: ${filePath} (ContentType: ${contentType}, HTML Process: ${processHtml})`);
 	serveFile(filePath, contentType, response, processHtml);
 });
 

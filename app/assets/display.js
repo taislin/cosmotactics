@@ -377,15 +377,21 @@ function drawEffects(drawInterval) {
 	}
 }
 
+/**
+ * Renders the main game menu panel, displaying player stats, equipment, logs, squad information, and controls.
+ *
+ * The menu adapts its content based on the current submenu selection, showing detailed information such as health, armour, oxygen, combat stats, equipment, recent logs, tile inspection, and squad status for all player-controlled units. It also draws interactive controls and contextual information about the current location and entities present.
+ */
 function drawMenu() {
 	if (VARS.GAMEWINDOW == "MENU" || VARS.GAMEWINDOW == "LOST") {
 		return;
 	}
+	const PANEL_WIDTH = 48; // Define a constant for the new width
 	msgDisplay.clear();
 	msgDisplay.drawText(
 		0,
 		1,
-		"║ %c{orange}MENU%c{} ║%c{#35b59b}  COSMOTACTICS   %c{}║ %c{orange}OBJ %c{}"
+		"║ %c{orange}MENU%c{} ║%c{#35b59b}         COSMOTACTICS           %c{}║ %c{orange}OBJ %c{}" // Added spacing
 	);
 	msgDisplay.drawText(
 		2,
@@ -395,74 +401,121 @@ function drawMenu() {
 			(player_entities.indexOf(VARS.SELECTED) + 1) +
 			"]"
 	);
-
 	msgDisplay.drawText(2, 4, "%c{grey}" + VARS.SELECTED.typename);
 	let phealth = Math.max(Math.floor(VARS.SELECTED.mob.stats.health / 5), 0);
-	let parmour = Math.max(Math.floor(VARS.SELECTED.mob.stats.defence / 5), 0);
 	let shealth = "X".repeat(phealth);
-	let sarmour = "X".repeat(parmour);
-	if (!shealth) {
-		shealth = "";
-	}
-	if (!sarmour) {
-		sarmour = "";
-	}
 	let shextra = 20 - phealth;
-	let saextra = 20 - parmour;
 	let shextras = "%b{#580000}%c{#580000}" + "X".repeat(shextra);
-	let saextras = "%b{#000058}%c{#000058}" + "X".repeat(saextra);
 	msgDisplay.drawText(
 		2,
 		5,
 		"Health: %b{#9F0000}%c{#9f0000}" + shealth + shextras
 	);
 	msgDisplay.drawText(10, 5, "%c{#ccc}" + VARS.SELECTED.mob.stats.health);
+
+	// Armor Bar
+	let parmour = Math.max(Math.floor(VARS.SELECTED.mob.stats.defence / 5), 0);
+	let sarmour = "X".repeat(parmour);
+	let saextra = 20 - parmour;
+	let saextras = "%b{#000058}%c{#000058}" + "X".repeat(saextra);
 	msgDisplay.drawText(
 		2,
 		6,
 		"Armour: %b{#00009f}%c{#00009f}" + sarmour + saextras
 	);
 	msgDisplay.drawText(10, 6, "%c{#ccc}" + VARS.SELECTED.mob.stats.defence);
+
+	// Oxygen Bar
 	let prad = Math.max(Math.floor(STATS.OXYGEN / 5), 0);
 	let srad = "X".repeat(prad);
-	if (!srad) {
-		srad = "";
-	}
 	let srextra = 20 - prad;
 	let srextras = "%b{#005800}%c{#005800}" + "X".repeat(srextra);
-
 	msgDisplay.drawText(
 		2,
 		7,
 		"Oxygen: %b{#009f00}%c{#009f00}" + srad + srextras
 	);
 	msgDisplay.drawText(10, 7, "%c{#ccc}" + STATS.OXYGEN);
+
+	// Gold and Turn
 	msgDisplay.drawText(2, 8, "Gold: %c{yellow}" + STATS.GOLD);
 	msgDisplay.drawText(
-		24 - VARS.TURN.toString().length,
+		PANEL_WIDTH - 2 - ("Turn: " + VARS.TURN).length,
 		8,
 		"Turn: %c{orange}" + VARS.TURN
 	);
 
+	// --- NEW: Core Combat Stats on the right of the bars ---
+	const STATS_X_POS = 26; // X-coordinate for the new stats column
+	// Ranged Damage
+	let rangedDmgText = "%c{grey}N/A";
+	if (VARS.SELECTED.mob.slots.ranged) {
+		const rWpn = VARS.SELECTED.mob.slots.ranged;
+		const minDmg = Math.floor(rWpn.stats.attack - rWpn.stats.attack * 0.1);
+		const maxDmg = Math.ceil(rWpn.stats.attack + rWpn.stats.attack * 0.1);
+		rangedDmgText = `%c{white}${minDmg}-${maxDmg} %c{grey}(${
+			rWpn.itemtype.split(" ")[0]
+		})`;
+	}
+	msgDisplay.drawText(STATS_X_POS, 5, `R-DMG: ${rangedDmgText}`);
+
+	// Melee Damage
+	let meleeDmgText = "%c{grey}N/A";
+	let meleeAttack = VARS.SELECTED.mob.stats.attack; // Base attack
+	if (VARS.SELECTED.mob.slots.melee) {
+		meleeAttack = VARS.SELECTED.mob.slots.melee.stats.attack; // Weapon attack
+	}
+	const minMelee = Math.floor(meleeAttack - meleeAttack * 0.1);
+	const maxMelee = Math.ceil(meleeAttack + meleeAttack * 0.1);
+	meleeDmgText = `%c{white}${minMelee}-${maxMelee}`;
+	msgDisplay.drawText(STATS_X_POS, 6, `M-DMG: ${meleeDmgText}`);
+
+	// Speed
+	msgDisplay.drawText(
+		STATS_X_POS,
+		7,
+		`Speed: %c{white}${VARS.SELECTED.mob.stats.speed.toFixed(2)}`
+	);
+
+	// --- BORDERS AND TABS ---
 	for (var i = 1; i < 40; i++) {
 		msgDisplay.drawText(0, i, "║");
-		msgDisplay.drawText(31, i, "║");
+		msgDisplay.drawText(PANEL_WIDTH - 1, i, "║");
 	}
 
-	msgDisplay.drawText(0, 0, "╔══════╦═════════════════╦═════╗");
-	msgDisplay.drawText(0, 2, "╠══════╩═════════════════╩═════╣");
-	msgDisplay.drawText(0, 9, "╟───────────┬─────────┬────────╢");
+	msgDisplay.drawText(
+		0,
+		0,
+		"╔══════╦════════════════════════════════╦══════╗"
+	); // Adjusted for new width
+	msgDisplay.drawText(
+		0,
+		2,
+		"╠══════╩════════════════════════════════╩══════╣"
+	);
+	msgDisplay.drawText(
+		0,
+		9,
+		"╟────────────┬──────────┬──────────┬───────────╢"
+	);
 	let submenus =
-		"║%c{#cc8400}%b{#ccc}1.%c{#000}EQUIPMENT%c{}%b{}│%c{orange}2.%c{}OBSERVE│%c{orange} 3.%c{}LOGS ║";
+		"║%c{#cc8400}%b{#ccc}1.%c{#000}EQUIPMENT %c{}%b{}│%c{orange}2.%c{}OBSERVE │%c{orange} 3.%c{}LOGS   %b{}%c{}│ %c{orange}4.%c{}SQUAD   ║";
 	if (VARS.SUBMENU == "INSPECT") {
 		submenus =
-			"║%c{orange}1.%c{}EQUIPMENT│%c{#cc8400}%b{#ccc}2.%c{#000}OBSERVE%c{}%b{}│%c{orange} 3.%c{}LOGS ║";
+			"║%c{orange}1.%c{}EQUIPMENT │%c{#cc8400}%b{#ccc}2.%c{#000}OBSERVE %c{}%b{}│%c{orange} 3.%c{}LOGS   %b{}%c{}│ %c{orange}4.%c{}SQUAD   ║";
 	} else if (VARS.SUBMENU == "LOGS") {
 		submenus =
-			"║%c{orange}1.%c{}EQUIPMENT│%c{orange}2.%c{}OBSERVE│%c{#cc8400}%b{#ccc} 3.%c{#000}LOGS %c{}%b{}║";
+			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE │%c{#cc8400}%b{#ccc} 3.%c{#000}LOGS   %b{}%c{}│ %c{orange}4.%c{}SQUAD   ║";
+	} else if (VARS.SUBMENU == "SQUAD") {
+		submenus =
+			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE │%c{orange} 3.%c{}LOGS   │%b{#ccc}%c{#000}4.SQUAD    %b{}%c{}║";
 	}
 	msgDisplay.drawText(0, 10, submenus);
-	msgDisplay.drawText(0, 11, "╟───────────┴─────────┴────────╢");
+	msgDisplay.drawText(
+		0,
+		11,
+		"╟────────────┴──────────┴──────────┴───────────╢"
+	);
 	if (VARS.SUBMENU == "LOGS") {
 		let parsedlog = "";
 		if (VARS.GAMELOG.length > 0) {
@@ -706,44 +759,98 @@ function drawMenu() {
 			);
 		}
 	}
+	// --- NEW: SQUAD PANEL DRAWING LOGIC ---
+	else if (VARS.SUBMENU == "SQUAD") {
+		let yPos = 13;
+		for (let i = 0; i < player_entities.length; i++) {
+			const unit = player_entities[i];
+			const isSelected = unit === VARS.SELECTED;
+			const nameColor = isSelected ? "%c{yellow}" : "%c{white}";
+
+			// Draw Name and Designation
+			msgDisplay.drawText(
+				2,
+				yPos,
+				`${nameColor}[Alpha ${i + 1}] ${unit.name}`
+			);
+
+			// Draw Health
+			const hpText = `%c{grey}HP: %c{white}${unit.mob.stats.health}/${unit.originalHealth}`;
+			msgDisplay.drawText(4, yPos + 1, hpText);
+
+			// Draw Ammo
+			let ammoText = "%c{grey}AMMO: --/--";
+			if (unit.mob.slots.ranged) {
+				const wpn = unit.mob.slots.ranged;
+				ammoText = `%c{grey}AMMO: %c{white}${wpn.stats.ammo}/${wpn.stats.max_ammo}`;
+			}
+			msgDisplay.drawText(22, yPos + 1, ammoText);
+
+			// Draw Stance and Autofire
+			let stanceText = `%c{grey}STANCE: %c{white}${unit.mob.stance.toUpperCase()}`;
+			if (isSelected) {
+				stanceText = "%c{grey}STANCE: N/A (ACTIVE)";
+			}
+			msgDisplay.drawText(4, yPos + 2, stanceText);
+
+			let afText = unit.mob.autofire ? "%c{#00ff00}ON" : "%c{red}OFF";
+			msgDisplay.drawText(22, yPos + 2, `%c{grey}AUTOFIR: ${afText}`);
+
+			yPos += 4; // Move to the next unit's position
+		}
+	}
+
+	// --- BOTTOM CONTROL BAR ---
 
 	//│║ ┬ ─ ┴ ╥ ╤ ╦ ╩
-	msgDisplay.drawText(0, 32, "╠══════╦══════╦══════╦═════════╣");
+	msgDisplay.drawText(
+		0,
+		32,
+		"╠══════════╦══════════╦══════════╦═════════════╣"
+	); // Adjusted
 	let sstring =
-		"║ %c{orange}M%c{}OVE ║ %c{orange}F%c{}IRE ║ %c{orange}L%c{}OOK ║I%c{orange}N%c{}TERACT ║";
+		"║   %c{orange}M%c{}OVE   ║   %c{orange}F%c{}IRE   ║   %c{orange}L%c{}OOK   ║  %c{orange}N%c{}EXT UNIT  ║"; // Adjusted
 	if (VARS.MODE == "none") {
 		sstring =
-			"║%b{#ccc} %c{#cc8400}M%c{#000}OVE %b{}%c{}║ %c{orange}F%c{}IRE ║ %c{orange}L%c{}OOK ║%c{orange}N%c{}EXT UNIT║";
+			"║%b{#ccc}   %c{#cc8400}M%c{#000}OVE   %b{}%c{}║   %c{orange}F%c{}IRE   ║   %c{orange}L%c{}OOK   ║  %c{orange}N%c{}EXT UNIT  ║";
 	} else if (VARS.MODE == "look") {
 		sstring =
-			"║ %c{orange}M%c{}OVE ║ %c{orange}F%c{}IRE ║%b{#ccc} %c{#cc8400}L%c{#000}OOK %b{}%c{}║%c{orange}N%c{}EXT UNIT║";
+			"║   %c{orange}M%c{}OVE   ║   %c{orange}F%c{}IRE   ║%b{#ccc}   %c{#cc8400}L%c{#000}OOK   %b{}%c{}║  %c{orange}N%c{}EXT UNIT  ║";
 	} else if (VARS.MODE == "targeting") {
 		sstring =
-			"║ %c{orange}M%c{}OVE ║%b{#ccc}%c{#cc8400} F%c{#000}IRE %c{}%b{}║ %c{orange}L%c{}OOK ║%c{orange}N%c{}EXT UNIT║";
+			"║   %c{orange}M%c{}OVE   ║%b{#ccc}%c{#cc8400}   F%c{#000}IRE   %c{}%b{}║   %c{orange}L%c{}OOK   ║  %c{orange}N%c{}EXT UNIT  ║";
 	}
 	msgDisplay.drawText(0, 33, sstring);
-	msgDisplay.drawText(0, 34, "╠══════╬══════╩═╦════╩═╦═══════╣");
-	let autof = "AUTOFIRE";
+	msgDisplay.drawText(
+		0,
+		34,
+		"╠══════════╬══════════╩═╦════════╩══╦══════════╣"
+	); // Adjusted
+	let autof = "%b{#9F0000}%c{#FFF}AUTOFIRE%b{}%c{orange}(O)%c{}";
 	let behav = "FOLLOW";
 	if (VARS.SELECTED && VARS.SELECTED.mob.autofire == true) {
-		autof = "%b{#ccc}%c{#000}AUTOFIRE%b{}%c{}";
+		autof = "%b{#005800}%c{#FFF}AUTOFIRE%b{}%c{orange}(O)%c{}";
 	}
 	if (VARS.SELECTED && VARS.SELECTED.mob.stance == "follow") {
-		behav = "%b{#ccc}%c{#000}FOLLOW%b{}%c{}";
+		behav = "%b{#005800}%c{#FFF}FOLLOW%b{}%c{orange}(P)%c{}";
 	} else if (VARS.SELECTED && VARS.SELECTED.mob.stance == "hold") {
-		behav = "%b{#ccc}%c{#000} HOLD %b{}%c{}";
+		behav = "%b{#00009f}%c{#FFF} HOLD %b{}%c{orange}(P)%c{}";
 	}
 	msgDisplay.drawText(
 		0,
 		35,
-		"║ WAI%c{orange}T%c{} ║" +
+		"║   WAI%c{orange}T%c{}   ║ " +
 			autof +
-			"║" +
+			"║ " +
 			behav +
-			"║%c{orange}R%c{}ELOAD ║"
+			" ║  %c{orange}R%c{}ELOAD  ║" // Adjusted
 	);
 
-	msgDisplay.drawText(0, 36, "╠══════╩════════╩══════╩═══════╣");
+	msgDisplay.drawText(
+		0,
+		36,
+		"╠══════════╩════════════╩═══════════╩══════════╣"
+	); // Adjusted
 
 	let locs = world[Number(currentLoc[0]) + "," + Number(currentLoc[1])];
 
@@ -763,13 +870,30 @@ function drawMenu() {
 				"%c{grey}" + locs.icon.name + " (" + locs.x + "," + locs.y + ")"
 			);
 		}
-		msgDisplay.drawText(31 - atmo_unsafe.length + 11, 38, atmo_unsafe);
-		msgDisplay.drawText(31 - tmp.length, 37, "%c{yellow}" + tmp);
+		msgDisplay.drawText(
+			PANEL_WIDTH - atmo_unsafe.length + 9,
+			38,
+			atmo_unsafe
+		); // Adjusted
+		msgDisplay.drawText(
+			PANEL_WIDTH - tmp.length - 1,
+			37,
+			"%c{yellow}" + tmp
+		); // Adjusted
 	}
 
-	msgDisplay.drawText(0, 39, "╚══════════════════════════════╝");
+	msgDisplay.drawText(
+		0,
+		39,
+		"╚══════════════════════════════════════════════╝"
+	); // Adjusted
 }
 
+/**
+ * Updates the field of view (FOV) for player-controlled entities, marking visible and seen tiles, entities, and items.
+ * 
+ * Resets visibility for all tiles, entities, and items, then uses a shadowcasting algorithm to determine which map areas are visible to player entities. Marks tiles, entities, and items as visible or seen based on their presence within the computed FOV radius.
+ */
 function updateFOV(player) {
 	for (var tile in world) {
 		world[tile].visible = false;

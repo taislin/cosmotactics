@@ -1,6 +1,6 @@
 // Import modules and functions
 import { setControls } from "./assets/controls.js";
-import { loadIcons, _tileMap } from "./assets/classes/icons.js";
+import { loadIcons } from "./assets/classes/icons.js";
 import { loadLevel } from "./assets/map.js";
 import { loadItems } from "./assets/classes/items.js";
 import { drawMainMenu } from "./assets/mainmenu.js";
@@ -36,23 +36,25 @@ export const gameDisplayConfig = {
 	height: 20,
 	forceSquareRatio: false,
 	fontSize: 16,
-	fontFamily: "Noto Sans Mono, monospace",
+	fontFamily: "Input Mono, Noto Sans Mono, monospace",
 	layout: "tile-gl",
 	bg: "#222",
 	tileWidth: 32,
 	tileHeight: 32,
 	tileSet: tileSets,
-	tileMap: _tileMap,
+	// The `tileMap` property is not needed for the 'tile-gl' backend when icon
+	// objects with their own `tcoords` are passed directly to `draw()`. The
+	// previous `_tileMap` implementation was buggy and has been removed.
 	tileColorize: true,
 };
 export const msgDisplayConfig = {
-	width: 32,
+	width: 48,
 	height: 40,
 	forceSquareRatio: false,
 	fontSize: 16,
 	bg: "#222",
 	fg: "#fff",
-	fontFamily: "Noto Sans Mono, monospace",
+	fontFamily: "Input Mono, Noto Sans Mono, monospace",
 	spacing: 1,
 };
 export const menuDisplayConfig = {

@@ -72,30 +72,49 @@ export function updateGameLogic(deltaTime) {
 }
 
 /**
- * Checks if a tile at the specified coordinates is passable for general pathfinding (e.g., for LOS or basic AI without considering specific unit collisions).
- * This function now uses the more robust `isTilePassableForMovement` from `gameUtils.js` by passing `null` for the moving unit.
- * @param {number} x - The x-coordinate to check.
- * @param {number} y - The y-coordinate to check.
- * @returns {boolean} True if the tile is generally passable, false otherwise.
+ * Determines if the tile at the given coordinates is passable for general movement or pathfinding.
+ * @param {number} x - The x-coordinate of the tile.
+ * @param {number} y - The y-coordinate of the tile.
+ * @returns {boolean} True if the tile is passable, false otherwise.
  */
 export function checkMove(x, y) {
 	return isTilePassableForMovement(x, y, null);
 }
 
 /**
- * Checks if a tile at the specified coordinates has light.
- * This function relies on `world_grid` which directly reflects terrain passability for light.
- * @param {number} x - The x-coordinate to check.
- * @param {number} y - The y-coordinate to check.
- * @returns {boolean} True if the tile has light (i.e., is not a blocking wall), false otherwise.
+ * Determines whether a tile at the given coordinates is transparent to light.
+ *
+ * Returns false if the coordinates are out of bounds or the tile does not exist. Returns true if the tile's icon explicitly marks it as transparent, or if the tile is passable for movement according to the world grid. Otherwise, returns false.
+ *
+ * @param {number} x - The x-coordinate of the tile.
+ * @param {number} y - The y-coordinate of the tile.
+ * @returns {boolean} True if light can pass through the tile; false otherwise.
  */
 export function checkLight(x, y) {
-	if (world_grid[y] && world_grid[y][x] === 1) {
-		// 1 typically means passable for light
-		return true;
-	} else {
+	// Check for out-of-bounds coordinates first
+	if (x < 0 || y < 0 || x >= VARS.MAP_X || y >= VARS.MAP_Y) {
+		return false;
+  }
+
+	const tile = world[x + "," + y];
+	if (!tile) {
+		// If for some reason the tile doesn't exist in the world object, treat as a wall.
 		return false;
 	}
+
+	// A tile is transparent if its icon definition explicitly says so.
+	if (tile.icon && tile.icon.transparent === true) {
+		return true;
+	}
+	
+	// Fallback for all other tiles:
+	// A tile is transparent if it is passable for movement (e.g., floor, grass).
+	// This maintains the original behavior for walls and other obstacles.
+	if (world_grid[y] && world_grid[y][x] === 1) {
+		return true;
+	}
+
+	return false; // Otherwise, it blocks light.
 }
 
 /**
@@ -281,9 +300,12 @@ function log(event) {
 }
 
 /**
- * Logs a debug message to the console and the in-game debug log.
- * @param {string|Object} text - The message to log.
- * @param {string} [type="log"] - The type of log message (log, error, warn, info, debug).
+ * Outputs a debug message to both the browser console and the in-game debug log when debugging is enabled.
+ * 
+ * Supports log types: "log", "error", "warn", "info", and "debug", each with distinct formatting and console output. Messages are timestamped and colour-coded in the in-game log.
+ * 
+ * @param {string|Object} text - The message or object to log.
+ * @param {string} [type="log"] - The log type, affecting formatting and console method.
  */
 export function debugLog(text, type = "log") {
 	let typecolor = "white";
@@ -293,6 +315,7 @@ export function debugLog(text, type = "log") {
 		}
 		if (type === "log") {
 			typecolor = "green";
+			console.log(text);
 		} else if (type === "error") {
 			console.error(text);
 			typecolor = "red";

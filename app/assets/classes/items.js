@@ -1,7 +1,7 @@
 import { items, icons } from "../engine.js";
 import { WIcon } from "./icons.js";
 import { importedItems } from "../datasets/imports.js";
-
+import { debugLog } from "../engine.js";
 /**
  * Represents an item in the game.
  */
@@ -73,14 +73,24 @@ export function loadItems() {
 		);
 	});
 }
-// Helper to assign icon to item, handling missing or invalid icons.
+/**
+ * Resolves and returns a valid WIcon instance for the given icon identifier.
+ *
+ * If the input is already a WIcon, it is returned as-is. If the icon identifier matches an entry in the icons collection, a deep copy of that icon is returned. If the icon is missing or invalid, logs an error and returns a deep copy of the default "?" icon.
+ *
+ * @param {string|WIcon} icon - The icon identifier or WIcon instance to resolve.
+ * @return {WIcon} The resolved WIcon instance.
+ */
 function assignIcon(icon) {
 	if (icon instanceof WIcon) {
 		return icon;
 	} else if (icons[icon]) {
 		return JSON.parse(JSON.stringify(icons[icon]));
 	} else {
-		console.log("\x1b[31mERROR:\x1b[0m " + "icon " + icon + " not found!");
+		debugLog(
+			"\x1b[31mERROR:\x1b[0m " + "icon " + icon + " not found!",
+			"error"
+		);
 		return JSON.parse(JSON.stringify(icons["?"]));
 	}
 }
