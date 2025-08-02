@@ -105,7 +105,7 @@ export function drawLostMenu(menuDisplay, gameDisplay, msgDisplay) {
 }
 /**
  * Renders the quick start guide screen, displaying gameplay objectives, controls, and UI tips across the menu and message panels.
- * 
+ *
  * The left panel shows the guide title and instructions for returning to the main menu. The right panel presents a multi-section overview of objectives, controls, combat, squad commands, and UI elements, formatted with colour highlights and indentation for clarity.
  */
 export function drawQuickGuide(menuDisplay, msgDisplay) {
@@ -154,4 +154,83 @@ export function drawQuickGuide(menuDisplay, msgDisplay) {
 		y++,
 		"%c{#009f00}Oxygen:%c{} Your squad's air supply"
 	);
+}
+export function drawMissionSelectScreen() {
+	menuDisplay.setOptions({
+		fontSize: 16,
+		fontFamily: "Space Mono, monospace",
+	});
+	msgDisplay.setOptions({
+		fontSize: 16,
+		fontFamily: "Space Mono, monospace",
+	});
+	menuDisplay.clear();
+	msgDisplay.clear();
+
+	menuDisplay.drawText(2, 1, "%c{#ffa500}SELECT DEPLOYMENT ZONE");
+
+	// Display the 3 mission choices on the left panel
+	let y = 3;
+	VARS.missionChoices.forEach((mission, index) => {
+		const isSelected = VARS.MENU_ITEM === index + 1;
+		const color = isSelected ? "%c{yellow}" : "%c{white}";
+		const selector = isSelected ? "> " : "  ";
+
+		menuDisplay.drawText(2, y, `${selector}${color}${mission.planetName}`);
+		y += 2; // Add some space between options
+	});
+
+	// Display details of the SELECTED mission on the right panel (msgDisplay)
+	if (
+		VARS.missionChoices.length > 0 &&
+		VARS.MENU_ITEM - 1 < VARS.missionChoices.length
+	) {
+		const selectedMission = VARS.missionChoices[VARS.MENU_ITEM - 1];
+		let detailY = 2;
+
+		msgDisplay.drawText(
+			2,
+			detailY++,
+			`%c{#ffa500}PLANET: %c{white}${selectedMission.planetName}`
+		);
+		msgDisplay.drawText(
+			2,
+			detailY++,
+			`%c{#ffa500}GEOGRAPHY: %c{white}${selectedMission.geography}`
+		);
+		msgDisplay.drawText(
+			2,
+			detailY++,
+			`%c{#ffa500}ATMOSPHERE: %c{white}${selectedMission.atmosphere}`
+		);
+		detailY++;
+
+		msgDisplay.drawText(2, detailY++, `%c{#ffa500}INTEL:`);
+		let alienList = selectedMission.knownAliens.join(", ");
+		if (selectedMission.knownAliens[0] === "Unknown") {
+			alienList = "%c{red}CLASSIFIED";
+		}
+		msgDisplay.drawText(4, detailY++, `Hostile presence: ${alienList}`);
+		detailY++;
+
+		msgDisplay.drawText(
+			2,
+			detailY++,
+			`%c{#ffa500}OBJECTIVE: %c{white}${selectedMission.objective}`
+		);
+		detailY++;
+
+		msgDisplay.drawText(
+			2,
+			detailY++,
+			`%c{#ffa500}REWARD: %c{yellow}${selectedMission.reward}`
+		);
+		detailY += 3;
+
+		msgDisplay.drawText(
+			2,
+			detailY++,
+			"%c{orange}[ Arrows to select, Enter to deploy ]"
+		);
+	}
 }

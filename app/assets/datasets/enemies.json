@@ -4,6 +4,10 @@
 		"desc": "A grotesque, reanimated husk. Slow and predictable, but its mutated flesh can absorb surprising amounts of punishment.",
 		"type": "mob",
 		"icon": "shambler",
+		"tags": [
+			"beast_medium",
+			"jungle_creature"
+		],
 		"death_message": "The reanimated husk collapses into a pile of gore.",
 		"ai": "basic",
 		"stats": {
@@ -28,6 +32,10 @@
 		"desc": "A standard infantry unit of the Grey Collective. Agile and equipped with advanced energy weapons, they represent a common threat.",
 		"type": "mob",
 		"icon": "grey",
+		"tags": [
+			"beast_medium",
+			"sapient_race"
+		],
 		"death_message": "The Grey's large head explodes in a shower of psionic energy.",
 		"ai": "ranged",
 		"stats": {
@@ -52,6 +60,11 @@
 		"desc": "Small, swift, and cunning, Wurries often operate in packs, using their blaster pistols to harass larger targets before closing in.",
 		"type": "mob",
 		"icon": "wurrie",
+		"tags": [
+			"sapient_race",
+			"jungle_creature",
+			"beast_small"
+		],
 		"ai": "ranged",
 		"stats": {
 			"health": 50,
@@ -75,6 +88,10 @@
 		"desc": "A terrifying land-dwelling parasite with rows of razor-sharp teeth. Extremely fast and relentless once it detects prey.",
 		"type": "mob",
 		"icon": "space_lamprey",
+		"tags": [
+			"cave_creature",
+			"beast_large"
+		],
 		"ai": "melee_agressive",
 		"stats": {
 			"health": 80,
@@ -99,6 +116,11 @@
 		"type": "mob",
 		"icon": "arakno",
 		"ai": "melee_agressive",
+		"tags": [
+			"cave_creature",
+			"jungle_creature",
+			"beast_small"
+		],
 		"stats": {
 			"health": 60,
 			"attack": 25,
@@ -122,6 +144,9 @@
 		"type": "mob",
 		"icon": "turret",
 		"ai": "basic",
+		"tags": [
+			"mechanical"
+		],
 		"stats": {
 			"health": 300,
 			"attack": 0,
@@ -145,6 +170,10 @@
 		"type": "mob",
 		"icon": "licker",
 		"ai": "basic",
+		"tags": [
+			"cave_creature",
+			"beast_small"
+		],
 		"stats": {
 			"health": 100,
 			"attack": 15,
@@ -168,6 +197,11 @@
 		"type": "mob",
 		"icon": "shell",
 		"ai": "melee_agressive",
+		"tags": [
+			"cave_creature",
+			"jungle_creature",
+			"beast_medium"
+		],
 		"stats": {
 			"health": 60,
 			"attack": 18,
@@ -191,6 +225,11 @@
 		"type": "mob",
 		"icon": "sludge_mimic",
 		"ai": "basic",
+		"tags": [
+			"cave_creature",
+			"jungle_creature",
+			"plant_hostile"
+		],
 		"stats": {
 			"health": 70,
 			"attack": 20,
@@ -214,6 +253,11 @@
 		"type": "mob",
 		"icon": "resonance_pylon",
 		"ai": "basic",
+		"tags": [
+			"cave_creature",
+			"surface_creature",
+			"plant_hostile"
+		],
 		"stats": {
 			"health": 120,
 			"attack": 0,
