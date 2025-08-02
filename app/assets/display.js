@@ -503,7 +503,7 @@ function drawMenu() {
 			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE │%c{#cc8400}%b{#ccc} 3.%c{#000}LOGS   %b{}%c{}│ %c{orange}4.%c{}SQUAD   ║";
 	} else if (VARS.SUBMENU == "SQUAD") {
 		submenus =
-			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE │%c{orange} 3.%c{}LOGS   │%b{#ccc}%c{#000}4.SQUAD    %b{}%c{}║";
+			"║%c{orange}1.%c{}EQUIPMENT │%c{orange}2.%c{}OBSERVE │%c{orange} 3.%c{}LOGS   │%b{#ccc}%c{#000} 4.SQUAD   %b{}%c{}║";
 	}
 	msgDisplay.drawText(0, 10, submenus);
 	msgDisplay.drawText(
@@ -514,15 +514,11 @@ function drawMenu() {
 	if (VARS.SUBMENU == "LOGS") {
 		let parsedlog = "";
 		if (VARS.GAMELOG.length > 0) {
-			for (var l = 0; l <= Math.min(7, VARS.GAMELOG.length - 1); l++) {
-				if (Number(VARS.GAMELOG[l].split(":")[0]) == VARS.TURN - 1) {
-					parsedlog += "%c{yellow}> %c{}" + VARS.GAMELOG[l] + "\n\n";
-				} else {
-					parsedlog += VARS.GAMELOG[l] + "\n";
-				}
+			for (var l = 0; l <= Math.min(8, VARS.GAMELOG.length - 1); l++) {
+				parsedlog += VARS.GAMELOG[l] + "\n";
 			}
 		}
-		msgDisplay.drawText(2, 13, parsedlog, 29);
+		msgDisplay.drawText(2, 13, parsedlog, 44);
 	} else if (VARS.SUBMENU == "INSPECT") {
 		if (
 			!(
@@ -782,14 +778,19 @@ function drawMenu() {
 			msgDisplay.drawText(22, yPos + 1, ammoText);
 
 			// Draw Stance and Autofire
-			let stanceText = `%c{grey}STANCE: %c{white}${unit.mob.stance.toUpperCase()}`;
-			if (isSelected) {
-				stanceText = "%c{grey}STANCE: N/A (ACTIVE)";
+			// Draw Stance and Autofire
+			let tempcolor = "white";
+			if (unit.mob.stance.toUpperCase() == "HOLD") {
+				tempcolor = "#006aff";
+			} else if (unit.mob.stance.toUpperCase() == "FOLLOW") {
+				tempcolor = "#00FF7F";
 			}
+			let stanceText = `%c{grey}STANCE: %c{${tempcolor}}${unit.mob.stance.toUpperCase()}`;
+
 			msgDisplay.drawText(4, yPos + 2, stanceText);
 
 			let afText = unit.mob.autofire ? "%c{#00ff00}ON" : "%c{red}OFF";
-			msgDisplay.drawText(22, yPos + 2, `%c{grey}AUTOFIR: ${afText}`);
+			msgDisplay.drawText(22, yPos + 2, `%c{grey}AUTOFIRE: ${afText}`);
 
 			yPos += 4; // Move to the next unit's position
 		}

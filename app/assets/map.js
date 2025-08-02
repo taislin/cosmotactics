@@ -5,6 +5,7 @@ import {
 	items,
 	player_entities,
 	world_items,
+	world_states,
 	debugLog,
 	log,
 } from "./engine.js";
@@ -188,26 +189,80 @@ function generateCaveWorld(level) {
 	}
 	return mapData;
 }
-
 /**
- * RENAMED & REFACTORED: Master function to load a new level.
- * It decides which map type to generate and then populates it.
- * @param {number} level - The level number to generate.
+ * Saves the current state of the world to the world_states manager.
+ * This should be called BEFORE loading a new level.
  */
-export function loadLevel(level = 0) {
-	debugLog(`--- Loading Level ${level} ---`, "info");
+function saveCurrentLevelState() {
+	if (VARS.LEVEL === null) return; // Don't save if no level is active
 
-	// --- 1. Reset State ---
+	debugLog(`Saving state for level ${VARS.LEVEL}`, "info");
+
+	// Filter out player entities, as they are persistent and will be re-added.
+	const nonPlayerEntities = entities.filter((e) => e.owner !== "player");
+
+	world_states[VARS.LEVEL] = {
+		world: JSON.parse(JSON.stringify(world)),
+		world_grid: JSON.parse(JSON.stringify(world_grid)),
+		world_items: JSON.parse(JSON.stringify(world_items)),
+		entities: JSON.parse(JSON.stringify(nonPlayerEntities)), // Save only non-player entities
+		map_x: VARS.MAP_X,
+		map_y: VARS.MAP_Y,
+	};
+}
+/**
+ * The master function to load a level. It will either generate a new one
+ * or restore a previously visited one from world_states.
+ * @param {number} level - The level number to load.
+ * @param {object} [entryPoint=null] - Optional coords {x, y} for where the player should appear.
+ */
+export function loadLevel(level, entryPoint = null) {
+	// --- 1. Check for and load existing state ---
+	if (world_states[level]) {
+		debugLog(`--- Loading existing state for Level ${level} ---`, "info");
+		const savedState = world_states[level];
+
+		world = savedState.world;
+		world_grid = savedState.world_grid;
+		world_items = savedState.world_items;
+
+		// Restore non-player entities
+		entities.length = 0; // Clear current entities
+		savedState.entities.forEach((e_data) => {
+			// This needs a proper re-hydration function, but for now we'll just push the data
+			// In a more complex system, you'd new up WEntity and WMob from the saved data.
+			entities.push(e_data);
+		});
+
+		VARS.MAP_X = savedState.map_x;
+		VARS.MAP_Y = savedState.map_y;
+
+		// Re-add player entities to the current entity list
+		player_entities.forEach((p) => entities.push(p));
+
+		if (entryPoint) {
+			player_entities.forEach((p, i) => {
+				p.x = entryPoint.x + (i % 2);
+				p.y = entryPoint.y + Math.floor(i / 2);
+			});
+		}
+		VARS.SELECTED = player_entities[0];
+		VARS.LEVEL = level;
+		return; // Stop here, level is loaded
+	}
+
+	// --- 2. If no saved state, generate a new level ---
+	debugLog(`--- Generating new Level ${level} ---`, "info");
 	world = {};
 	world_items.length = 0;
 	entities.length = 0;
-	player_entities.forEach((p) => entities.push(p)); // Re-add persistent player entities
+	player_entities.forEach((p) => entities.push(p));
 
 	VARS.MAP_X = 40 + level * 2;
 	VARS.MAP_Y = 30 + level * 2;
 	world_grid = new Array(VARS.MAP_Y);
-
-	// --- 2. Decide Map Type & Generate Base Terrain ---
+	VARS.LEVEL = level; // Set current level number
+	// --- 3. Decide Map Type & Generate Base Terrain ---
 	let mapData;
 	let mapType;
 	if (level === 0) {
@@ -223,7 +278,7 @@ export function loadLevel(level = 0) {
 		mapData = generateCaveWorld(level);
 	}
 
-	// --- 3. Populate World from mapData ---
+	// --- 4. Populate World from mapData ---
 	for (let y = 0; y < VARS.MAP_Y; y++) {
 		world_grid[y] = new Array(VARS.MAP_X);
 		for (let x = 0; x < VARS.MAP_X; x++) {
@@ -251,13 +306,27 @@ export function loadLevel(level = 0) {
 		}
 	}
 
-	// --- 4. Place Player & Objective ---
+	// --- 5. Place Player & Objective ---
 	const playerStartPos = findClearAreaForPlayer();
-	addPlayerUnits(playerStartPos.x, playerStartPos.y);
-	placeShuttle(playerStartPos.x, playerStartPos.y);
-	placeStairs(playerStartPos.x, playerStartPos.y);
+	// Use entryPoint if provided, otherwise use generated start
+	const startX = entryPoint ? entryPoint.x : playerStartPos.x;
+	const startY = entryPoint ? entryPoint.y : playerStartPos.y;
 
-	// --- 5. Spawn Enemies and Items based on Map Type ---
+	addPlayerUnits(startX, startY);
+
+	if (level === 0) {
+		// Only place shuttle on the surface level
+		placeShuttle(startX, startY);
+	} else {
+		// For deeper levels, place "Stairs Up" where the player entered.
+		world[`${startX},${startY}`].icon = JSON.parse(
+			JSON.stringify(icons["stairs_up"])
+		);
+	}
+
+	placeStairs(startX, startY); // This places "Stairs Down"
+
+	// --- 6. Spawn Enemies and Items based on Map Type ---
 	if (mapType === "forest") {
 		addEnemiesAndItems_Forest(level);
 	} else {
@@ -593,69 +662,98 @@ function createPlayerUnit(x, y, unitName) {
 }
 
 /**
- * Places a 2x2 shuttle object on the map near the player's starting point.
- * This function overwrites existing terrain and makes the tiles impassable.
+ * Finds a valid 2x2 clear area to place the shuttle and stamps it onto the map.
+ * It searches in a spiral pattern around the player's start position to ensure
+ * the shuttle is close, visible, and fully on the map.
  * @param {number} playerStartX - The x-coordinate of the player's starting position.
  * @param {number} playerStartY - The y-coordinate of the player's starting position.
  */
 function placeShuttle(playerStartX, playerStartY) {
 	debugLog(
-		`Placing shuttle near player at (${playerStartX}, ${playerStartY})`,
+		`Searching for shuttle placement near (${playerStartX}, ${playerStartY})`,
 		"info"
 	);
 
-	// Define the shuttle's shape and the icon for each part.
-	// This makes it easy to read and modify.
 	const shuttleShape = [
-		{ x: 0, y: 0, iconKey: "shuttle_nw" }, // Top-left
-		{ x: 1, y: 0, iconKey: "shuttle_ne" }, // Top-right
-		{ x: 0, y: 1, iconKey: "shuttle_sw" }, // Bottom-left
-		{ x: 1, y: 1, iconKey: "shuttle_se" }, // Bottom-right
+		{ x: 0, y: 0, iconKey: "shuttle_nw" },
+		{ x: 1, y: 0, iconKey: "shuttle_ne" },
+		{ x: 0, y: 1, iconKey: "shuttle_sw" },
+		{ x: 1, y: 1, iconKey: "shuttle_se" },
 	];
 
-	// Determine the top-left coordinate of the shuttle.
-	// We'll place it just to the left of the player's squad.
-	const shuttleTopLeftX = playerStartX - 3;
-	const shuttleTopLeftY = playerStartY;
-	for (const part of shuttleShape) {
-		// Find the specific icon data for this part of the shuttle.
-		const shuttleIconData = icons[part.iconKey];
+	let shuttlePlaced = false;
+	let searchRadius = 3; // Start searching 3 tiles away
 
-		// A quick safety check to ensure the icon exists.
-		if (!shuttleIconData) {
-			debugLog(
-				`Icon data for '${part.iconKey}' not found! Skipping this part.`,
-				"error"
-			);
-			continue;
-		}
-
-		const placeX = shuttleTopLeftX + part.x;
-		const placeY = shuttleTopLeftY + part.y;
-
-		// Skip any part that would be off-map.
-		if (
-			placeX < 0 ||
-			placeY < 0 ||
-			placeX >= VARS.MAP_X ||
-			placeY >= VARS.MAP_Y
+	// Keep expanding the search radius until we find a spot or give up.
+	while (!shuttlePlaced && searchRadius < 10) {
+		// Search in a square ring around the player at the current radius
+		for (
+			let x = playerStartX - searchRadius;
+			x <= playerStartX + searchRadius;
+			x++
 		) {
-			continue;
-		}
+			for (
+				let y = playerStartY - searchRadius;
+				y <= playerStartY + searchRadius;
+				y++
+			) {
+				// Check if this position (as the top-left corner) is a valid spot
+				let canPlaceHere = true;
+				for (const part of shuttleShape) {
+					const checkX = x + part.x;
+					const checkY = y + part.y;
+					// Is the spot off the map or not a passable floor tile?
+					if (
+						checkX < 0 ||
+						checkY < 0 ||
+						checkX >= VARS.MAP_X ||
+						checkY >= VARS.MAP_Y ||
+						world_grid[checkY][checkX] !== 1
+					) {
+						canPlaceHere = false;
+						break;
+					}
+				}
 
-		// Stamp the shuttle part onto the world map.
-		if (world[`${placeX},${placeY}`]) {
-			// Overwrite the tile's icon with the correct shuttle part icon.
-			world[`${placeX},${placeY}`].icon = JSON.parse(
-				JSON.stringify(shuttleIconData)
-			);
+				// If all 2x2 tiles are valid, place the shuttle and we're done
+				if (canPlaceHere) {
+					for (const part of shuttleShape) {
+						const placeX = x + part.x;
+						const placeY = y + part.y;
+						const shuttleIconData = icons[part.iconKey];
 
-			// The passability should be defined in the icon data itself, but we'll enforce it here.
-			_setWorldGridTile(placeX, placeY, false);
+						if (shuttleIconData && world[`${placeX},${placeY}`]) {
+							world[`${placeX},${placeY}`].icon = JSON.parse(
+								JSON.stringify(shuttleIconData)
+							);
+							_setWorldGridTile(placeX, placeY, false);
+						}
+					}
+					debugLog(`Placed shuttle at top-left (${x}, ${y})`, "info");
+					shuttlePlaced = true;
+					return; // Exit the function
+				}
+			}
 		}
+		searchRadius++; // If no spot found, increase search radius and try again
+	}
+
+	if (!shuttlePlaced) {
+		debugLog(
+			"Could not find a valid 2x2 area to place the shuttle near the player.",
+			"error"
+		);
 	}
 }
-
+/**
+ * Handles moving between levels.
+ * @param {number} targetLevel - The level number to go to.
+ * @param {object} targetCoords - The x,y coords of the stairs being used.
+ */
+export function changeLevel(targetLevel, targetCoords) {
+	saveCurrentLevelState();
+	loadLevel(targetLevel, targetCoords); // Pass the stairs' location as the new entry point
+}
 export function nextLevel(level_nr) {
 	VARS.LEVEL = level_nr;
 	loadLevel(VARS.LEVEL); // Changed from loadWorld_maze

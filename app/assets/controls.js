@@ -105,7 +105,7 @@ export function setControls() {
 			case "Enter":
 			case "Space":
 				const targetCoords = [VARS.TARGET[0], VARS.TARGET[1]];
-				clicks(targetCoords, draw_interval, this);
+				clicks(targetCoords, draw_interval);
 				break;
 			case "KeyQ":
 			case "Numpad7":
@@ -413,7 +413,7 @@ export function setControls() {
 			world[currentLoc[0] + "," + currentLoc[1]].visible === false
 		)
 			return;
-		clicks(currentLoc, draw_interval, this);
+		clicks(currentLoc, draw_interval);
 	}
 }
 
@@ -437,13 +437,43 @@ function canProceedToNextLevel() {
  * Proceeds to the next level by calling nextLevel with the incremented level number.
  */
 function proceedToNextLevel() {
-	nextLevel(VARS.LEVEL + 1);
+	const sel = locEnt[VARS.MENU_ITEM - 1];
+	if (sel && sel.type === "stairs") {
+		if (sel.name === "stairs (down)") {
+			if (canProceedToNextLevel()) {
+				// Your proximity check
+				debugLog("Using stairs down...", "action");
+				changeLevel(VARS.LEVEL + 1, {
+					x: VARS.TARGET[0],
+					y: VARS.TARGET[1],
+				});
+			} else {
+				log({
+					type: "info",
+					text: "The whole squad must be nearby to proceed.",
+				});
+			}
+		} else if (sel.name === "stairs (up)") {
+			if (canProceedToNextLevel()) {
+				debugLog("Using stairs up...", "action");
+				changeLevel(VARS.LEVEL - 1, {
+					x: VARS.TARGET[0],
+					y: VARS.TARGET[1],
+				});
+			} else {
+				log({
+					type: "info",
+					text: "The whole squad must be nearby to proceed.",
+				});
+			}
+		}
+	}
 }
 
 export function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
-function clicks(currentLoc, draw_interval, O) {
+function clicks(currentLoc, draw_interval) {
 	if (VARS.MODE == "targeting") {
 		if (
 			VARS.TARGET[0] == currentLoc[0] &&
@@ -519,7 +549,7 @@ function clicks(currentLoc, draw_interval, O) {
 				}
 			}
 
-			O.path = [];
+			let path = [];
 			dijkstra.compute(VARS.SELECTED.x, VARS.SELECTED.y, function (x, y) {
 				path.push([x, y]);
 			});

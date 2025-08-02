@@ -31,6 +31,9 @@ export var player_entities = [];
 /**
  * @type {Array} Holds all world items.
  */
+// The key will be the level number (e.g., 0, 1, 2).
+export let world_states = {};
+
 export var world_items = [];
 export var DEBUGGING = false;
 export var DEBUGLOG = "";
