@@ -1,4 +1,4 @@
-import { generationData } from "./datasets/planet_generation_data.json";
+import generationData from "./datasets/planet_generation_data.json" with { type: "json" };
 import { getRandomElement } from "./utils/gameUtils.js";
 import { generatePlanetName } from "./namegen.js";
 

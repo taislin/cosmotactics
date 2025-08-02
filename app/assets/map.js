@@ -217,6 +217,16 @@ function saveCurrentLevelState() {
  * @param {object} [entryPoint=null] - Optional coords {x, y} for where the player should appear.
  */
 export function loadLevel(level, entryPoint = null) {
+	const missionData = VARS.currentMissionData;
+	if (!missionData) {
+		debugLog(
+			"FATAL: loadLevel called without currentMissionData!",
+			"error"
+		);
+		return;
+	}
+	const planet = missionData.planet;
+
 	// --- 1. Check for and load existing state ---
 	if (world_states[level]) {
 		debugLog(`--- Loading existing state for Level ${level} ---`, "info");
@@ -250,7 +260,10 @@ export function loadLevel(level, entryPoint = null) {
 		VARS.LEVEL = level;
 		return; // Stop here, level is loaded
 	}
-
+	debugLog(
+		`--- Generating Level ${level} for Planet ${planet.name} (${planet.biome}) ---`,
+		"info"
+	);
 	// --- 2. If no saved state, generate a new level ---
 	debugLog(`--- Generating new Level ${level} ---`, "info");
 	world = {};
@@ -264,20 +277,30 @@ export function loadLevel(level, entryPoint = null) {
 	VARS.LEVEL = level; // Set current level number
 	// --- 3. Decide Map Type & Generate Base Terrain ---
 	let mapData;
-	let mapType;
-	if (level === 0) {
-		mapType = "forest";
-		mapData = generateOpenWorld();
-	} else if (level > 1 && level % 2 === 0) {
-		// Every even level is a forest
-		mapType = "forest";
-		mapData = generateOpenWorld();
-	} else {
-		// Odd levels are caves
-		mapType = "cave";
-		mapData = generateCaveWorld(level);
+	// Map the biome name from your generator to the actual map-making function
+	switch (planet.biome) {
+		case "Jungle":
+		case "Plains":
+		case "Oceanic":
+			mapData = generateOpenWorld(); // Your existing forest-style generator
+			break;
+		case "Arctic":
+		case "Ice Caverns":
+		case "Caverns":
+		case "Desert":
+		case "Volcanic":
+		case "Barren Plains":
+		case "Rocky Craters":
+			mapData = generateCaveWorld(level); // Your existing cave-style generator
+			break;
+		default:
+			debugLog(
+				`Unknown biome: ${planet.biome}. Defaulting to caves.`,
+				"warn"
+			);
+			mapData = generateCaveWorld(level);
+			break;
 	}
-
 	// --- 4. Populate World from mapData ---
 	for (let y = 0; y < VARS.MAP_Y; y++) {
 		world_grid[y] = new Array(VARS.MAP_X);
@@ -327,29 +350,114 @@ export function loadLevel(level, entryPoint = null) {
 	placeStairs(startX, startY); // This places "Stairs Down"
 
 	// --- 6. Spawn Enemies and Items based on Map Type ---
-	if (mapType === "forest") {
-		addEnemiesAndItems_Forest(level);
-	} else {
-		addEnemiesAndItems_Cave(level);
+	// Get all enemy KEYS from the importedUnits object
+	const allEnemyKeys = Object.keys(importedUnits);
+	// Filter the KEYS based on the properties of their corresponding objects
+	const validEnemyKeys = allEnemyKeys.filter((key) => {
+		const enemy = importedUnits[key];
+		// Ensure the entry is actually an enemy (not a player unit) and has tags
+		if (!enemy.tags || enemy.ai === "player") {
+			return false;
+		}
+		return planet.enemyTags.some((tag) => (enemy.tags || []).includes(tag));
+	});
+
+	if (validEnemyKeys.length > 0) {
+		const enemyCount = 5 + Math.floor(level * missionData.difficulty);
+		for (let i = 0; i < enemyCount; i++) {
+			const randomEnemyKey = getRandomElement(validEnemyKeys);
+			_placeUnitOnRandomTile(randomEnemyKey, 1, "enemy", 8); // Pass the key directly
+		}
 	}
 	let entryMessage = "";
-	if (mapType === "cave") {
-		const caveMessages = [
-			"The air grows cold and damp.",
-			"A low, chittering sound echoes from the darkness ahead.",
-			"The smell of ozone and alien decay hangs heavy in this chamber.",
-		];
-		entryMessage = getRandomElement(caveMessages);
-	} else {
-		// forest
-		const forestMessages = [
-			"You emerge into a clearing, the alien sun filtering through strange flora.",
-			"The ground is soft with moss, but the silence feels unnatural.",
-			"Twisted, alien trees loom over you like ancient sentinels.",
-		];
-		entryMessage = getRandomElement(forestMessages);
+	switch (planet.biome) {
+		case "Jungle":
+			const forestMessages = [
+				"You emerge into a clearing, the alien sun filtering through strange flora.",
+				"The ground is soft with moss, but the silence feels unnatural.",
+				"Twisted, alien trees loom over you like ancient sentinels.",
+			];
+			entryMessage = getRandomElement(forestMessages);
+			break;
+		case "Plains":
+			const plainsMessages = [
+				"You step onto the open plains, the wind carrying strange scents.",
+				"The ground is hard-packed, dotted with alien grasses and flowers.",
+				"A distant rumble hints at something large moving beneath the surface.",
+			];
+			entryMessage = getRandomElement(plainsMessages);
+			break;
+		case "Oceanic":
+			const oceanMessages = [
+				"The air is thick with salt and the sound of waves crashing nearby.",
+				"Strange, bioluminescent creatures flicker in the shallows.",
+				"The ground is wet and slippery, covered in alien seaweed.",
+			];
+			entryMessage = getRandomElement(oceanMessages);
+			break;
+		case "Arctic":
+			const arcticMessages = [
+				"The cold bites at your suit as you step onto the icy surface.",
+				"Snow crunches underfoot, and the air is thin and frigid.",
+				"Strange ice formations rise like jagged teeth from the frozen ground.",
+			];
+			entryMessage = getRandomElement(arcticMessages);
+			break;
+		case "Ice Caverns":
+			const iceCaveMessages = [
+				"You enter a cavern of shimmering ice, the walls glowing faintly.",
+				"The air is frigid, and your breath fogs in front of you.",
+				"Strange, crystalline structures jut from the walls, reflecting light eerily.",
+			];
+			entryMessage = getRandomElement(iceCaveMessages);
+			break;
+		case "Caverns":
+			const caveMessages = [
+				"The air grows cold and damp.",
+				"A low, chittering sound echoes from the darkness ahead.",
+				"The smell of ozone and alien decay hangs heavy in this chamber.",
+			];
+			entryMessage = getRandomElement(caveMessages);
+		case "Desert":
+			const desertMessages = [
+				"The heat is oppressive as you step onto the sandy expanse.",
+				"Strange rock formations jut from the ground like ancient monuments.",
+				"The wind carries a fine layer of dust that stings your eyes.",
+			];
+			entryMessage = getRandomElement(desertMessages);
+			break;
+		case "Volcanic":
+			const volcanicMessages = [
+				"The ground trembles slightly as you step onto the volcanic rock.",
+				"Heat radiates from fissures in the ground, and the air smells of sulfur.",
+				"Strange, glowing minerals dot the landscape, casting an eerie light.",
+			];
+			entryMessage = getRandomElement(volcanicMessages);
+			break;
+		case "Barren Plains":
+			const barrenMessages = [
+				"You step onto the cracked, dry earth of the barren plains.",
+				"The wind howls across the desolate landscape, carrying dust and debris.",
+				"Strange, twisted plants cling to life in this harsh environment.",
+			];
+			entryMessage = getRandomElement(barrenMessages);
+			break;
+		case "Rocky Craters":
+			const rockyMessages = [
+				"You find yourself in a field of jagged rocks and deep craters.",
+				"The ground is uneven, and every step feels precarious.",
+				"Strange, alien minerals glint in the light, hinting at hidden dangers.",
+			];
+			entryMessage = getRandomElement(rockyMessages);
+			break;
+		default:
+			entryMessage =
+				"You step into the alien terrain, ready for whatever lies ahead.";
+			break;
 	}
-	log({ type: "info", text: entryMessage });
+	if (entryMessage != "") {
+		log({ type: "info", text: entryMessage });
+	}
 }
 
 function findClearAreaForPlayer() {

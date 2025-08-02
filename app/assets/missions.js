@@ -1,9 +1,9 @@
 // Import your new data files and a name generator
-import { biomes } from "./datasets/planet_biomes.json";
-import { objectives } from "./datasets/mission_objectives.json";
+import objectives from "./datasets/mission_objectives.json" with { type: "json" };
 import { generatePlanet } from "./planet_generator.js";
 import { generatePlanetName } from "./namegen.js"; // You might need a new namegen for planets
-import { enemies } from "./datasets/enemies.json"; // To resolve tags
+import enemies from "./datasets/enemies.json" with { type: "json" }; // To resolve tags
+import { getRandomElement } from "./utils/gameUtils.js";
 
 export function generateMissionChoices(count = 3) {
 	let choices = [];

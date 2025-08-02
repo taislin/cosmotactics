@@ -53,8 +53,10 @@ const initial_vars = {
 	GAMELOG: [],
 	TARGET: [-1, -1],
 	SELECTED: null,
-	LEVEL: 0,
+	LEVEL: null,
 	isAnimating: false,
+	missionChoices: [],      // Will hold the 3 generated mission options
+    currentMissionData: null // Will hold the data for the mission the player deploys to
 };
 export let VARS = JSON.parse(JSON.stringify(initial_vars));
 const initial_stats = {
@@ -201,8 +203,10 @@ export function processTurn() {
 	}
 	// --- END REFACTOR ---
 
-	let newOxygen = parseFloat((STATS.OXYGEN - 0.1).toFixed(1));
-	STATS.OXYGEN = Math.max(newOxygen, 0);
+    if (VARS.currentMissionData && VARS.currentMissionData.planet.needsOxygen) {
+        let newOxygen = parseFloat((STATS.OXYGEN - 0.1).toFixed(1));
+	    STATS.OXYGEN = Math.max(newOxygen, 0);
+    }
 
 	VARS.TURN++;
 	if (checkLose() === true) {

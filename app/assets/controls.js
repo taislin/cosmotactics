@@ -17,15 +17,21 @@ import {
 	msgDisplay,
 	setupProjectileCanvas,
 } from "../index.js";
-import { world, world_grid, nextLevel } from "./map.js";
+import { world, world_grid, loadLevel } from "./map.js";
 import { Projectile } from "./classes/projectile.js";
-import { drawMainMenu, drawLostMenu, drawQuickGuide } from "./mainmenu.js";
-// Import from new utils file for shared logic
+import { generateMissionChoices } from "./missions.js";
+import {
+	drawMainMenu,
+	drawLostMenu,
+	drawQuickGuide,
+	drawMissionSelectScreen,
+} from "./mainmenu.js";
 import { findMobCoords, isTilePassableForMovement } from "./utils/gameUtils.js";
 
 let loaded = false;
 let lastMoveTime = 0;
-const MOVE_DELAY = 300; /**
+const MOVE_DELAY = 300;
+/**
  * Registers global keyboard and mouse event listeners to handle all user input for the game, including gameplay, menu navigation, and UI interactions.
  *
  * Sets up internal handlers to process key and mouse events according to the current game state, enabling movement, targeting, menu selection, mode switching, and in-game actions. Ensures input is appropriately routed and throttled, and manages state transitions between gameplay, menus, and guide screens.
@@ -216,32 +222,66 @@ export function setControls() {
 					VARS.MENU_ITEM = Math.min(VARS.MENU_ITEM + 1, 3);
 				else if (code === "Enter") {
 					if (VARS.MENU_ITEM === 1) {
-						// New Game
-						VARS.GAMEWINDOW = "GAME";
-						loaded = true;
-						document
-							.getElementById("terminal")
-							.removeChild(menuDisplay.getContainer());
-						document
-							.getElementById("terminal")
-							.appendChild(gameDisplay.getContainer());
-						setupProjectileCanvas();
-						// NOTE: We don't redraw the menu here because we are leaving this state.
+						// New Game -> GO TO MISSION SELECT
+						VARS.GAMEWINDOW = "MISSION_SELECT";
+						VARS.missionChoices = generateMissionChoices(); // Generate 3 new missions
+						VARS.MENU_ITEM = 1; // Reset selection for the new screen
+						drawMissionSelectScreen(menuDisplay, msgDisplay);
 						return;
 					}
 					if (VARS.MENU_ITEM === 2) {
 						// Quick Guide
 						VARS.GAMEWINDOW = "GUIDE";
 						drawQuickGuide(menuDisplay, msgDisplay);
-						// NOTE: We don't redraw the menu here because we are leaving this state.
 						return;
 					}
 				}
 
-				// If we get here, it means we're still in the menu (e.g., arrow key press)
 				drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 				break;
+			case "MISSION_SELECT":
+				if (code === "ArrowUp") {
+					VARS.MENU_ITEM = Math.max(VARS.MENU_ITEM - 1, 1);
+					drawMissionSelectScreen(menuDisplay, msgDisplay); // Redraw to update selection
+				} else if (code === "ArrowDown") {
+					VARS.MENU_ITEM = Math.min(
+						VARS.MENU_ITEM + 1,
+						VARS.missionChoices.length
+					);
+					drawMissionSelectScreen(menuDisplay, msgDisplay); // Redraw to update selection
+				} else if (code === "Enter") {
+					// Player has chosen a mission! Let's deploy.
+					const selectedMission =
+						VARS.missionChoices[VARS.MENU_ITEM - 1];
+					VARS.currentMissionData = selectedMission.generationData;
 
+					// Transition to the game screen
+					VARS.GAMEWINDOW = "GAME";
+					loaded = true;
+					document
+						.getElementById("terminal")
+						.removeChild(menuDisplay.getContainer());
+					document
+						.getElementById("terminal")
+						.appendChild(gameDisplay.getContainer());
+					setupProjectileCanvas();
+
+					// Load level 0 of the chosen mission
+					loadLevel(0);
+				} else if (code === "Escape") {
+					// Allow player to back out to the main menu
+					menuDisplay.setOptions({
+						fontSize: 32,
+						fontFamily: "Arcade, Noto Sans Mono, monospace",
+					});
+					msgDisplay.setOptions({
+						fontSize: 16,
+						fontFamily: "Input Mono, Noto Sans Mono, monospace",
+					});
+					VARS.GAMEWINDOW = "MENU";
+					drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
+				}
+				break;
 			case "GAME":
 				// Check for initial loaded state
 				if (!loaded) {
@@ -351,8 +391,8 @@ export function setControls() {
 	/**
 	 * Handles mouse click events based on the current game window state.
 	 *
-	 * In the "LOST" state, returns to the main menu and resets the game after a delay.  
-	 * In the "MENU" state, processes menu navigation and selection, updating the game window or redrawing the menu as needed.  
+	 * In the "LOST" state, returns to the main menu and resets the game after a delay.
+	 * In the "MENU" state, processes menu navigation and selection, updating the game window or redrawing the menu as needed.
 	 * In the "GAME" state, translates click positions to map or GUI coordinates, processes GUI interactions, and, if the clicked map tile is valid and visible, delegates further handling to the `clicks` function.
 	 */
 	function handleClick(e) {
@@ -624,7 +664,7 @@ function clicks(currentLoc, draw_interval) {
 }
 /**
  * Reloads the selected unit's ranged weapon to its maximum ammo capacity if possible, logs the action, and processes the turn.
- * 
+ *
  * The weapon is only reloaded if it has a reload capability, is not already at maximum ammo, and the unit is currently selected.
  */
 export function reload(unit) {

@@ -155,14 +155,16 @@ export function drawQuickGuide(menuDisplay, msgDisplay) {
 		"%c{#009f00}Oxygen:%c{} Your squad's air supply"
 	);
 }
-export function drawMissionSelectScreen() {
+export function drawMissionSelectScreen(menuDisplay, msgDisplay) {
 	menuDisplay.setOptions({
+		width: 40,
+		height: 40,
 		fontSize: 16,
-		fontFamily: "Space Mono, monospace",
+		fontFamily: "Input Mono, Noto Sans Mono, monospace",
 	});
 	msgDisplay.setOptions({
 		fontSize: 16,
-		fontFamily: "Space Mono, monospace",
+		fontFamily: "Input Mono, Noto Sans Mono, monospace",
 	});
 	menuDisplay.clear();
 	msgDisplay.clear();
