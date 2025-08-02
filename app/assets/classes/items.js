@@ -73,7 +73,14 @@ export function loadItems() {
 		);
 	});
 }
-// Helper to assign icon to item, handling missing or invalid icons.
+/**
+ * Resolves and returns a valid WIcon instance for the given icon identifier.
+ *
+ * If the input is already a WIcon, it is returned as-is. If the icon identifier matches an entry in the icons collection, a deep copy of that icon is returned. If the icon is missing or invalid, logs an error and returns a deep copy of the default "?" icon.
+ *
+ * @param {string|WIcon} icon - The icon identifier or WIcon instance to resolve.
+ * @return {WIcon} The resolved WIcon instance.
+ */
 function assignIcon(icon) {
 	if (icon instanceof WIcon) {
 		return icon;

@@ -86,11 +86,9 @@ export function drawMainMenu(menuDisplay, gameDisplay, msgDisplay) {
 }
 
 /**
- * Draws the game over screen.
+ * Renders the game over screen, displaying a loss message and the player's score summary.
  *
- * @param {Display} menuDisplay - The display object for the menu.
- * @param {Display} gameDisplay - The display object for the game screen.
- * @param {Display} msgDisplay - The display object for messages.
+ * Shows the game title, a "You have lost!" message, and prompts the player to continue. The score panel displays the current level, gold collected, and turn count.
  */
 export function drawLostMenu(menuDisplay, gameDisplay, msgDisplay) {
 	menuDisplay.clear();
@@ -106,9 +104,9 @@ export function drawLostMenu(menuDisplay, gameDisplay, msgDisplay) {
 	msgDisplay.drawText(2, 7, "%c{#fff}Turns: " + "%c{orange}" + VARS.TURN);
 }
 /**
- * Draws the in-game quick start guide.
- * @param {Display} menuDisplay - The display object for the menu (left panel).
- * @param {Display} msgDisplay - The display object for messages (right panel).
+ * Renders the quick start guide screen, displaying gameplay objectives, controls, and UI tips across the menu and message panels.
+ * 
+ * The left panel shows the guide title and instructions for returning to the main menu. The right panel presents a multi-section overview of objectives, controls, combat, squad commands, and UI elements, formatted with colour highlights and indentation for clarity.
  */
 export function drawQuickGuide(menuDisplay, msgDisplay) {
 	menuDisplay.clear();
