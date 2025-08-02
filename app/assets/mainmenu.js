@@ -1,5 +1,6 @@
 import { VARS, STATS } from "./engine.js";
-
+import { menuDisplay, msgDisplay, spriteDisplay, tileSets } from "../index.js";
+import { importedIcons } from "./datasets/imports.js";
 /**
  * Draws the main menu screen.
  *
@@ -65,6 +66,7 @@ export function drawMainMenu(menuDisplay, gameDisplay, msgDisplay) {
 	menuDisplay.clear();
 	msgDisplay.clear();
 	gameDisplay.clear();
+	spriteDisplay.clear();
 	menuDisplay.drawText(2, 3, "%c{#35b59b}COSMOTACTICS");
 	// Draw menu items
 	MENU_ITEMS.forEach((item, idx) => {
@@ -93,6 +95,7 @@ export function drawMainMenu(menuDisplay, gameDisplay, msgDisplay) {
 export function drawLostMenu(menuDisplay, gameDisplay, msgDisplay) {
 	menuDisplay.clear();
 	msgDisplay.clear();
+	spriteDisplay.clear();
 	gameDisplay.clear();
 	menuDisplay.drawText(2, 3, "%c{#35b59b}COSMOTACTICS");
 	menuDisplay.drawText(1, 6, "%c{orange}You have lost!");
@@ -111,6 +114,7 @@ export function drawLostMenu(menuDisplay, gameDisplay, msgDisplay) {
 export function drawQuickGuide(menuDisplay, msgDisplay) {
 	menuDisplay.clear();
 	msgDisplay.clear();
+	spriteDisplay.clear();
 	// Title on the left panel
 	menuDisplay.drawText(2, 3, "%c{#35b59b}QUICK GUIDE");
 	menuDisplay.drawText(1, 18, "%c{orange}Press ESC or");
@@ -156,20 +160,32 @@ export function drawQuickGuide(menuDisplay, msgDisplay) {
 	);
 }
 export function drawMissionSelectScreen(menuDisplay, msgDisplay) {
+	// Pass in displays explicitly
 	menuDisplay.setOptions({
-		width: 40,
+		width: 64,
 		height: 40,
 		fontSize: 16,
+		forcesquareRatio: false,
 		fontFamily: "Input Mono, Noto Sans Mono, monospace",
+	});
+	spriteDisplay.setOptions({
+		width: 20,
+		height: 20,
+		tileSet: tileSets, // Re-apply the tileSet
+		bg: "transparent", // Also ensure background is transparent
 	});
 	msgDisplay.setOptions({
 		fontSize: 16,
 		fontFamily: "Input Mono, Noto Sans Mono, monospace",
 	});
 	menuDisplay.clear();
+	spriteDisplay.clear();
 	msgDisplay.clear();
 
-	menuDisplay.drawText(2, 1, "%c{#ffa500}SELECT DEPLOYMENT ZONE");
+	menuDisplay.drawText(4, 2, "%c{#ffa500}SELECT DEPLOYMENT ZONE");
+
+	// Get the canvas context ONCE
+	const menuCanvasCtx = menuDisplay.getContainer().getContext("2d");
 
 	// Display the 3 mission choices on the left panel
 	let y = 3;
@@ -178,8 +194,24 @@ export function drawMissionSelectScreen(menuDisplay, msgDisplay) {
 		const color = isSelected ? "%c{yellow}" : "%c{white}";
 		const selector = isSelected ? "> " : "  ";
 
-		menuDisplay.drawText(2, y, `${selector}${color}${mission.planetName}`);
-		y += 2; // Add some space between options
+		// Draw the planet name text
+		menuDisplay.drawText(
+			8,
+			y * 2,
+			`${selector}${color}${mission.planetName}`
+		);
+		console.log(importedIcons[mission.icon]);
+		if (importedIcons[mission.icon]) {
+			spriteDisplay.draw(
+				1,
+				y - 0.35,
+				importedIcons[mission.icon],
+				"transparent",
+				"transparent"
+			);
+		}
+
+		y += 4;
 	});
 
 	// Display details of the SELECTED mission on the right panel (msgDisplay)
@@ -192,39 +224,51 @@ export function drawMissionSelectScreen(menuDisplay, msgDisplay) {
 
 		msgDisplay.drawText(
 			2,
-			detailY++,
+			(detailY += 2),
 			`%c{#ffa500}PLANET: %c{white}${selectedMission.planetName}`
 		);
 		msgDisplay.drawText(
 			2,
-			detailY++,
+			(detailY += 2),
 			`%c{#ffa500}GEOGRAPHY: %c{white}${selectedMission.geography}`
 		);
 		msgDisplay.drawText(
 			2,
-			detailY++,
+			(detailY += 2),
 			`%c{#ffa500}ATMOSPHERE: %c{white}${selectedMission.atmosphere}`
 		);
-		detailY++;
-
-		msgDisplay.drawText(2, detailY++, `%c{#ffa500}INTEL:`);
-		let alienList = selectedMission.knownAliens.join(", ");
-		if (selectedMission.knownAliens[0] === "Unknown") {
-			alienList = "%c{red}CLASSIFIED";
-		}
-		msgDisplay.drawText(4, detailY++, `Hostile presence: ${alienList}`);
-		detailY++;
 
 		msgDisplay.drawText(
 			2,
-			detailY++,
+			(detailY += 2),
+			`%c{#ffa500}EVA REQUIRED: %c{white}${selectedMission.eva_required}`
+		);
+		detailY += 2;
+
+		msgDisplay.drawText(2, (detailY += 2), `%c{#ffa500}INTEL:`);
+		let alienList = selectedMission.knownAliens.join(", ");
+		if (selectedMission.knownAliens[0] === "Unknown Hostiles") {
+			alienList = "%c{red}CLASSIFIED";
+		} else if (selectedMission.knownAliens.includes("None")) {
+			alienList = "No significant threats detected.";
+		}
+		msgDisplay.drawText(
+			4,
+			(detailY += 2),
+			`Hostile presence: ${alienList}`
+		);
+		detailY += 2;
+
+		msgDisplay.drawText(
+			2,
+			(detailY += 2),
 			`%c{#ffa500}OBJECTIVE: %c{white}${selectedMission.objective}`
 		);
-		detailY++;
+		detailY += 2;
 
 		msgDisplay.drawText(
 			2,
-			detailY++,
+			(detailY += 2),
 			`%c{#ffa500}REWARD: %c{yellow}${selectedMission.reward}`
 		);
 		detailY += 3;
@@ -232,7 +276,7 @@ export function drawMissionSelectScreen(menuDisplay, msgDisplay) {
 		msgDisplay.drawText(
 			2,
 			detailY++,
-			"%c{orange}[ Arrows to select, Enter to deploy ]"
+			"%c{orange}[ %c{white}Arrows%c{orange} to select, %c{white}Enter%c{orange} to deploy ]"
 		);
 	}
 }

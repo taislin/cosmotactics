@@ -1,4 +1,10 @@
-import { gameDisplay, msgDisplay } from "../index.js";
+import {
+	tileSets,
+	gameDisplay,
+	msgDisplay,
+	menuDisplay,
+	menuDisplayConfig,
+} from "../index.js";
 import {
 	entities,
 	VARS,
@@ -12,7 +18,6 @@ import {
 import { world, world_grid } from "./map.js";
 export var currentLoc = [0, 0];
 export var drawPaths = [];
-
 /**
  * Utility function to tint an image with a specific color.
  * @param {HTMLImageElement} image - The source image to tint.
@@ -280,7 +285,7 @@ export function updateCanvas(projectileCtx) {
 
 	// --- NEW Projectile Drawing Loop with Color ---
 	if (projectileCtx) {
-		const options = gameDisplay.getOptions();
+		const options = menuDisplayConfig;
 		const tileWidth = options.tileWidth;
 		const tileHeight = options.tileHeight;
 
@@ -891,7 +896,7 @@ function drawMenu() {
 
 /**
  * Updates the field of view (FOV) for player-controlled entities, marking visible and seen tiles, entities, and items.
- * 
+ *
  * Resets visibility for all tiles, entities, and items, then uses a shadowcasting algorithm to determine which map areas are visible to player entities. Marks tiles, entities, and items as visible or seen based on their presence within the computed FOV radius.
  */
 function updateFOV(player) {
@@ -936,7 +941,7 @@ function updateFOV(player) {
  * Calculates the visible area of the map based on the selected entity's position and zoom level.
  * @returns {Array} - An array representing the visible area [minX, minY, maxX, maxY].
  */
-function calculateDrawInterval() {
+export function calculateDrawInterval() {
 	return [
 		VARS.SELECTED.x - VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
 		VARS.SELECTED.y - VARS.MAP_DISPLAY_Y / VARS.ZOOM_LEVEL,

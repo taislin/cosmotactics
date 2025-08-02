@@ -26,7 +26,7 @@ export function generateMissionChoices(count = 3) {
 
 		// Determine difficulty based on planet properties
 		let difficulty = 1.0;
-		if (planet.gameplayAtmosphere === "EVA_REQUIRED_HAZARDOUS")
+		if (planet.gameplayAtmosphere === "EVA REQUIRED")
 			difficulty += 0.5;
 		if (planet.life === "Sapient Natives") difficulty += 0.5;
 		if (planet.temperature !== "Temperate") difficulty += 0.2;
@@ -44,7 +44,8 @@ export function generateMissionChoices(count = 3) {
 			icon: planet.spriteIcon, // Use the pre-generated sprite name
 			geography: planet.biome,
 			knownAliens: knownAliens,
-			atmosphere: `${planet.atmosphere} (${planet.gameplayAtmosphere})`,
+			atmosphere: planet.atmosphere,
+			eva_required: planet.gameplayAtmosphere === "EVA REQUIRED" ? "%c{red}Yes%c{}" : "%c{green}No%c{}",
 			objective: objective.name,
 			reward: `${reward} Gold`,
 			// This is the data your level generator will actually use

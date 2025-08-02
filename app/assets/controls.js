@@ -15,6 +15,9 @@ import {
 	gameDisplay,
 	menuDisplay,
 	msgDisplay,
+	spriteDisplay,
+	msgDisplayConfig,
+	menuDisplayConfig,
 	setupProjectileCanvas,
 } from "../index.js";
 import { world, world_grid, loadLevel } from "./map.js";
@@ -267,18 +270,17 @@ export function setControls() {
 					setupProjectileCanvas();
 
 					// Load level 0 of the chosen mission
+					spriteDisplay.clear();
 					loadLevel(0);
 				} else if (code === "Escape") {
 					// Allow player to back out to the main menu
-					menuDisplay.setOptions({
-						fontSize: 32,
-						fontFamily: "Arcade, Noto Sans Mono, monospace",
-					});
+					menuDisplay.setOptions(menuDisplayConfig);
 					msgDisplay.setOptions({
 						fontSize: 16,
 						fontFamily: "Input Mono, Noto Sans Mono, monospace",
 					});
 					VARS.GAMEWINDOW = "MENU";
+					spriteDisplay.clear();
 					drawMainMenu(menuDisplay, gameDisplay, msgDisplay);
 				}
 				break;

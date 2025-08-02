@@ -14,6 +14,10 @@ function preloadTileSets() {
 		"./icons/gui.png",
 		"./icons/entities.png",
 		"./icons/icon.png",
+		"./icons/items.png",
+		"./icons/planets.png",
+		"./icons/terrain.png",
+		"./icons/trees.png",
 	];
 	return sources.map((src) => {
 		const img = document.createElement("img");
@@ -47,6 +51,19 @@ export const gameDisplayConfig = {
 	// previous `_tileMap` implementation was buggy and has been removed.
 	tileColorize: true,
 };
+export const spriteDisplayConfig = {
+	width: 20,
+	height: 20,
+	forceSquareRatio: false,
+	fontSize: 16,
+	fontFamily: "Input Mono, Noto Sans Mono, monospace",
+	layout: "tile-gl",
+	bg: "transparent",
+	tileWidth: 32,
+	tileHeight: 32,
+	tileSet: tileSets,
+	tileColorize: true,
+};
 export const msgDisplayConfig = {
 	width: 48,
 	height: 40,
@@ -60,7 +77,7 @@ export const msgDisplayConfig = {
 export const menuDisplayConfig = {
 	width: 20,
 	height: 20,
-	forceSquareRatio: true,
+	forceSquareRatio: false,
 	fontSize: 32,
 	bg: "#222",
 	fg: "#fff",
@@ -71,6 +88,7 @@ export const menuDisplayConfig = {
 export const gameDisplay = new ROT.Display(gameDisplayConfig);
 export const menuDisplay = new ROT.Display(menuDisplayConfig);
 export const msgDisplay = new ROT.Display(msgDisplayConfig);
+export const spriteDisplay = new ROT.Display(spriteDisplayConfig);
 
 // Projectile Canvas setup
 let projectileCanvas;
@@ -87,6 +105,9 @@ export function setupProjectileCanvas() {
 // Attach displays to DOM
 function attachDisplays() {
 	document.getElementById("terminal").appendChild(menuDisplay.getContainer());
+	document
+		.getElementById("sprite-overlay")
+		.appendChild(spriteDisplay.getContainer());
 	document.getElementById("msg").appendChild(msgDisplay.getContainer());
 }
 

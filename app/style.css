@@ -76,13 +76,28 @@ td {
 #msg {
 	display: inline-block;
 }
+#terminal,
+#msg,
+#sprite-overlay {
+	display: inline-block;
+}
 
 #msg {
-	margin-left: -8px;
+	margin-left: -10px;
 	vertical-align: top;
 }
 
 #log {
 	overflow-y: auto;
 	max-height: 100px;
+}
+#game-container {
+	position: relative; /* This is crucial for absolute positioning */
+}
+
+#sprite-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none; /* Allows clicks to pass through to the text layer */
 }

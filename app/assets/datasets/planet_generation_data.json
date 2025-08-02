@@ -77,7 +77,7 @@
     "atmospheres": {
         "none": {
             "name": "None (Vacuum)",
-            "gameplay_effect": "EVA_REQUIRED",
+            "gameplay_effect": "EVA REQUIRED",
             "oxygen_mission": true
         },
         "breathable": {
@@ -87,7 +87,7 @@
         },
         "toxic": {
             "name": "Toxic (Methane/Ammonia)",
-            "gameplay_effect": "EVA_REQUIRED",
+            "gameplay_effect": "EVA REQUIRED",
             "oxygen_mission": true
         }
     },
