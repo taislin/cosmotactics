@@ -1,0 +1,242 @@
+{
+    "planet_terran_1": {
+        "name": "Terran Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                0,
+                0
+            ]
+        ]
+    },
+    "planet_terran_2": {
+        "name": "Terran Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                1,
+                0
+            ]
+        ]
+    },
+    "planet_terran_3": {
+        "name": "Terran Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                2,
+                0
+            ]
+        ]
+    },
+    "planet_terran_4": {
+        "name": "Terran Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                3,
+                0
+            ]
+        ]
+    },
+    "planet_terran_5": {
+        "name": "Terran Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                4,
+                0
+            ]
+        ]
+    },
+    "planet_ice_1": {
+        "name": "Ice Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                0,
+                1
+            ]
+        ]
+    },
+    "planet_ice_2": {
+        "name": "Ice Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                1,
+                1
+            ]
+        ]
+    },
+    "planet_ice_3": {
+        "name": "Ice Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                2,
+                1
+            ]
+        ]
+    },
+    "planet_ice_4": {
+        "name": "Ice Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                3,
+                1
+            ]
+        ]
+    },
+    "planet_ice_5": {
+        "name": "Ice Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                4,
+                1
+            ]
+        ]
+    },
+    "planet_scorched_1": {
+        "name": "Scorched Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                0,
+                2
+            ]
+        ]
+    },
+    "planet_scorched_2": {
+        "name": "Scorched Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                1,
+                2
+            ]
+        ]
+    },
+    "planet_scorched_3": {
+        "name": "Scorched Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                2,
+                2
+            ]
+        ]
+    },
+    "planet_scorched_4": {
+        "name": "Scorched Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                3,
+                2
+            ]
+        ]
+    },
+    "planet_scorched_5": {
+        "name": "Scorched Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                4,
+                2
+            ]
+        ]
+    },
+    "planet_barren_1": {
+        "name": "Barren Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                0,
+                3
+            ]
+        ]
+    },
+    "planet_barren_2": {
+        "name": "Barren Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                1,
+                3
+            ]
+        ]
+    },
+    "planet_barren_3": {
+        "name": "Barren Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                2,
+                3
+            ]
+        ]
+    },
+    "planet_barren_4": {
+        "name": "Barren Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                3,
+                3
+            ]
+        ]
+    },
+    "planet_barren_5": {
+        "name": "Barren Planet",
+        "tileset": "./icons/planets.png",
+        "passable": true,
+        "transparent": true,
+        "tcoords": [
+            [
+                4,
+                3
+            ]
+        ]
+    }
+}

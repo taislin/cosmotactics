@@ -1,0 +1,133 @@
+{
+    "core_types": {
+        "terrestrial": {
+            "name": "Terrestrial World",
+            "allows_surface": true,
+            "possible_constitutions": [
+                "silicate",
+                "ferrous",
+                "carbon"
+            ]
+        }
+    },
+    "constitutions": {
+        "silicate": {
+            "name": "Silicate"
+        },
+        "ferrous": {
+            "name": "Ferrous"
+        },
+        "carbon": {
+            "name": "Carbon"
+        }
+    },
+    "archetypes": {
+        "terran": {
+            "name": "Terran",
+            "sprite_count": 5,
+            "valid_biomes": [
+                "Jungle",
+                "Plains",
+                "Oceanic"
+            ],
+            "valid_temperatures": [
+                "Temperate"
+            ],
+            "life_chance": 0.9
+        },
+        "ice": {
+            "name": "Ice",
+            "sprite_count": 5,
+            "valid_biomes": [
+                "Arctic",
+                "Ice Caverns"
+            ],
+            "valid_temperatures": [
+                "Frozen"
+            ],
+            "life_chance": 0.2
+        },
+        "scorched": {
+            "name": "Scorched",
+            "sprite_count": 5,
+            "valid_biomes": [
+                "Desert",
+                "Volcanic"
+            ],
+            "valid_temperatures": [
+                "Scorched"
+            ],
+            "life_chance": 0.1
+        },
+        "barren": {
+            "name": "Barren",
+            "sprite_count": 5,
+            "valid_biomes": [
+                "Barren Plains",
+                "Rocky Craters"
+            ],
+            "valid_temperatures": [
+                "Frozen",
+                "Temperate",
+                "Scorched"
+            ],
+            "life_chance": 0.05
+        }
+    },
+    "atmospheres": {
+        "none": {
+            "name": "None (Vacuum)",
+            "gameplay_effect": "EVA REQUIRED",
+            "oxygen_mission": true
+        },
+        "breathable": {
+            "name": "Breathable (Type I)",
+            "gameplay_effect": "NONE",
+            "oxygen_mission": false
+        },
+        "toxic": {
+            "name": "Toxic (Methane/Ammonia)",
+            "gameplay_effect": "EVA REQUIRED",
+            "oxygen_mission": true
+        }
+    },
+    "life_levels": {
+        "none": {
+            "name": "No Life Detected",
+            "enemy_tags": []
+        },
+        "microbial": {
+            "name": "Microbial Life",
+            "enemy_tags": []
+        },
+        "flora_only": {
+            "name": "Rich Flora",
+            "enemy_tags": [
+                "plant_hostile"
+            ]
+        },
+        "fauna_simple": {
+            "name": "Simple Fauna",
+            "enemy_tags": [
+                "beast_small",
+                "beast_medium"
+            ]
+        },
+        "fauna_complex": {
+            "name": "Complex Ecosystem",
+            "enemy_tags": [
+                "beast_small",
+                "beast_medium",
+                "beast_large",
+                "plant_hostile"
+            ]
+        },
+        "sapient_native": {
+            "name": "Sapient Natives",
+            "enemy_tags": [
+                "sapient_race",
+                "beast_medium"
+            ]
+        }
+    }
+}

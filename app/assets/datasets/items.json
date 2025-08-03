@@ -37,5 +37,13 @@
 		},
 		"slot": "extra",
 		"itemtype": "oxygen"
+	},
+	"alien_artifact": {
+		"name": "Alien Artifact",
+		"desc": "A pulsating crystalline object of unknown origin. Its energy readings are off the charts. It must be secured.",
+		"icon": "artifact",
+		"stats": {},
+		"slot": "extra",
+		"itemtype": "mission_objective"
 	}
 }

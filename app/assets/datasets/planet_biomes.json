@@ -1,0 +1,51 @@
+{
+  "jungle_dense": {
+    "name": "Dense Jungle",
+    "icon": "planet_icon_jungle",
+    "description": "Thick, overwhelming foliage limits sight lines.",
+    "terrain_types": [
+      "grass",
+      "alien_tree_green",
+      "alien_tree_purple",
+      "alien_bush"
+    ],
+    "possible_enemies": [
+      "shambler",
+      "wurrie_blaster",
+      "arakno"
+    ],
+    "hazard_chance": 0.05
+  },
+  "cavern_acidic": {
+    "name": "Acidic Caverns",
+    "icon": "planet_icon_cave",
+    "description": "Corrosive pools and unstable rock formations are common.",
+    "terrain_types": [
+      "cave_floor",
+      "cave_wall",
+      "acid_pool",
+      "rubble_pile"
+    ],
+    "possible_enemies": [
+      "space_lamprey",
+      "sludge_mimic",
+      "shell"
+    ],
+    "hazard_chance": 0.20
+  },
+  "desert_crystal": {
+    "name": "Crystalline Desert",
+    "icon": "planet_icon_desert",
+    "description": "Open plains of sand broken by sharp, impassable crystal growths.",
+    "terrain_types": [
+      "sand",
+      "dirt",
+      "crystal_formation_wall"
+    ],
+    "possible_enemies": [
+      "grey_soldier",
+      "turret_laser"
+    ],
+    "hazard_chance": 0.02
+  }
+}

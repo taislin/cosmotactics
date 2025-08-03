@@ -11,6 +11,7 @@ import _importedItems from "./items.json" with { type: "json" };
 import _importedItems_equipment from "./items_equipment.json" with { type: "json" };
 import _importedItems_weapons from "./items_weapons.json" with { type: "json" };
 import _importedTerrains from "./terrain.json" with { type: "json" }; 
+import _importedIcons_planets from "./icons_planets.json" with { type: "json" };
 
 export let importedUnits = { ..._importedUnits, ..._importedEnemies };
 export let importedIcons = {
@@ -18,7 +19,8 @@ export let importedIcons = {
 	..._importedIcons, 
 	..._importedIcons_entities,
 	..._importedIcons_objects,
-	..._importedIcons_terrain, 
+	..._importedIcons_terrain,
+	..._importedIcons_planets,
 };
 export let importedItems = {
 	..._importedItems,

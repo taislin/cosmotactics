@@ -118,12 +118,87 @@ export function generateName() {
 }
 
 /**
- * Selects a random element from the provided array.
+ * Returns a random element from the given array, or an empty string if the input is not a non-empty array.
  *
- * @param {Array} array - The array to select from.
- * @returns {*} A random element from the array.
+ * @param {Array} array - The array to select a random element from.
+ * @returns {*} The randomly selected element, or an empty string if the input is invalid.
  */
 export function randomFromArray(array) {
 	if (!Array.isArray(array) || array.length === 0) return "";
 	return array[Math.floor(Math.random() * array.length)];
+}
+
+// NEW DATA for planet names
+const STAR_NAMES = [
+	"Alpha Centauri",
+	"Sirius",
+	"Procyon",
+	"Epsilon Eridani",
+	"Tau Ceti",
+	"Luyten",
+	"Gliese",
+	"Vega",
+	"Altair",
+	"Deneb",
+	"Rigel",
+	"Betelgeuse",
+	"Aldebaran",
+	"Cygnus",
+	"Kepler",
+	"Trappist",
+	"Proxima",
+	"Barnard's Star",
+	"Wolf",
+	"Lalande",
+	"Kapteyn",
+	"Ross",
+	"Fomalhaut",
+	"Spica",
+	"Canopus",
+	"Arcturus",
+	"Antares",
+	"Pollux",
+	"Castor",
+	"Mizar",
+	"Alnitak",
+	"Alnilam",
+	"Mintaka",
+	"Scheat",
+	"Bellatrix",
+	"Gacrux",
+	"Hadar",
+	"Kaus Australis",
+	"Sadr",
+	"Aquila",
+	"Lyra",
+	"Orion",
+	"Perseus",
+	"Scorpius",
+	"Taurus",
+	"Virgo",
+	"Capella",
+	"Regulus",
+];
+
+const ROMAN_NUMERALS = [
+	"I",
+	"II",
+	"III",
+	"IV",
+	"V",
+	"VI",
+	"VII",
+	"VIII",
+	"IX",
+	"X",
+];
+
+/**
+ * Generates a procedural planet name in the format of "Starname RomanNumeral".
+ * @returns {string} A randomly generated planet name (e.g., "Kepler IV").
+ */
+export function generatePlanetName() {
+	const star = randomFromArray(STAR_NAMES);
+	const numeral = randomFromArray(ROMAN_NUMERALS);
+	return `${star} ${numeral}`;
 }

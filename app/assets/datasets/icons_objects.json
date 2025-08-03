@@ -263,5 +263,26 @@
                 3
             ]
         ]
+    },
+    "artifact": {
+        "name": "alien artifact",
+        "icon": [
+            "*"
+        ],
+        "color": [
+            "transparent"
+        ],
+        "background": [
+            null
+        ],
+        "passable": true,
+        "transparent": true,
+        "tileset": "./icons/items.png",
+        "tcoords": [
+            [
+                4,
+                2
+            ]
+        ]
     }
 }

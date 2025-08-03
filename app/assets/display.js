@@ -1,4 +1,10 @@
-import { gameDisplay, msgDisplay } from "../index.js";
+import {
+	tileSets,
+	gameDisplay,
+	msgDisplay,
+	menuDisplay,
+	menuDisplayConfig,
+} from "../index.js";
 import {
 	entities,
 	VARS,
@@ -10,9 +16,9 @@ import {
 	projectiles,
 } from "./engine.js";
 import { world, world_grid } from "./map.js";
+import { importedTerrains } from "./datasets/imports.js";
 export var currentLoc = [0, 0];
 export var drawPaths = [];
-
 /**
  * Utility function to tint an image with a specific color.
  * @param {HTMLImageElement} image - The source image to tint.
@@ -40,8 +46,12 @@ function tintImage(image, color) {
 }
 
 /**
- * Updates the game canvas, drawing the map, entities, items, and UI elements.
- * @param {CanvasRenderingContext2D} projectileCtx - The context for the overlay canvas.
+ * Renders the current game state onto the main display, including the map, entities, items, effects, UI menu, and projectiles.
+ * 
+ * If a projectile overlay context is provided, projectiles are drawn with appropriate icons and colour tinting on the overlay canvas.
+ * The function updates the field of view, draws visible and previously seen tiles, overlays targeting and selection indicators, and manages temporary visual effects.
+ * 
+ * @param {CanvasRenderingContext2D} projectileCtx - Optional. The rendering context for the projectile overlay canvas.
  */
 export function updateCanvas(projectileCtx) {
 	gameDisplay.clear();
@@ -280,7 +290,7 @@ export function updateCanvas(projectileCtx) {
 
 	// --- NEW Projectile Drawing Loop with Color ---
 	if (projectileCtx) {
-		const options = gameDisplay.getOptions();
+		const options = menuDisplayConfig;
 		const tileWidth = options.tileWidth;
 		const tileHeight = options.tileHeight;
 
@@ -378,9 +388,9 @@ function drawEffects(drawInterval) {
 }
 
 /**
- * Renders the main game menu panel, displaying player stats, equipment, logs, squad information, and controls.
+ * Renders the main game menu panel, displaying player stats, equipment, logs, squad information, and interactive controls.
  *
- * The menu adapts its content based on the current submenu selection, showing detailed information such as health, armour, oxygen, combat stats, equipment, recent logs, tile inspection, and squad status for all player-controlled units. It also draws interactive controls and contextual information about the current location and entities present.
+ * The menu dynamically adapts its content based on the current submenu selection, providing detailed information such as mission objectives, health, armour, oxygen, combat stats, equipment, recent logs, tile inspection (including terrain, passability, atmosphere safety, and contents), and squad status for all player-controlled units. It also displays contextual information about the current location and available actions.
  */
 function drawMenu() {
 	if (VARS.GAMEWINDOW == "MENU" || VARS.GAMEWINDOW == "LOST") {
@@ -388,10 +398,38 @@ function drawMenu() {
 	}
 	const PANEL_WIDTH = 48; // Define a constant for the new width
 	msgDisplay.clear();
+	let objectiveText = "UNKNOWN";
+	if (VARS.currentMissionData) {
+		const objectiveType = VARS.currentMissionData.objective.type;
+		if (objectiveType === "EXTERMINATE_AND_EVAC") {
+			if (VARS.missionPhase === "MAIN") {
+				objectiveText = `ELIMINATE HOSTILES: ${VARS.killCount} / ${VARS.targetKillCount}`;
+			} else {
+				// EVAC phase
+				objectiveText = `RETURN TO SHUTTLE FOR EVAC`;
+			}
+		} else if (objectiveType === "RETRIEVE_AND_EVAC") {
+			const targetLevel = VARS.currentMissionData.objective.spawn_level;
+			if (VARS.missionPhase === "MAIN") {
+				objectiveText = `LOCATE ARTIFACT (LEVEL ${targetLevel + 1})`;
+			} else {
+				// EVAC phase
+				objectiveText = `ARTIFACT SECURED. RETURN TO SHUTTLE.`;
+			}
+		} else if (objectiveType === "ASSASSINATE_AND_EVAC") {
+			const targetLevel = VARS.currentMissionData.objective.spawn_level;
+			if (VARS.missionPhase === "MAIN") {
+				objectiveText = `NEUTRALIZE HVT (LEVEL ${targetLevel + 1})`;
+			} else {
+				// EVAC phase
+				objectiveText = `HVT ELIMINATED. RETURN TO SHUTTLE.`;
+			}
+		}
+	}
 	msgDisplay.drawText(
 		0,
 		1,
-		"║ %c{orange}MENU%c{} ║%c{#35b59b}         COSMOTACTICS           %c{}║ %c{orange}OBJ %c{}" // Added spacing
+		`║ %c{orange}MENU%c{} ║ %c{orange}OBJ: %c{#35b59b}${objectiveText}%c{}`
 	);
 	msgDisplay.drawText(
 		2,
@@ -486,12 +524,12 @@ function drawMenu() {
 	msgDisplay.drawText(
 		0,
 		0,
-		"╔══════╦════════════════════════════════╦══════╗"
+		"╔══════╦═══════════════════════════════════════╗"
 	); // Adjusted for new width
 	msgDisplay.drawText(
 		0,
 		2,
-		"╠══════╩════════════════════════════════╩══════╣"
+		"╠══════╩═══════════════════════════════════════╣"
 	);
 	msgDisplay.drawText(
 		0,
@@ -551,7 +589,7 @@ function drawMenu() {
 					"," +
 					VARS.TARGET[1] +
 					")",
-				28
+				46
 			);
 			let getpass = world_grid[VARS.TARGET[1]][VARS.TARGET[0]];
 			if (getpass == 1) {
@@ -559,23 +597,49 @@ function drawMenu() {
 			} else {
 				getpass = "%c{red}NOT PASSABLE";
 			}
+			const tileKey =
+				world[VARS.TARGET[0] + "," + VARS.TARGET[1]].terrainTypeKey; // Get the terrain name key (e.g., "cave_floor")
 			msgDisplay.drawText(
 				2,
 				13,
 				"%c{grey}Terrain:%c{} " +
-					world[VARS.TARGET[0] + "," + VARS.TARGET[1]].icon.name,
-				28
+					world[VARS.TARGET[0] + "," + VARS.TARGET[1]].icon.name +
+					"%c{grey} (" +
+					getpass +
+					"%c{grey})",
+				46
 			);
-			msgDisplay.drawText(2, 14, getpass, 28);
-			let br = "%c{green}SAFE";
-			let notbr = "%c{red}NOT SAFE";
-			msgDisplay.drawText(2, 15, "%c{grey}Atmosphere: " + notbr);
+			let br = "%c{#35b59b}SAFE";
+			let notbr = "%c{#b53535}NOT SAFE";
+			const atmosphereStatus =
+				VARS.currentMissionData &&
+				VARS.currentMissionData.planet.needsOxygen
+					? notbr
+					: br;
 			msgDisplay.drawText(
 				2,
-				16,
-				"%c{grey}Temperature: " + "%c{yellow}21°C"
+				14,
+				"%c{grey}Atmosphere: " +
+					atmosphereStatus +
+					"%c{grey}, %c{yellow}21°C",
+				46
 			);
-
+			const terrainData = importedTerrains[tileKey];
+			if (terrainData && terrainData.desc) {
+				msgDisplay.drawText(
+					2,
+					16,
+					"%c{grey}Desc: %c{white}" + terrainData.desc,
+					45
+				); // Adjust Y-position as needed
+			} else {
+				msgDisplay.drawText(
+					2,
+					16,
+					"%c{grey}Desc: %c{}No description available.",
+					45
+				);
+			}
 			let locEnt = [];
 			for (var e of entities) {
 				if (e.x == VARS.TARGET[0] && e.y == VARS.TARGET[1]) {
@@ -598,7 +662,7 @@ function drawMenu() {
 				locEnt.push({ name: "stairs (down)", type: "stairs" });
 			}
 			VARS.MENU_LENGTH = locEnt.length;
-			msgDisplay.drawText(2, 18, "%c{grey}Tile Contents:");
+			msgDisplay.drawText(2, 19, "%c{grey}Tile Contents:");
 			if (locEnt.length) {
 				for (var i = 0; i < locEnt.length; i++) {
 					let cl = "%c{}";
@@ -609,9 +673,9 @@ function drawMenu() {
 						if (locEnt[i] && locEnt[i].mob && locEnt[i].mob.desc) {
 							msgDisplay.drawText(
 								2,
-								25,
+								26,
 								"%c{grey}" + locEnt[i].mob.desc,
-								28
+								45
 							); // Draw description at the bottom
 						}
 					}
@@ -625,7 +689,7 @@ function drawMenu() {
 					} else if (locEnt[i].owner && locEnt[i].owner != "player") {
 						cl = "%c{red}";
 					}
-					msgDisplay.drawText(2, 19 + i, indx + cl + locEnt[i].name);
+					msgDisplay.drawText(2, 20 + i, indx + cl + locEnt[i].name);
 				}
 			}
 		} else {
@@ -862,7 +926,12 @@ function drawMenu() {
 	if (locs) {
 		let tmp = "21°C";
 		let atmo = "%c{#35b59b}SAFE";
-		let atmo_unsafe = "%c{#b53535}UNSAFE";
+		let atmo_unsafe = "%c{#b53535}NOT SAFE";
+		const atmosphereStatus =
+			VARS.currentMissionData &&
+			VARS.currentMissionData.planet.needsOxygen
+				? atmo_unsafe
+				: atmo;
 		if (locs.visible) {
 			msgDisplay.drawText(
 				1,
@@ -871,12 +940,12 @@ function drawMenu() {
 			);
 		}
 		msgDisplay.drawText(
-			PANEL_WIDTH - atmo_unsafe.length + 9,
+			PANEL_WIDTH - atmosphereStatus.length + 9,
 			38,
-			atmo_unsafe
+			atmosphereStatus
 		); // Adjusted
 		msgDisplay.drawText(
-			PANEL_WIDTH - tmp.length - 1,
+			PANEL_WIDTH - tmp.length - 2,
 			37,
 			"%c{yellow}" + tmp
 		); // Adjusted
@@ -890,9 +959,10 @@ function drawMenu() {
 }
 
 /**
- * Updates the field of view (FOV) for player-controlled entities, marking visible and seen tiles, entities, and items.
- * 
- * Resets visibility for all tiles, entities, and items, then uses a shadowcasting algorithm to determine which map areas are visible to player entities. Marks tiles, entities, and items as visible or seen based on their presence within the computed FOV radius.
+ * Updates visibility and exploration status for tiles, entities, and items based on player-controlled entities' field of view.
+ *
+ * Resets all visibility flags, then uses shadowcasting to determine which map areas are visible to player entities within a fixed radius. Marks tiles as visible and seen, and updates visibility for entities and items located within the visible area.
+ * @param {object} player - The player entity or context used for FOV calculation.
  */
 function updateFOV(player) {
 	for (var tile in world) {
@@ -933,10 +1003,10 @@ function updateFOV(player) {
 }
 
 /**
- * Calculates the visible area of the map based on the selected entity's position and zoom level.
- * @returns {Array} - An array representing the visible area [minX, minY, maxX, maxY].
+ * Determines the rectangular bounds of the map currently visible to the player.
+ * @returns {number[]} An array [minX, minY, maxX, maxY] specifying the visible map area in tile coordinates.
  */
-function calculateDrawInterval() {
+export function calculateDrawInterval() {
 	return [
 		VARS.SELECTED.x - VARS.MAP_DISPLAY_X / VARS.ZOOM_LEVEL,
 		VARS.SELECTED.y - VARS.MAP_DISPLAY_Y / VARS.ZOOM_LEVEL,

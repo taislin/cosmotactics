@@ -7,13 +7,19 @@ import { drawMainMenu } from "./assets/mainmenu.js";
 import { icons, updateGameLogic, VARS } from "./assets/engine.js";
 import { updateCanvas } from "./assets/display.js";
 
-// Preload tile sets
+/**
+ * Preloads image elements for all required tile set sources.
+ * @return {HTMLImageElement[]} An array of image elements with their sources set to the tile set image files.
+ */
 function preloadTileSets() {
 	const sources = [
 		"./icons/terrain.png",
 		"./icons/gui.png",
 		"./icons/entities.png",
 		"./icons/icon.png",
+		"./icons/items.png",
+		"./icons/planets.png",
+		"./icons/trees.png",
 	];
 	return sources.map((src) => {
 		const img = document.createElement("img");
@@ -47,6 +53,19 @@ export const gameDisplayConfig = {
 	// previous `_tileMap` implementation was buggy and has been removed.
 	tileColorize: true,
 };
+export const spriteDisplayConfig = {
+	width: 20,
+	height: 20,
+	forceSquareRatio: false,
+	fontSize: 16,
+	fontFamily: "Input Mono, Noto Sans Mono, monospace",
+	layout: "tile-gl",
+	bg: "transparent",
+	tileWidth: 32,
+	tileHeight: 32,
+	tileSet: tileSets,
+	tileColorize: true,
+};
 export const msgDisplayConfig = {
 	width: 48,
 	height: 40,
@@ -60,7 +79,7 @@ export const msgDisplayConfig = {
 export const menuDisplayConfig = {
 	width: 20,
 	height: 20,
-	forceSquareRatio: true,
+	forceSquareRatio: false,
 	fontSize: 32,
 	bg: "#222",
 	fg: "#fff",
@@ -71,6 +90,7 @@ export const menuDisplayConfig = {
 export const gameDisplay = new ROT.Display(gameDisplayConfig);
 export const menuDisplay = new ROT.Display(menuDisplayConfig);
 export const msgDisplay = new ROT.Display(msgDisplayConfig);
+export const spriteDisplay = new ROT.Display(spriteDisplayConfig);
 
 // Projectile Canvas setup
 let projectileCanvas;
@@ -84,9 +104,14 @@ export function setupProjectileCanvas() {
 	projectileCtx = projectileCanvas.getContext("2d");
 }
 
-// Attach displays to DOM
+/**
+ * Appends the menu, sprite, and message display containers to their respective DOM elements.
+ */
 function attachDisplays() {
 	document.getElementById("terminal").appendChild(menuDisplay.getContainer());
+	document
+		.getElementById("sprite-overlay")
+		.appendChild(spriteDisplay.getContainer());
 	document.getElementById("msg").appendChild(msgDisplay.getContainer());
 }
 

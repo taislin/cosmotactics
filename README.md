@@ -23,13 +23,12 @@ A squad-based tactical roguelike game set in a gritty sci-fi universe. Lead your
     -   [📜 Features](#-features)
     -   [🚀 Getting Started](#-getting-started)
     -   [🎮 How to Play](#-how-to-play)
-    -   [🛠 Technologies Used](#-technologies-used)
     -   [🤝 Contributing](#-contributing)
-    -   [📄 License](#-license)
-    -   [🙏 Credits and Attributions](#-credits-and-attributions)
+    -   [🙏 Licenses and Attributions](#-licenses-and-attributions)
         -   [⚙️ Core Development](#️-core-development)
         -   [🛠 Libraries \& Engines](#-libraries--engines)
         -   [🎨 Graphics \& Tilesets](#-graphics--tilesets)
+        -   [🖨️ Fonts](#️-fonts)
 
 ## 📜 Features
 
@@ -70,15 +69,15 @@ For a comprehensive guide on game mechanics, controls, units, and items, please 
 
 [**CosmoTactics Operator's Manual**](https://taislin.github.io/cosmotactics/docs/)
 
-## 🛠 Technologies Used
+## 🤝 Contributing
+
+Contributions are welcome! If you have suggestions for new features, bug fixes, or improvements to the codebase, please open an issue or submit a pull request.
+
+**Technologies Used:**
 
 -   **HTML5, CSS3, JavaScript:** Core web technologies.
 -   **ROT.js:** Robust roguelike toolkit for display, map generation, FOV, pathfinding, and RNG.
 -   **Neutralino.js:** Used for the executable, basically a small, self-contained browser app.
-
-## 🤝 Contributing
-
-Contributions are welcome! If you have suggestions for new features, bug fixes, or improvements to the codebase, please open an issue or submit a pull request.
 
 1.  **Clone the repository:**
 
@@ -102,21 +101,17 @@ Contributions are welcome! If you have suggestions for new features, bug fixes, 
 
     This will start a server, usually accessible at `http://127.0.0.1:8125/`. Open this URL in your web browser.
 
-## 📄 License
-
-This project is licensed under the **Creative Commons BY NC 4.0 License**.
-
-This license enables reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator.
-
-See the [LICENSE](LICENSE) file for details.
-
-## 🙏 Credits and Attributions
+## 🙏 Licenses and Attributions
 
 CosmoTactics is made possible by the hard work of its creator and the generous contributions of the open-source and creative communities.
 
 ### ⚙️ Core Development
 
--   **Game Design, Programming, and Art:** [taislin](https://github.com/taislin) _(Unless specified otherwise)_. Licensed under [CC BY-NC 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/).
+**Game Design, Programming, and Art:** [taislin](https://github.com/taislin) _(Unless specified otherwise)_. Licensed under [CC BY-NC 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/).
+
+This license enables reusers to distribute, remix, adapt, and build upon the material in any medium or format for noncommercial purposes only, and only so long as attribution is given to the creator.
+
+See the [LICENSE](LICENSE) file for details.
 
 ### 🛠 Libraries & Engines
 
@@ -132,3 +127,7 @@ CosmoTactics is made possible by the hard work of its creator and the generous c
 -   **[Urizen 1-bit tileset](https://vurmux.itch.io/urizen-onebit-tileset)** by _Varmux_. Licensed under [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
 
 -   **[32Rogues](https://sethbb.itch.io/32rogues)** by _Seth_. Licensed under a Proprietary License (open-source), see files for more information.
+
+### 🖨️ Fonts
+
+-   All included fonts are licensed under [SIL Open Font License 1.1](https://openfontlicense.org/open-font-license-official-text/)
