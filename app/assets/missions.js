@@ -5,6 +5,14 @@ import { generatePlanetName } from "./namegen.js"; // You might need a new nameg
 import enemies from "./datasets/enemies.json" with { type: "json" }; // To resolve tags
 import { getRandomElement } from "./utils/gameUtils.js";
 
+/**
+ * Generates an array of mission choice objects, each representing a potential mission on a randomly generated habitable planet.
+ *
+ * Each mission choice includes display information such as planet name, icon, biome, atmosphere, EVA requirement, known alien threats, mission objective, and calculated reward. The function also provides generation data for use by the level generator, including the planet object, objective, and difficulty score.
+ *
+ * @param {number} [count=3] - The number of mission choices to generate.
+ * @returns {Array<Object>} An array of mission choice objects with display and generation data.
+ */
 export function generateMissionChoices(count = 3) {
 	let choices = [];
 

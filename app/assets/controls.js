@@ -35,9 +35,9 @@ let loaded = false;
 let lastMoveTime = 0;
 const MOVE_DELAY = 300;
 /**
- * Registers global keyboard and mouse event listeners to handle all user input for the game, including gameplay, menu navigation, and UI interactions.
+ * Sets up global keyboard and mouse event listeners to manage all user input for the game.
  *
- * Sets up internal handlers to process key and mouse events according to the current game state, enabling movement, targeting, menu selection, mode switching, and in-game actions. Ensures input is appropriately routed and throttled, and manages state transitions between gameplay, menus, and guide screens.
+ * Routes input events to context-sensitive handlers based on the current game state, enabling gameplay controls, menu navigation, mission selection, guide access, and UI interactions. Ensures input is throttled where necessary and transitions between game states appropriately.
  */
 
 export function setControls() {
@@ -193,9 +193,9 @@ export function setControls() {
 	}
 
 	/**
-	 * Routes keyboard events to the appropriate handler based on the current game window state.
+	 * Processes keyboard input and routes actions based on the current game window state.
 	 *
-	 * Handles menu navigation, state transitions, and delegates gameplay key events to `handleGameKeys`. In the guide and lost screens, processes exit or reset actions. In the menu, manages item selection and transitions to game or guide screens.
+	 * Handles navigation and selection in menus and mission select screens, transitions between game states, and delegates gameplay key events to the appropriate handler. Also manages exit and reset actions in guide and lost screens.
 	 * @param {KeyboardEvent} e - The keyboard event to process.
 	 */
 	function handleKeyDown(e) {
@@ -334,6 +334,11 @@ export function setControls() {
 		}
 	}
 
+	/**
+	 * Handles interaction with entities and items at the current target location.
+	 *
+	 * In "INSPECT" submenu, processes the selected entity or item at the target tile. If the selection is stairs and all player units are nearby, proceeds to the next level. If the selection is an item, applies its effects: oxygen items restore oxygen, healing items heal all player units, and mission objective items secure the artifact and trigger evacuation. Used items are removed from the world.
+	 */
 	function handleKeyU() {
 		let locEnt = [];
 		for (const e of entities) {
@@ -407,11 +412,9 @@ export function setControls() {
 	}
 
 	/**
-	 * Handles mouse click events based on the current game window state.
+	 * Processes mouse click events according to the current game window state.
 	 *
-	 * In the "LOST" state, returns to the main menu and resets the game after a delay.
-	 * In the "MENU" state, processes menu navigation and selection, updating the game window or redrawing the menu as needed.
-	 * In the "GAME" state, translates click positions to map or GUI coordinates, processes GUI interactions, and, if the clicked map tile is valid and visible, delegates further handling to the `clicks` function.
+	 * In the "LOST" state, initiates a delayed reset and returns to the main menu. In the "MENU" state, handles menu navigation and selection, updating the game state or redrawing the menu as appropriate. In the "GAME" state, interprets click positions to interact with GUI elements or map tiles, delegating valid map tile clicks to the `clicks` function if the tile is visible.
 	 */
 	function handleClick(e) {
 		if (VARS.isAnimating) {
@@ -558,6 +561,13 @@ function proceedToNextLevel() {
 export function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
+/**
+ * Handles map tile clicks based on the current interaction mode.
+ *
+ * In targeting mode, clicking the current target fires a ranged weapon if ammo is available; otherwise, updates the target. In normal mode, computes a path to the clicked tile and, on double-click, initiates movement if the tile is passable and not blocked by impassable entities. In look mode, updates the target and collects entities and items at the clicked location for inspection.
+ * @param {number[]} currentLoc - The [x, y] coordinates of the clicked map tile.
+ * @param {number[]} draw_interval - Interval data used for path drawing and visualisation.
+ */
 function clicks(currentLoc, draw_interval) {
 	if (VARS.MODE == "targeting") {
 		if (
@@ -681,9 +691,9 @@ function clicks(currentLoc, draw_interval) {
 	}
 }
 /**
- * Reloads the selected unit's ranged weapon to its maximum ammo capacity if possible, logs the action, and processes the turn.
+ * Reloads the selected unit's ranged weapon to full ammo if eligible, then processes the turn.
  *
- * The weapon is only reloaded if it has a reload capability, is not already at maximum ammo, and the unit is currently selected.
+ * The weapon is reloaded only if it supports reloading, is not already at maximum ammo, and the unit is currently selected.
  */
 export function reload(unit) {
 	if (unit.mob.slots.ranged) {
@@ -815,6 +825,13 @@ function clickGUI(coords) {
 		}
 	}
 }
+/**
+ * Moves the selected unit along a specified path, updating its position step by step and processing a turn after each move.
+ * 
+ * Recursively advances the unit through each coordinate in the path, with a short delay between moves.
+ * 
+ * @param {number[][]} path - An array of [x, y] coordinates representing the movement path.
+ */
 async function doMoves(path) {
 	let curr = path.shift();
 	if (!curr) {
@@ -833,6 +850,9 @@ async function doMoves(path) {
 	}
 }
 
+/**
+ * Switches the game to the main menu screen and updates the display accordingly.
+ */
 export function goToMainMenu() {
 	VARS.GAMEWINDOW = "MENU";
 	loaded = false;

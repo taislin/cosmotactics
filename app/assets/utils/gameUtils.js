@@ -101,7 +101,14 @@ export function isTilePassableForMovement(x, y, movingUnit) {
 	return true; // Tile is passable
 }
 
-// Keeping getDir here as it's a general utility function that could be used by others.
+/**
+ * Determines the primary cardinal direction from an origin point to a target point.
+ * @param {number} ox - The x-coordinate of the origin.
+ * @param {number} oy - The y-coordinate of the origin.
+ * @param {number} tx - The x-coordinate of the target.
+ * @param {number} ty - The y-coordinate of the target.
+ * @return {string|null} The direction ("north", "south", "east", or "west"), or null if the origin and target are the same.
+ */
 export function getDir(ox, oy, tx, ty) {
 	let dir = null;
 	if (Math.abs(ox - tx) >= Math.abs(oy - ty)) {
@@ -121,8 +128,8 @@ export function getDir(ox, oy, tx, ty) {
 }
 
 /**
- * Checks if all living player entities are within a specified radius of the evac zone.
- * @returns {boolean} True if all players are in the zone, false otherwise.
+ * Determines whether all living player entities are within the evacuation zone radius.
+ * @returns {boolean} True if every living player is within 4 units of the shuttle coordinates; false if any player is outside the radius or if the shuttle coordinates are undefined.
  */
 export function areAllPlayersInEvacZone() {
 	if (!VARS.shuttleCoords) return false;

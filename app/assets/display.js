@@ -46,8 +46,12 @@ function tintImage(image, color) {
 }
 
 /**
- * Updates the game canvas, drawing the map, entities, items, and UI elements.
- * @param {CanvasRenderingContext2D} projectileCtx - The context for the overlay canvas.
+ * Renders the current game state onto the main display, including the map, entities, items, effects, UI menu, and projectiles.
+ * 
+ * If a projectile overlay context is provided, projectiles are drawn with appropriate icons and colour tinting on the overlay canvas.
+ * The function updates the field of view, draws visible and previously seen tiles, overlays targeting and selection indicators, and manages temporary visual effects.
+ * 
+ * @param {CanvasRenderingContext2D} projectileCtx - Optional. The rendering context for the projectile overlay canvas.
  */
 export function updateCanvas(projectileCtx) {
 	gameDisplay.clear();
@@ -384,9 +388,9 @@ function drawEffects(drawInterval) {
 }
 
 /**
- * Renders the main game menu panel, displaying player stats, equipment, logs, squad information, and controls.
+ * Renders the main game menu panel, displaying player stats, equipment, logs, squad information, and interactive controls.
  *
- * The menu adapts its content based on the current submenu selection, showing detailed information such as health, armour, oxygen, combat stats, equipment, recent logs, tile inspection, and squad status for all player-controlled units. It also draws interactive controls and contextual information about the current location and entities present.
+ * The menu dynamically adapts its content based on the current submenu selection, providing detailed information such as mission objectives, health, armour, oxygen, combat stats, equipment, recent logs, tile inspection (including terrain, passability, atmosphere safety, and contents), and squad status for all player-controlled units. It also displays contextual information about the current location and available actions.
  */
 function drawMenu() {
 	if (VARS.GAMEWINDOW == "MENU" || VARS.GAMEWINDOW == "LOST") {
@@ -955,9 +959,10 @@ function drawMenu() {
 }
 
 /**
- * Updates the field of view (FOV) for player-controlled entities, marking visible and seen tiles, entities, and items.
+ * Updates visibility and exploration status for tiles, entities, and items based on player-controlled entities' field of view.
  *
- * Resets visibility for all tiles, entities, and items, then uses a shadowcasting algorithm to determine which map areas are visible to player entities. Marks tiles, entities, and items as visible or seen based on their presence within the computed FOV radius.
+ * Resets all visibility flags, then uses shadowcasting to determine which map areas are visible to player entities within a fixed radius. Marks tiles as visible and seen, and updates visibility for entities and items located within the visible area.
+ * @param {object} player - The player entity or context used for FOV calculation.
  */
 function updateFOV(player) {
 	for (var tile in world) {
@@ -998,8 +1003,8 @@ function updateFOV(player) {
 }
 
 /**
- * Calculates the visible area of the map based on the selected entity's position and zoom level.
- * @returns {Array} - An array representing the visible area [minX, minY, maxX, maxY].
+ * Determines the rectangular bounds of the map currently visible to the player.
+ * @returns {number[]} An array [minX, minY, maxX, maxY] specifying the visible map area in tile coordinates.
  */
 export function calculateDrawInterval() {
 	return [

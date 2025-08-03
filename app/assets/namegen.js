@@ -118,10 +118,10 @@ export function generateName() {
 }
 
 /**
- * Selects a random element from the provided array.
+ * Returns a random element from the given array, or an empty string if the input is not a non-empty array.
  *
- * @param {Array} array - The array to select from.
- * @returns {*} A random element from the array.
+ * @param {Array} array - The array to select a random element from.
+ * @returns {*} The randomly selected element, or an empty string if the input is invalid.
  */
 export function randomFromArray(array) {
 	if (!Array.isArray(array) || array.length === 0) return "";
