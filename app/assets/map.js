@@ -336,6 +336,7 @@ export function loadLevel(level, entryPoint = null) {
 				visible: false,
 				seen: false,
 				isHazard: terrainKey === "acid_pool",
+				terrainTypeKey: terrainKey,
 			};
 			_applyRandomIconProperties(world[`${x},${y}`]);
 			_setWorldGridTile(x, y, iconData.passable);

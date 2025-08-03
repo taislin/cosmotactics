@@ -33,7 +33,7 @@
 		"movement_cost": 1.0,
 		"visibility_modifier": 0,
 		"effect": null,
-		"desc": "Glowing cave mushrooms. Harmless."
+		"desc": "Glowing cave mushrooms. Harmless but can block line of sight."
 	},
 	"snow": {
 		"movement_cost": 1.3,
@@ -43,27 +43,27 @@
 	},
 	"cave_wall": {
 		"movement_cost": -1,
-		"visibility_modifier": 0,
+		"visibility_modifier": 1.0,
 		"effect": null,
-		"desc": "Impenetrable rock wall."
+		"desc": "Impenetrable rock wall. Blocks movement and line of sight."
 	},
 	"wood_wall": {
 		"movement_cost": -1,
-		"visibility_modifier": 0,
+		"visibility_modifier": 1.0,
 		"effect": null,
-		"desc": "A sturdy wooden wall."
+		"desc": "A sturdy wooden wall. Impassable."
 	},
 	"brick_wall": {
 		"movement_cost": -1,
-		"visibility_modifier": 0,
+		"visibility_modifier": 1.0,
 		"effect": null,
-		"desc": "A solid brick wall."
+		"desc": "A solid brick wall. Impassable."
 	},
 	"snow_wall": {
 		"movement_cost": -1,
-		"visibility_modifier": 0,
+		"visibility_modifier": 1.0,
 		"effect": null,
-		"desc": "A wall of compacted snow."
+		"desc": "A wall of compacted snow. Impassable."
 	},
 	"mud": {
 		"movement_cost": 1.5,
@@ -79,6 +79,18 @@
 		"visibility_modifier": 0.5,
 		"effect": null,
 		"desc": "Dense bush. Can provide minor cover."
+	},
+	"alien_flowers": {
+		"movement_cost": 1.0,
+		"visibility_modifier": 0.2,
+		"effect": null,
+		"desc": "Unusual alien flora with vibrant colors. Offers minimal cover."
+	},
+	"alien_bush": {
+		"movement_cost": 1.0,
+		"visibility_modifier": 0.5,
+		"effect": null,
+		"desc": "A cluster of alien foliage. Provides moderate concealment."
 	},
 	"bush_dead": {
 		"movement_cost": 1.0,
@@ -103,6 +115,30 @@
 		"visibility_modifier": 1.0,
 		"effect": null,
 		"desc": "A tall tree. Impassable, blocks line of sight."
+	},
+	"alien_tree_purple": {
+		"movement_cost": -1,
+		"visibility_modifier": 1.0,
+		"effect": null,
+		"desc": "A towering alien tree with deep purple foliage. Blocks movement and line of sight."
+	},
+	"alien_tree_green": {
+		"movement_cost": -1,
+		"visibility_modifier": 1.0,
+		"effect": null,
+		"desc": "An alien tree with lush green leaves. Impassable, blocks line of sight."
+	},
+	"alien_tree_blue": {
+		"movement_cost": -1,
+		"visibility_modifier": 1.0,
+		"effect": null,
+		"desc": "A luminous alien tree with blue-tinged bark. Impassable, blocks line of sight."
+	},
+	"alien_tree_orange": {
+		"movement_cost": -1,
+		"visibility_modifier": 1.0,
+		"effect": null,
+		"desc": "A vibrant alien tree with fiery orange leaves. Impassable, blocks line of sight."
 	},
 	"tree_dead": {
 		"movement_cost": -1,
@@ -158,18 +194,6 @@
 		"effect": null,
 		"desc": "An igloo door."
 	},
-	"oxygen": {
-		"movement_cost": 1.0,
-		"visibility_modifier": 0,
-		"effect": null,
-		"desc": "An oxygen tank on the ground."
-	},
-	"medkit": {
-		"movement_cost": 1.0,
-		"visibility_modifier": 0,
-		"effect": null,
-		"desc": "A medkit on the ground."
-	},
 	"stairs_down": {
 		"movement_cost": 1.0,
 		"visibility_modifier": 0,
@@ -177,6 +201,14 @@
 			"type": "level_transition"
 		},
 		"desc": "Stairs leading deeper into the complex."
+	},
+	"stairs_up": {
+		"movement_cost": 1.0,
+		"visibility_modifier": 0,
+		"effect": {
+			"type": "level_transition"
+		},
+		"desc": "Stairs leading back to the previous level."
 	},
 	"acid_pool": {
 		"movement_cost": 1.0,
@@ -186,12 +218,18 @@
 			"amount": 5,
 			"damage_type": "acid"
 		},
-		"desc": "A pool of corrosive alien acid."
+		"desc": "A pool of corrosive alien acid. Dangerous to traverse."
 	},
 	"rubble_pile": {
 		"movement_cost": -1,
 		"visibility_modifier": 0,
 		"effect": null,
 		"desc": "A large pile of debris. Impassable."
+	},
+	"crystal_formation_wall": {
+		"movement_cost": -1,
+		"visibility_modifier": 1.0,
+		"effect": null,
+		"desc": "Jagged, impassable crystal growths. Blocks movement and line of sight."
 	}
 }

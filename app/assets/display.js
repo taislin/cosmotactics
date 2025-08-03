@@ -16,6 +16,7 @@ import {
 	projectiles,
 } from "./engine.js";
 import { world, world_grid } from "./map.js";
+import { importedTerrains } from "./datasets/imports.js";
 export var currentLoc = [0, 0];
 export var drawPaths = [];
 /**
@@ -393,7 +394,7 @@ function drawMenu() {
 	}
 	const PANEL_WIDTH = 48; // Define a constant for the new width
 	msgDisplay.clear();
-	let objectiveText = "OBJECTIVE: UNKNOWN";
+	let objectiveText = "UNKNOWN";
 	if (VARS.currentMissionData) {
 		const objectiveType = VARS.currentMissionData.objective.type;
 		if (objectiveType === "EXTERMINATE_AND_EVAC") {
@@ -401,7 +402,7 @@ function drawMenu() {
 				objectiveText = `ELIMINATE HOSTILES: ${VARS.killCount} / ${VARS.targetKillCount}`;
 			} else {
 				// EVAC phase
-				objectiveText = `%c{#35b59b}RETURN TO SHUTTLE FOR EVAC`;
+				objectiveText = `RETURN TO SHUTTLE FOR EVAC`;
 			}
 		} else if (objectiveType === "RETRIEVE_AND_EVAC") {
 			const targetLevel = VARS.currentMissionData.objective.spawn_level;
@@ -409,7 +410,7 @@ function drawMenu() {
 				objectiveText = `LOCATE ARTIFACT (LEVEL ${targetLevel + 1})`;
 			} else {
 				// EVAC phase
-				objectiveText = `%c{#35b59b}ARTIFACT SECURED. RETURN TO SHUTTLE.`;
+				objectiveText = `ARTIFACT SECURED. RETURN TO SHUTTLE.`;
 			}
 		} else if (objectiveType === "ASSASSINATE_AND_EVAC") {
 			const targetLevel = VARS.currentMissionData.objective.spawn_level;
@@ -417,14 +418,14 @@ function drawMenu() {
 				objectiveText = `NEUTRALIZE HVT (LEVEL ${targetLevel + 1})`;
 			} else {
 				// EVAC phase
-				objectiveText = `%c{#35b59b}HVT ELIMINATED. RETURN TO SHUTTLE.`;
+				objectiveText = `HVT ELIMINATED. RETURN TO SHUTTLE.`;
 			}
 		}
 	}
 	msgDisplay.drawText(
 		0,
 		1,
-		`║ %c{orange}MENU%c{} ║%c{#35b59b} ${objectiveText.padEnd(30)} %c{}║`
+		`║ %c{orange}MENU%c{} ║ %c{orange}OBJ: %c{#35b59b}${objectiveText}%c{}`
 	);
 	msgDisplay.drawText(
 		2,
@@ -519,12 +520,12 @@ function drawMenu() {
 	msgDisplay.drawText(
 		0,
 		0,
-		"╔══════╦════════════════════════════════╦══════╗"
+		"╔══════╦═══════════════════════════════════════╗"
 	); // Adjusted for new width
 	msgDisplay.drawText(
 		0,
 		2,
-		"╠══════╩════════════════════════════════╩══════╣"
+		"╠══════╩═══════════════════════════════════════╣"
 	);
 	msgDisplay.drawText(
 		0,
@@ -584,7 +585,7 @@ function drawMenu() {
 					"," +
 					VARS.TARGET[1] +
 					")",
-				28
+				46
 			);
 			let getpass = world_grid[VARS.TARGET[1]][VARS.TARGET[0]];
 			if (getpass == 1) {
@@ -592,23 +593,49 @@ function drawMenu() {
 			} else {
 				getpass = "%c{red}NOT PASSABLE";
 			}
+			const tileKey =
+				world[VARS.TARGET[0] + "," + VARS.TARGET[1]].terrainTypeKey; // Get the terrain name key (e.g., "cave_floor")
 			msgDisplay.drawText(
 				2,
 				13,
 				"%c{grey}Terrain:%c{} " +
-					world[VARS.TARGET[0] + "," + VARS.TARGET[1]].icon.name,
-				28
+					world[VARS.TARGET[0] + "," + VARS.TARGET[1]].icon.name +
+					"%c{grey} (" +
+					getpass +
+					"%c{grey})",
+				46
 			);
-			msgDisplay.drawText(2, 14, getpass, 28);
-			let br = "%c{green}SAFE";
-			let notbr = "%c{red}NOT SAFE";
-			msgDisplay.drawText(2, 15, "%c{grey}Atmosphere: " + notbr);
+			let br = "%c{#35b59b}SAFE";
+			let notbr = "%c{#b53535}NOT SAFE";
+			const atmosphereStatus =
+				VARS.currentMissionData &&
+				VARS.currentMissionData.planet.needsOxygen
+					? notbr
+					: br;
 			msgDisplay.drawText(
 				2,
-				16,
-				"%c{grey}Temperature: " + "%c{yellow}21°C"
+				14,
+				"%c{grey}Atmosphere: " +
+					atmosphereStatus +
+					"%c{grey}, %c{yellow}21°C",
+				46
 			);
-
+			const terrainData = importedTerrains[tileKey];
+			if (terrainData && terrainData.desc) {
+				msgDisplay.drawText(
+					2,
+					16,
+					"%c{grey}Desc: %c{white}" + terrainData.desc,
+					45
+				); // Adjust Y-position as needed
+			} else {
+				msgDisplay.drawText(
+					2,
+					16,
+					"%c{grey}Desc: %c{}No description available.",
+					45
+				);
+			}
 			let locEnt = [];
 			for (var e of entities) {
 				if (e.x == VARS.TARGET[0] && e.y == VARS.TARGET[1]) {
@@ -631,7 +658,7 @@ function drawMenu() {
 				locEnt.push({ name: "stairs (down)", type: "stairs" });
 			}
 			VARS.MENU_LENGTH = locEnt.length;
-			msgDisplay.drawText(2, 18, "%c{grey}Tile Contents:");
+			msgDisplay.drawText(2, 19, "%c{grey}Tile Contents:");
 			if (locEnt.length) {
 				for (var i = 0; i < locEnt.length; i++) {
 					let cl = "%c{}";
@@ -642,7 +669,7 @@ function drawMenu() {
 						if (locEnt[i] && locEnt[i].mob && locEnt[i].mob.desc) {
 							msgDisplay.drawText(
 								2,
-								25,
+								26,
 								"%c{grey}" + locEnt[i].mob.desc,
 								45
 							); // Draw description at the bottom
@@ -658,7 +685,7 @@ function drawMenu() {
 					} else if (locEnt[i].owner && locEnt[i].owner != "player") {
 						cl = "%c{red}";
 					}
-					msgDisplay.drawText(2, 19 + i, indx + cl + locEnt[i].name);
+					msgDisplay.drawText(2, 20 + i, indx + cl + locEnt[i].name);
 				}
 			}
 		} else {
@@ -895,7 +922,12 @@ function drawMenu() {
 	if (locs) {
 		let tmp = "21°C";
 		let atmo = "%c{#35b59b}SAFE";
-		let atmo_unsafe = "%c{#b53535}UNSAFE";
+		let atmo_unsafe = "%c{#b53535}NOT SAFE";
+		const atmosphereStatus =
+			VARS.currentMissionData &&
+			VARS.currentMissionData.planet.needsOxygen
+				? atmo_unsafe
+				: atmo;
 		if (locs.visible) {
 			msgDisplay.drawText(
 				1,
@@ -904,12 +936,12 @@ function drawMenu() {
 			);
 		}
 		msgDisplay.drawText(
-			PANEL_WIDTH - atmo_unsafe.length + 9,
+			PANEL_WIDTH - atmosphereStatus.length + 9,
 			38,
-			atmo_unsafe
+			atmosphereStatus
 		); // Adjusted
 		msgDisplay.drawText(
-			PANEL_WIDTH - tmp.length - 1,
+			PANEL_WIDTH - tmp.length - 2,
 			37,
 			"%c{yellow}" + tmp
 		); // Adjusted

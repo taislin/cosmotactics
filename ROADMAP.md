@@ -12,11 +12,11 @@ My goal is to build a deep, engaging squad-based tactical roguelike. The roadmap
 
 _Focus: Solidifying the core game loop and adding essential quality-of-life features._
 
--   [x] **Persistent & Bidirectional Levels:** Implement a state-saving system for visited levels, allowing players to travel up and down between floors.
--   [x] **Expanded Mission Objectives:** Introduce a basic "Objective & Evac" mission type where the squad must complete a goal and return to the shuttle to win.
--   [x] **In-Game Quick Guide:** Fully integrate the Quick Start guide into the main menu for easy access.
--   [x] **Thematic Level Start:** Add the squad's shuttle as a multi-tile, static object at the start of Level 0 for better immersion.
--   [ ] **Expanded Arsenal:** Add a selection of new weapons with unique mechanics (e.g., Shotguns, Stun Weapons) to increase tactical variety.
+-   ✅ **Persistent & Bidirectional Levels:** Implement a state-saving system for visited levels, allowing players to travel up and down between floors.
+-   ✅ **Expanded Mission Objectives:** Introduce a basic "Objective & Evac" mission type where the squad must complete a goal and return to the shuttle to win.
+-   ✅ **In-Game Quick Guide:** Fully integrate the Quick Start guide into the main menu for easy access.
+-   ✅ **Thematic Level Start:** Add the squad's shuttle as a multi-tile, static object at the start of Level 0 for better immersion.
+-   ❌ **Expanded Arsenal:** Add a selection of new weapons with unique mechanics (e.g., Shotguns, Stun Weapons) to increase tactical variety.
 
 ---
 
@@ -24,13 +24,13 @@ _Focus: Solidifying the core game loop and adding essential quality-of-life feat
 
 _Focus: Making the "squad" aspect more meaningful by introducing persistent management between missions._
 
--   [ ] **Between-Missions Barracks Screen:**
+-   ❌ **Between-Missions Barracks Screen:**
     -   View a roster of all available operatives.
     -   Manually assign weapons, armor, and items to each squad member from a shared inventory.
     -   Recruit new troopers to replace fallen ones.
--   [ ] **Persistent Operative Health:** Wounded operatives will not fully heal between missions, encouraging squad rotation.
--   [ ] **Global Stash:** Items and gold found during missions are added to a shared stash for use in the Barracks.
--   [ ] **Save/Load:** The ability to save and load games, either on browser storage or locally.
+-   ❌ **Persistent Operative Health:** Wounded operatives will not fully heal between missions, encouraging squad rotation.
+-   ❌ **Global Stash:** Items and gold found during missions are added to a shared stash for use in the Barracks.
+-   ❌ **Save/Load:** The ability to save and load games, either on browser storage or locally.
 
 ---
 
@@ -38,13 +38,13 @@ _Focus: Making the "squad" aspect more meaningful by introducing persistent mana
 
 _Focus: Adding more layers to combat that reward careful planning and positioning._
 
--   [ ] **Cover System:** Introduce half and full cover mechanics, providing defensive bonuses and making flanking a critical tactic.
--   [ ] **Overwatch & Suppression System:**
+-   ❌ **Cover System:** Introduce half and full cover mechanics, providing defensive bonuses and making flanking a critical tactic.
+-   ❌ **Overwatch & Suppression System:**
     -   **Overwatch:** Allow units to end their turn by guarding an area, firing on the first enemy that moves into their line of sight.
     -   **Suppression:** Heavy weapons can pin down enemies, reducing their accuracy and movement.
--   [ ] **Status Effects System:** Formalize effects like Stun, Bleed, and Poison with clear visual indicators.
--   [ ] **Expanded Mission Variety:** Add new objective types like "Holdout" (survive against waves of enemies) - see Notes.
--   [ ] **More Biomes:** Add ice, etc.
+-   ❌ **Status Effects System:** Formalize effects like Stun, Bleed, and Poison with clear visual indicators.
+-   ❌ **Expanded Mission Variety:** Add new objective types like "Holdout" (survive against waves of enemies) - see Notes.
+-   ❌ **More Biomes:** Add ice, etc.
 
 ---
 
@@ -52,9 +52,9 @@ _Focus: Adding more layers to combat that reward careful planning and positionin
 
 _Focus: Making enemies smarter, more varied, and more threatening._
 
--   [ ] **Advanced Enemy AI:** Enemies will learn to use cover, coordinate their attacks, and exhibit more complex behaviors.
--   [ ] **New Enemy Archetypes:** Introduce specialized aliens like the "Controller" (buffs/debuffs), the "Ambusher" (stealth), and the "Spawner" (summons minions).
--   [ ] **Interactive Hazards:** Add more dynamic environmental elements like explosive containers and destructible cover.
+-   ❌ **Advanced Enemy AI:** Enemies will learn to use cover, coordinate their attacks, and exhibit more complex behaviors.
+-   ❌ **New Enemy Archetypes:** Introduce specialized aliens like the "Controller" (buffs/debuffs), the "Ambusher" (stealth), and the "Spawner" (summons minions).
+-   ❌ **Interactive Hazards:** Add more dynamic environmental elements like explosive containers and destructible cover.
 
 ---
 
@@ -62,9 +62,9 @@ _Focus: Making enemies smarter, more varied, and more threatening._
 
 _Focus: Expanding the between-missions gameplay loop with long-term strategic choices._
 
--   [ ] **Research & Development Lab Screen:** Research captured alien artifacts and tech to unlock new, more powerful equipment for your squad.
--   [ ] **Workshop/Fabrication Screen:** Once a technology is researched, spend resources to build copies of the item for your operatives.
--   [ ] **Operative Progression:** Operatives gain experience and level up, receiving small stat boosts or new passive abilities.
+-   ❌ **Research & Development Lab Screen:** Research captured alien artifacts and tech to unlock new, more powerful equipment for your squad.
+-   ❌ **Workshop/Fabrication Screen:** Once a technology is researched, spend resources to build copies of the item for your operatives.
+-   ❌ **Operative Progression:** Operatives gain experience and level up, receiving small stat boosts or new passive abilities.
 
 ---
 
@@ -72,10 +72,10 @@ _Focus: Expanding the between-missions gameplay loop with long-term strategic ch
 
 _Focus: Tying everything together with a narrative, sound, and a refined user experience._
 
--   [ ] **Campaign Structure:** Introduce a simple campaign map with a mix of story-critical and randomly generated missions.
--   [ ] **Sound Design:** Implement background music and sound effects for weapons, impacts, and UI interactions.
--   [ ] **UI/UX Overhaul:** Refine all UI elements for clarity, add tooltips, and improve the game log.
--   [ ] **Full Controller & Keyboard Support:** Ensure every action and menu is navigable without a mouse.
+-   ❌ **Campaign Structure:** Introduce a simple campaign map with a mix of story-critical and randomly generated missions.
+-   ❌ **Sound Design:** Implement background music and sound effects for weapons, impacts, and UI interactions.
+-   ❌ **UI/UX Overhaul:** Refine all UI elements for clarity, add tooltips, and improve the game log.
+-   ❌ **Full Controller & Keyboard Support:** Ensure every action and menu is navigable without a mouse.
 
 ---
 
@@ -83,9 +83,9 @@ _Focus: Tying everything together with a narrative, sound, and a refined user ex
 
 _Focus: Extensive playtesting, balancing, and bug fixing before the official launch._
 
--   [ ] **Final Balancing Pass:** Adjust all weapon stats, enemy health, and mission difficulties based on comprehensive feedback.
--   [ ] **New Player Experience:** Implement a tutorial or a guided first mission to ease new players into the game's mechanics.
--   [ ] **Performance Optimization:** Profile and optimize the code to ensure a smooth experience.
+-   ❌ **Final Balancing Pass:** Adjust all weapon stats, enemy health, and mission difficulties based on comprehensive feedback.
+-   ❌ **New Player Experience:** Implement a tutorial or a guided first mission to ease new players into the game's mechanics.
+-   ❌ **Performance Optimization:** Profile and optimize the code to ensure a smooth experience.
 
 ---
 

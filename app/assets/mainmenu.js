@@ -117,9 +117,9 @@ export function drawQuickGuide(menuDisplay, msgDisplay) {
 	spriteDisplay.clear();
 	// Title on the left panel
 	menuDisplay.drawText(2, 3, "%c{#35b59b}QUICK GUIDE");
-	menuDisplay.drawText(1, 18, "%c{orange}Press ESC or");
-	menuDisplay.drawText(1, 19, "%c{orange}Enter to return");
-	menuDisplay.drawText(1, 20, "%c{orange}to the Main Menu");
+	menuDisplay.drawText(1, 15, "%c{orange}Press ESC or");
+	menuDisplay.drawText(1, 16, "%c{orange}Enter to return");
+	menuDisplay.drawText(1, 17, "%c{orange}to the Main Menu");
 
 	// Guide content on the right panel
 	let y = 2; // Starting y-position for text
