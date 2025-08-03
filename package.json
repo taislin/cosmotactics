@@ -1,6 +1,6 @@
 {
     "name": "cosmotactics",
-    "version": "0.2.24-dev.bdd6371",
+    "version": "0.2.24-dev.bb2ba74",
     "description": "A squad-based tactical roguelike game set in a gritty sci-fi universe.",
     "main": "index.js",
     "type": "module",
