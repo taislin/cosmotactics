@@ -149,7 +149,7 @@ export function processTurn() {
 	// If no projectiles, proceed with the turn.
 	// --- Start of AI and Player Squad Action Phase ---
 	const activeEntities = [...entities]; // Create a shallow copy to iterate over
-
+	let dead_entities_this_turn = []; // Collection for safe removal
 	for (const e of activeEntities) {
 		if (e.mob && e.mob.ai === "dead") {
 			// --- NEW: INCREMENT KILL COUNT ---
@@ -202,8 +202,6 @@ export function processTurn() {
 	// --- End of AI and Player Squad Action Phase ---
 
 	// --- Start of Post-Action Phase: Health Check & Death ---
-	let dead_entities_this_turn = []; // Collection for safe removal
-
 	for (const e of entities) {
 		e.process(); // This handles health checks and marks as dead
 		if (e.mob && e.mob.ai === "dead") {

@@ -1,4 +1,4 @@
-import { VARS, entities, debugLog } from "./../engine.js";
+import { VARS, entities, debugLog, player_entities } from "./../engine.js";
 import { world_grid } from "./../map.js";
 
 /**

@@ -64,7 +64,7 @@ const CONTROL_INSTRUCTIONS = [
 
 /**
  * Renders the main menu screen, including menu options and control instructions.
- * 
+ *
  * Highlights the currently selected menu item and displays control instructions on the message panel.
  */
 export function drawMainMenu(menuDisplay, gameDisplay, msgDisplay) {
@@ -193,9 +193,6 @@ export function drawMissionSelectScreen(menuDisplay, msgDisplay) {
 	msgDisplay.clear();
 
 	menuDisplay.drawText(4, 2, "%c{#ffa500}SELECT DEPLOYMENT ZONE");
-
-	// Get the canvas context ONCE
-	const menuCanvasCtx = menuDisplay.getContainer().getContext("2d");
 
 	// Display the 3 mission choices on the left panel
 	let y = 3;

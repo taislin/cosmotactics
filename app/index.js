@@ -19,7 +19,6 @@ function preloadTileSets() {
 		"./icons/icon.png",
 		"./icons/items.png",
 		"./icons/planets.png",
-		"./icons/terrain.png",
 		"./icons/trees.png",
 	];
 	return sources.map((src) => {
