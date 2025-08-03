@@ -392,21 +392,23 @@ export function loadLevel(level, entryPoint = null) {
 	}
 	let entryMessage = "";
 	switch (planet.biome) {
-		case "Jungle":
+		case "Jungle": {
 			const forestMessages = [
 				"You emerge into a clearing, the alien sun filtering through strange flora.",
 				"The ground is soft with moss, but the silence feels unnatural.",
 				"Twisted, alien trees loom over you like ancient sentinels.",
 			];
 			entryMessage = getRandomElement(forestMessages);
+		}
 			break;
-		case "Plains":
+		case "Plains": {
 			const plainsMessages = [
 				"You step onto the open plains, the wind carrying strange scents.",
 				"The ground is hard-packed, dotted with alien grasses and flowers.",
 				"A distant rumble hints at something large moving beneath the surface.",
 			];
 			entryMessage = getRandomElement(plainsMessages);
+		}
 			break;
 		case "Oceanic":
 			const oceanMessages = [
@@ -432,20 +434,23 @@ export function loadLevel(level, entryPoint = null) {
 			];
 			entryMessage = getRandomElement(iceCaveMessages);
 			break;
-		case "Caverns":
+		case "Caverns": {
 			const caveMessages = [
 				"The air grows cold and damp.",
 				"A low, chittering sound echoes from the darkness ahead.",
 				"The smell of ozone and alien decay hangs heavy in this chamber.",
 			];
 			entryMessage = getRandomElement(caveMessages);
-		case "Desert":
+			break; // CRITICAL: prevent fall-through into "Desert"
+		}
+		case "Desert": {
 			const desertMessages = [
 				"The heat is oppressive as you step onto the sandy expanse.",
 				"Strange rock formations jut from the ground like ancient monuments.",
 				"The wind carries a fine layer of dust that stings your eyes.",
 			];
 			entryMessage = getRandomElement(desertMessages);
+		}
 			break;
 		case "Volcanic":
 			const volcanicMessages = [
