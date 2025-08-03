@@ -7,7 +7,10 @@ import { drawMainMenu } from "./assets/mainmenu.js";
 import { icons, updateGameLogic, VARS } from "./assets/engine.js";
 import { updateCanvas } from "./assets/display.js";
 
-// Preload tile sets
+/**
+ * Preloads image elements for all required tile set sources.
+ * @return {HTMLImageElement[]} An array of image elements with their sources set to the tile set image files.
+ */
 function preloadTileSets() {
 	const sources = [
 		"./icons/terrain.png",
@@ -102,7 +105,9 @@ export function setupProjectileCanvas() {
 	projectileCtx = projectileCanvas.getContext("2d");
 }
 
-// Attach displays to DOM
+/**
+ * Appends the menu, sprite, and message display containers to their respective DOM elements.
+ */
 function attachDisplays() {
 	document.getElementById("terminal").appendChild(menuDisplay.getContainer());
 	document
