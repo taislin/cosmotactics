@@ -229,6 +229,10 @@ export function processTurn() {
 			canEvac = true; // For this mission, just being in the EVAC phase is enough
 		} else if (objectiveType === "RETRIEVE_AND_EVAC") {
 			canEvac = VARS.isArtifactSecured; // For this mission, you must have the artifact
+		} else if (objectiveType === "ASSASSINATE_AND_EVAC") {
+			// You can only evac if the mission is in the EVAC phase
+			// (which is only set when the HVT is confirmed dead).
+			canEvac = VARS.missionPhase === "EVAC";
 		}
 
 		if (canEvac && areAllPlayersInEvacZone()) {

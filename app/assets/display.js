@@ -411,6 +411,14 @@ function drawMenu() {
 				// EVAC phase
 				objectiveText = `%c{#35b59b}ARTIFACT SECURED. RETURN TO SHUTTLE.`;
 			}
+		} else if (objectiveType === "ASSASSINATE_AND_EVAC") {
+			const targetLevel = VARS.currentMissionData.objective.spawn_level;
+			if (VARS.missionPhase === "MAIN") {
+				objectiveText = `NEUTRALIZE HVT (LEVEL ${targetLevel + 1})`;
+			} else {
+				// EVAC phase
+				objectiveText = `%c{#35b59b}HVT ELIMINATED. RETURN TO SHUTTLE.`;
+			}
 		}
 	}
 	msgDisplay.drawText(
