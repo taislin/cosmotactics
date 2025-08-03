@@ -62,6 +62,11 @@ const CONTROL_INSTRUCTIONS = [
 	{ y: 38, text: "%c{}Version: %c{orange}" + VARS.VERSION, x: 0 },
 ];
 
+/**
+ * Renders the main menu screen, including menu options and control instructions.
+ * 
+ * Highlights the currently selected menu item and displays control instructions on the message panel.
+ */
 export function drawMainMenu(menuDisplay, gameDisplay, msgDisplay) {
 	menuDisplay.clear();
 	msgDisplay.clear();
@@ -88,9 +93,9 @@ export function drawMainMenu(menuDisplay, gameDisplay, msgDisplay) {
 }
 
 /**
- * Renders the game over screen, displaying a loss message and the player's score summary.
+ * Displays the game over screen with a loss message and a summary of the player's progress.
  *
- * Shows the game title, a "You have lost!" message, and prompts the player to continue. The score panel displays the current level, gold collected, and turn count.
+ * Shows the game title, a notification of defeat, a prompt to continue, and a score panel listing the current level, gold collected, and turn count.
  */
 export function drawLostMenu(menuDisplay, gameDisplay, msgDisplay) {
 	menuDisplay.clear();
@@ -107,9 +112,9 @@ export function drawLostMenu(menuDisplay, gameDisplay, msgDisplay) {
 	msgDisplay.drawText(2, 7, "%c{#fff}Turns: " + "%c{orange}" + VARS.TURN);
 }
 /**
- * Renders the quick start guide screen, displaying gameplay objectives, controls, and UI tips across the menu and message panels.
+ * Displays the quick start guide screen, outlining gameplay objectives, controls, combat basics, squad commands, and UI elements.
  *
- * The left panel shows the guide title and instructions for returning to the main menu. The right panel presents a multi-section overview of objectives, controls, combat, squad commands, and UI elements, formatted with colour highlights and indentation for clarity.
+ * The left panel presents the guide title and instructions for returning to the main menu, while the right panel provides a structured overview of essential gameplay information with colour highlights and indentation for clarity.
  */
 export function drawQuickGuide(menuDisplay, msgDisplay) {
 	menuDisplay.clear();
@@ -159,6 +164,11 @@ export function drawQuickGuide(menuDisplay, msgDisplay) {
 		"%c{#009f00}Oxygen:%c{} Your squad's air supply"
 	);
 }
+/**
+ * Renders the mission selection screen, displaying available missions and details for the selected mission.
+ *
+ * The left panel lists mission options with icons and highlights the current selection. The right panel shows detailed information about the selected mission, including planet attributes, hostile presence, objectives, and rewards. Navigation instructions are displayed at the bottom.
+ */
 export function drawMissionSelectScreen(menuDisplay, msgDisplay) {
 	// Pass in displays explicitly
 	menuDisplay.setOptions({

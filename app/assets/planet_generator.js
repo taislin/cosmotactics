@@ -2,6 +2,12 @@ import generationData from "./datasets/planet_generation_data.json" with { type:
 import { getRandomElement } from "./utils/gameUtils.js";
 import { generatePlanetName } from "./namegen.js";
 
+/**
+ * Generates a procedurally created planet object with randomised archetype, appearance, environment, and life attributes.
+ * 
+ * The returned planet includes properties such as archetype, sprite icon, habitability, constitution, name, biome, temperature, atmosphere, gameplay-related atmosphere effects, oxygen requirements, life level, and associated enemy tags. All values are determined using predefined generation data and random selection, ensuring variety and internal consistency.
+ * @returns {Object} A planet object with randomly assigned properties based on generation rules.
+ */
 export function generatePlanet() {
 	let planet = {};
 

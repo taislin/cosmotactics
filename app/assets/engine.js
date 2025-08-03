@@ -97,13 +97,13 @@ export function checkMove(x, y) {
 }
 
 /**
- * Determines whether a tile at the given coordinates is transparent to light.
+ * Determines if light can pass through the tile at the specified coordinates.
  *
- * Returns false if the coordinates are out of bounds or the tile does not exist. Returns true if the tile's icon explicitly marks it as transparent, or if the tile is passable for movement according to the world grid. Otherwise, returns false.
+ * Returns false if the coordinates are out of bounds or the tile does not exist. Returns true if the tile's icon is marked as transparent or if the tile is passable for movement; otherwise, returns false.
  *
- * @param {number} x - The x-coordinate of the tile.
- * @param {number} y - The y-coordinate of the tile.
- * @returns {boolean} True if light can pass through the tile; false otherwise.
+ * @param {number} x - The horizontal coordinate of the tile.
+ * @param {number} y - The vertical coordinate of the tile.
+ * @returns {boolean} True if the tile is transparent to light; false if it blocks light.
  */
 export function checkLight(x, y) {
 	// Check for out-of-bounds coordinates first
@@ -133,7 +133,9 @@ export function checkLight(x, y) {
 }
 
 /**
- * Processes a single game turn, updating entities and game state.
+ * Processes a single game turn, handling entity actions, AI behaviour, mission phase transitions, oxygen depletion, and loss conditions.
+ *
+ * Advances the game state by updating all entities, resolving player and AI actions, removing dead entities, and managing mission objectives such as evacuation and high-value target elimination. Handles oxygen consumption if required by the mission's planet and checks for loss conditions at the end of the turn.
  */
 export function processTurn() {
 	// 1. Check for active projectiles and wait if any are still flying
@@ -424,8 +426,9 @@ export function debugLog(text, type = "log") {
 }
 
 /**
- * Resets the game to its initial state.
- * @param {number} [_seed=null] - Optional seed value for the random number generator.
+ * Restores all game variables, entities, and items to their initial state and loads the starting level.
+ * If a seed is provided, it is used for randomisation; otherwise, a random seed is generated.
+ * @param {number} [_seed=null] Optional seed for deterministic game state.
  */
 export function resetGame(_seed = null) {
 	VARS = JSON.parse(JSON.stringify(initial_vars));

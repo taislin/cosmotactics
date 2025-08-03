@@ -211,10 +211,12 @@ function saveCurrentLevelState() {
 	};
 }
 /**
- * The master function to load a level. It will either generate a new one
- * or restore a previously visited one from world_states.
+ * Loads the specified level, restoring its previous state if visited or generating a new map and entities based on mission and biome data.
+ * 
+ * If a saved state exists for the level, restores world, entities, and player positions. Otherwise, generates terrain, places player units, shuttle or stairs, spawns biome-appropriate enemies, and handles mission-specific objectives such as item placement. Displays a contextual entry message for the biome.
+ * 
  * @param {number} level - The level number to load.
- * @param {object} [entryPoint=null] - Optional coords {x, y} for where the player should appear.
+ * @param {object} [entryPoint=null] - Optional coordinates {x, y} for player placement.
  */
 export function loadLevel(level, entryPoint = null) {
 	const missionData = VARS.currentMissionData;
@@ -491,6 +493,12 @@ export function loadLevel(level, entryPoint = null) {
 		});
 	}
 }
+/**
+ * Finds a 3x3 passable area on the map suitable for player spawning.
+ * 
+ * Attempts up to 100 times to locate a clear 3x3 region near the map origin; if unsuccessful, forcibly clears and returns coordinates at (2,2).
+ * @return {{x: number, y: number}} The coordinates of the top-left tile of the clear area.
+ */
 function findClearAreaForPlayer() {
 	let attempts = 0;
 	while (attempts < 100) {
@@ -653,6 +661,14 @@ function addPlayerUnits(startX, startY) {
 	}
 }
 
+/**
+ * Places one or more units of the specified type on random empty tiles at a minimum distance from the player.
+ * @param {string} unitName - The name of the unit type to place.
+ * @param {number} [count=1] - The number of units to place.
+ * @param {string} [faction="enemy"] - The faction to assign to the placed units.
+ * @param {number} [minDistanceFromPlayer=8] - The minimum distance from the player for placement.
+ * @return {object|null} The placed entity if only one unit is placed; otherwise, null.
+ */
 function _placeUnitOnRandomTile(
 	unitName,
 	count = 1,
@@ -685,6 +701,11 @@ function _placeUnitOnRandomTile(
 	return count === 1 ? lastPlacedEntity : null;
 }
 
+/**
+ * Finds an unoccupied, passable tile at least a specified distance from the player.
+ * @param {number} [minDistanceFromPlayer=8] - The minimum allowed distance from the player's current position.
+ * @return {number[]|null} The coordinates `[x, y]` of a suitable tile, or `null` if none found.
+ */
 function _findEmptyTile(minDistanceFromPlayer = 8) {
 	const emptyTiles = getEmptyTiles();
 	shuffle(emptyTiles);
@@ -816,11 +837,11 @@ function createPlayerUnit(x, y, unitName) {
 }
 
 /**
- * Finds a valid 2x2 clear area to place the shuttle and stamps it onto the map.
- * It searches in a spiral pattern around the player's start position to ensure
- * the shuttle is close, visible, and fully on the map.
+ * Searches for a valid 2x2 area near the player's starting position and places the shuttle there, marking the tiles as impassable.
+ * Expands the search outward in square rings until a suitable area is found or the maximum radius is reached.
  * @param {number} playerStartX - The x-coordinate of the player's starting position.
  * @param {number} playerStartY - The y-coordinate of the player's starting position.
+ * @returns {object|undefined} The coordinates of the shuttle's door tile if placed, otherwise undefined.
  */
 function placeShuttle(playerStartX, playerStartY) {
 	debugLog(
