@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Main SEO / Search Engine Tags -->
+    <meta name="description"
+        content="A squad-based tactical roguelike set in a gritty sci-fi universe. Lead your squad in unique simultaneous turn-based combat. Playable in browser or on desktop.">
+    <meta name="author" content="taislin">
+    <meta name="keywords" content="roguelike, tactical, turn-based, sci-fi, javascript game, rotjs, cosmotactics">
+
+    <!-- Open Graph (for Facebook, Discord, etc.) -->
+    <meta property="og:title" content="CosmoTactics - A Tactical Roguelike - Development Roadmap">
+    <meta property="og:description"
+        content="Lead your SEF squad through hostile alien planets in unique simultaneous turn-based combat.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://taislin.github.io/cosmotactics/">
+    <meta property="og:image" content="https://raw.githubusercontent.com/taislin/cosmotactics/master/docs/screen.png">
+    <meta property="og:site_name" content="CosmoTactics">
+
+    <!-- Twitter Card (for Twitter) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CosmoTactics - A Tactical Roguelike - Development Roadmap">
+    <meta name="twitter:description"
+        content="Lead your SEF squad through hostile alien planets in unique simultaneous turn-based combat.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/taislin/cosmotactics/master/docs/screen.png">
+
+    <!-- Browser UI Customization -->
+    <meta name="theme-color" content="#ffa500"> <!-- Sets the browser chrome color on mobile -->
+
+    <!-- Standard Favicons -->
+    <link rel="icon" href="./../app/icons/icon.ico" sizes="any"> <!-- .ico for broad compatibility -->
+    <link rel="icon" href="./../app/icons/icon.svg" type="image/svg+xml"> <!-- SVG for high-res screens -->
+    <link rel="apple-touch-icon" href="./../app/icons/apple-touch-icon.png"> <!-- For "Add to Home Screen" on iOS -->
+    <link rel="manifest" href="./../manifest.json">
+    <title>CosmoTactics - Development Roadmap</title>
+    <!-- Link to your existing stylesheet to keep the look consistent -->
+    <link rel="stylesheet" href="./style.css">
+    <style>
+        /* Small style override for the content area if needed */
+        #roadmap-content {
+            background-color: rgba(20, 20, 20, 0.98);
+            border: 1px solid #35b59b;
+            padding: 30px;
+            max-width: 900px;
+            /* Wider for roadmap text */
+            margin: 40px auto;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <!-- This is where the formatted Markdown will be injected -->
+        <div id="roadmap-content">
+            <h1>Loading Roadmap...</h1>
+        </div>
+        <p style="text-align: center;">
+            <a href="./../index.html" class="button-link" style="color:#0d0d0d;">← Back to Main Page</a>
+        </p>
+    </main>
+
+    <!-- 1. Include the 'marked' library from a CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- 2. Add the script to fetch and render your Markdown file -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const contentElement = document.getElementById('roadmap-content');
+
+            // Fetch the Markdown file
+            fetch('./../ROADMAP.md')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(markdownText => {
+                    // Use the 'marked' library to parse the Markdown into HTML
+                    const htmlContent = marked.parse(markdownText);
+
+                    // Inject the resulting HTML into our container
+                    contentElement.innerHTML = htmlContent;
+                })
+                .catch(error => {
+                    console.error('Error fetching or parsing roadmap.md:', error);
+                    contentElement.innerHTML = '<h1>Error: Could not load roadmap.</h1><p>Please check the console for details.</p>';
+                });
+        });
+    </script>
+</body>
+
+</html>

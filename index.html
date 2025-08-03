@@ -4,8 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Main SEO / Search Engine Tags -->
+    <meta name="description"
+        content="A squad-based tactical roguelike set in a gritty sci-fi universe. Lead your squad in unique simultaneous turn-based combat. Playable in browser or on desktop.">
+    <meta name="author" content="taislin">
+    <meta name="keywords" content="roguelike, tactical, turn-based, sci-fi, javascript game, rotjs, cosmotactics">
+
+    <!-- Open Graph (for Facebook, Discord, etc.) -->
+    <meta property="og:title" content="CosmoTactics - A Tactical Roguelike">
+    <meta property="og:description"
+        content="Lead your SEF squad through hostile alien planets in unique simultaneous turn-based combat.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://taislin.github.io/cosmotactics/">
+    <meta property="og:image" content="https://raw.githubusercontent.com/taislin/cosmotactics/master/docs/screen.png">
+    <meta property="og:site_name" content="CosmoTactics">
+
+    <!-- Twitter Card (for Twitter) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CosmoTactics - A Tactical Roguelike">
+    <meta name="twitter:description"
+        content="Lead your SEF squad through hostile alien planets in unique simultaneous turn-based combat.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/taislin/cosmotactics/master/docs/screen.png">
+
+    <!-- Browser UI Customization -->
+    <meta name="theme-color" content="#ffa500"> <!-- Sets the browser chrome color on mobile -->
+
+    <!-- Standard Favicons -->
+    <link rel="icon" href="./app/icons/icon.ico" sizes="any"> <!-- .ico for broad compatibility -->
+    <link rel="icon" href="./app/icons/icon.svg" type="image/svg+xml"> <!-- SVG for high-res screens -->
+    <link rel="apple-touch-icon" href="./app/icons/apple-touch-icon.png"> <!-- For "Add to Home Screen" on iOS -->
+    <link rel="manifest" href="./manifest.json">
+
     <title>CosmoTactics - A Tactical Roguelike</title>
-    <link rel="icon" href="./app/icons/icon.png" type="image/png">
     <style>
         @font-face {
             font-family: "Space Mono";
@@ -71,22 +101,23 @@
         h1 {
             color: #ffa500;
             font-family: 'Nova Mono', serif;
-            font-size: 3em;
-            margin-bottom: 10px;
+            font-size: 2.5em;
+            margin-bottom: 0;
             margin-top: 0;
         }
 
         h2 {
             color: #35b59b;
             font-family: 'Space Mono', monospace;
-            font-size: 1.5em;
+            font-size: 1.4em;
             margin-top: 0;
             margin-bottom: 20px;
         }
 
         p {
-            font-size: 1.1em;
-            margin-bottom: 15px;
+            font-size: 1em;
+            margin-bottom: 10px;
+            margin-top: 10px;
         }
 
         .buttons {
@@ -144,12 +175,14 @@
         <p>Lead your <b>Space Expeditionary Force</b> squad through hostile alien planets. Navigate treacherous
             environments and battle myriad lifeforms in unique simultaneous turn-based combat.</p>
         <div class="buttons">
-            <a href="./app/index.html" class="button">Play Game</a>
+            <a href="./app/index.html" class="button">Play in Browser</a>
             <a href="./docs/index.html" class="button">Operator's Manual</a>
+            <a href="./docs/roadmap.html" class="button">Roadmap</a>
+            <a href="https://github.com/taislin/cosmotactics/releases" target="_blank" class="button">Download App</a>
             <a href="https://github.com/taislin/cosmotactics" target="_blank" class="button">GitHub Repo</a>
         </div>
         <footer>
-            <p>Version: <span id="landing-version">Loading...</span></p>
+            <p style="margin:0">Version: <span id="landing-version">Loading...</span></p>
         </footer>
     </div>
 
@@ -181,6 +214,24 @@
             }
         });
     </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoGame",
+  "name": "CosmoTactics",
+  "author": {
+    "@type": "Person",
+    "name": "taislin"
+  },
+  "url": "https://taislin.github.io/cosmotactics/",
+  "image": "https://raw.githubusercontent.com/taislin/cosmotactics/master/docs/screen.png",
+  "description": "A squad-based tactical roguelike game set in a gritty sci-fi universe.",
+  "applicationCategory": "Game",
+  "genre": ["Roguelike", "Strategy", "Science Fiction"],
+  "playMode": "SinglePlayer",
+  "operatingSystem": "Windows, macOS, Linux, Web browser"
+}
+</script>
 </body>
 
 </html>

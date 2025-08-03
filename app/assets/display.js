@@ -644,7 +644,7 @@ function drawMenu() {
 								2,
 								25,
 								"%c{grey}" + locEnt[i].mob.desc,
-								28
+								45
 							); // Draw description at the bottom
 						}
 					}

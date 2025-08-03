@@ -1,0 +1,21 @@
+{
+    "short_name": "CosmoTactics",
+    "name": "CosmoTactics",
+    "description": "A squad-based tactical roguelike game set in a gritty sci-fi universe.",
+    "start_url": "./app/index.html",
+    "display": "standalone",
+    "background_color": "#0d0d0d",
+    "theme_color": "#ffa500",
+    "icons": [
+        {
+            "src": "./app/icons/web-app-manifest-192x192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "./app/icons/web-app-manifest-512x512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ]
+}
