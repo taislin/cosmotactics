@@ -393,10 +393,22 @@ function drawMenu() {
 	}
 	const PANEL_WIDTH = 48; // Define a constant for the new width
 	msgDisplay.clear();
+	let objectiveText = "OBJECTIVE: UNKNOWN";
+	if (VARS.currentMissionData) {
+		const objectiveType = VARS.currentMissionData.objective.type;
+		if (objectiveType === "EXTERMINATE_AND_EVAC") {
+			if (VARS.missionPhase === "MAIN") {
+				objectiveText = `ELIMINATE HOSTILES: ${VARS.killCount} / ${VARS.targetKillCount}`;
+			} else {
+				// EVAC phase
+				objectiveText = `%c{#35b59b}RETURN TO SHUTTLE FOR EVAC`;
+			}
+		}
+	}
 	msgDisplay.drawText(
 		0,
 		1,
-		"║ %c{orange}MENU%c{} ║%c{#35b59b}         COSMOTACTICS           %c{}║ %c{orange}OBJ %c{}" // Added spacing
+		`║ %c{orange}MENU%c{} ║%c{#35b59b} ${objectiveText.padEnd(30)} %c{}║`
 	);
 	msgDisplay.drawText(
 		2,

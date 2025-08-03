@@ -15,9 +15,10 @@
   },
   "exterminate_hive": {
     "name": "Clear and Secure",
-    "description": "Hostile nests have been located. Destroy all of them to secure the sector.",
-    "type": "EXTERMINATE",
-    "difficulty_modifier": 0.9,
-    "reward_gold_base": 80
+    "description": "A high concentration of hostile bioforms has been detected. Neutralize all designated targets to secure the sector, then return to the shuttle.",
+    "type": "EXTERMINATE_AND_EVAC",
+    "difficulty_modifier": 1.1,
+    "reward_gold_base": 120,
+    "kill_count_base": 10
   }
 }

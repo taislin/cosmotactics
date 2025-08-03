@@ -817,7 +817,7 @@ async function doMoves(path) {
 	}
 }
 
-function goToMainMenu() {
+export function goToMainMenu() {
 	VARS.GAMEWINDOW = "MENU";
 	loaded = false;
 	if (

@@ -119,3 +119,25 @@ export function getDir(ox, oy, tx, ty) {
 	}
 	return dir;
 }
+
+/**
+ * Checks if all living player entities are within a specified radius of the evac zone.
+ * @returns {boolean} True if all players are in the zone, false otherwise.
+ */
+export function areAllPlayersInEvacZone() {
+	if (!VARS.shuttleCoords) return false;
+
+	const evacRadius = 4; // How close they need to be to the shuttle "door"
+
+	for (const player of player_entities) {
+		const distance = Math.hypot(
+			player.x - VARS.shuttleCoords.x,
+			player.y - VARS.shuttleCoords.y
+		);
+		if (distance > evacRadius) {
+			return false; // Found a player outside the zone
+		}
+	}
+
+	return true; // All players are within the zone
+}

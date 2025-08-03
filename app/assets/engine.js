@@ -1,9 +1,9 @@
 import { world_grid, loadLevel, world } from "./map.js";
-import { goToLostMenu, sleep } from "./controls.js";
+import { goToLostMenu, sleep, goToMainMenu } from "./controls.js";
 import { setSeed } from "../index.js";
 import pkg from "../../package.json" with { type: "json" };
 // Import from new utils file for shared logic
-import { isTilePassableForMovement, checkFire } from "./utils/gameUtils.js";
+import { isTilePassableForMovement, checkFire, areAllPlayersInEvacZone } from "./utils/gameUtils.js";
 // Import for player squad AI logic
 import { processPlayerSquadAI } from "./ai/mobAI.js";
 
@@ -56,7 +56,11 @@ const initial_vars = {
 	LEVEL: null,
 	isAnimating: false,
 	missionChoices: [],      // Will hold the 3 generated mission options
-    currentMissionData: null // Will hold the data for the mission the player deploys to
+    currentMissionData: null, // Will hold the data for the mission the player deploys to
+    missionPhase: 'NONE', // 'NONE', 'MAIN', 'EVAC'
+    killCount: 0,
+    targetKillCount: 0,
+    shuttleCoords: null // Will store {x, y} of the shuttle's "door"
 };
 export let VARS = JSON.parse(JSON.stringify(initial_vars));
 const initial_stats = {
@@ -139,7 +143,15 @@ export function processTurn() {
 	const activeEntities = [...entities]; // Create a shallow copy to iterate over
 
 	for (const e of activeEntities) {
-		if (!e.mob || e.mob.ai === "dead") continue;
+        if (e.mob && e.mob.ai === "dead") {
+            // --- NEW: INCREMENT KILL COUNT ---
+            if (e.owner !== 'player') { // Only count non-player deaths
+                VARS.killCount++;
+            }
+            // --- END ---
+            dead_entities_this_turn.push(e);
+			continue;
+        }
 
 		// Update defence stats for player units at the start of their potential action
 		if (e.owner === "player") {
@@ -202,7 +214,17 @@ export function processTurn() {
 		}
 	}
 	// --- END REFACTOR ---
-
+    if (VARS.missionPhase === 'EVAC') {
+        if (areAllPlayersInEvacZone()) {
+            log({ type: "info", text: "%c{green}Mission Complete! Extracting squad." });
+            // Here you would transition to the "Mission Debriefing" screen
+            // For now, we'll just go back to the main menu as a placeholder.
+            // TODO: Implement Debriefing Screen
+            VARS.GAMEWINDOW = "MENU";
+            goToMainMenu(); // You'll need to import this from controls.js or move it.
+            return; // Stop further processing this turn
+        }
+    }
     if (VARS.currentMissionData && VARS.currentMissionData.planet.needsOxygen) {
         let newOxygen = parseFloat((STATS.OXYGEN - 0.1).toFixed(1));
 	    STATS.OXYGEN = Math.max(newOxygen, 0);

@@ -200,7 +200,6 @@ export function drawMissionSelectScreen(menuDisplay, msgDisplay) {
 			y * 2,
 			`${selector}${color}${mission.planetName}`
 		);
-		console.log(importedIcons[mission.icon]);
 		if (importedIcons[mission.icon]) {
 			spriteDisplay.draw(
 				1,

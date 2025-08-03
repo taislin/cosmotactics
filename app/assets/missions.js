@@ -26,11 +26,11 @@ export function generateMissionChoices(count = 3) {
 
 		// Determine difficulty based on planet properties
 		let difficulty = 1.0;
-		if (planet.gameplayAtmosphere === "EVA REQUIRED")
-			difficulty += 0.5;
-		if (planet.life === "Sapient Natives") difficulty += 0.5;
-		if (planet.temperature !== "Temperate") difficulty += 0.2;
-
+		if (planet.gameplayAtmosphere === "EVA REQUIRED"){
+			difficulty += 0.5;}
+		if (planet.life === "Sapient Natives") {difficulty += 0.5;}
+		if (planet.temperature !== "Temperate") {difficulty += 0.2;}
+		difficulty = Math.round(difficulty * 10) / 10;
 		const knownAliens =
 			difficulty < 1.8
 				? possibleEnemies.map((e) => e.name).slice(0, 3) // Show up to 3 known enemy names
@@ -52,6 +52,7 @@ export function generateMissionChoices(count = 3) {
 			generationData: {
 				planet: planet,
 				objective: objective,
+				difficulty: difficulty,
 			},
 		});
 	}

@@ -226,7 +226,20 @@ export function loadLevel(level, entryPoint = null) {
 		return;
 	}
 	const planet = missionData.planet;
+	// --- NEW: MISSION INITIALIZATION ---
+	if (level === 0) {
+		// Mission objectives are set at the start (level 0)
+		VARS.missionPhase = "MAIN";
+		VARS.killCount = 0;
+		VARS.targetKillCount = 0; // Default
 
+		if (missionData.objective.type === "EXTERMINATE_AND_EVAC") {
+			VARS.targetKillCount = Math.floor(
+				missionData.objective.kill_count_base * missionData.difficulty
+			);
+		}
+		// Add other objective types here later with `else if`
+	}
 	// --- 1. Check for and load existing state ---
 	if (world_states[level]) {
 		debugLog(`--- Loading existing state for Level ${level} ---`, "info");
@@ -339,7 +352,7 @@ export function loadLevel(level, entryPoint = null) {
 
 	if (level === 0) {
 		// Only place shuttle on the surface level
-		placeShuttle(startX, startY);
+		VARS.shuttleCoords = placeShuttle(startX, startY);
 	} else {
 		// For deeper levels, place "Stairs Up" where the player entered.
 		world[`${startX},${startY}`].icon = JSON.parse(
@@ -363,7 +376,12 @@ export function loadLevel(level, entryPoint = null) {
 	});
 
 	if (validEnemyKeys.length > 0) {
-		const enemyCount = 5 + Math.floor(level * missionData.difficulty);
+		// Use the targetKillCount for spawning if this is an exterminate mission
+		const enemyCount =
+			VARS.targetKillCount > 0
+				? VARS.targetKillCount
+				: 5 + Math.floor(level * missionData.difficulty); // Fallback for other missions
+
 		for (let i = 0; i < enemyCount; i++) {
 			const randomEnemyKey = getRandomElement(validEnemyKeys);
 			_placeUnitOnRandomTile(randomEnemyKey, 1, "enemy", 8); // Pass the key directly
@@ -853,7 +871,11 @@ function placeShuttle(playerStartX, playerStartY) {
 		}
 		searchRadius++; // If no spot found, increase search radius and try again
 	}
-
+	if (shuttlePlaced) {
+		debugLog(`Placed shuttle at top-left (${x}, ${y})`, "info");
+		// Return the coordinates of the "door" or a central point for evac checks
+		return { x: x, y: y + 1 }; // e.g., bottom-left tile
+	}
 	if (!shuttlePlaced) {
 		debugLog(
 			"Could not find a valid 2x2 area to place the shuttle near the player.",
