@@ -274,5 +274,30 @@
 			"melee": null,
 			"extra": null
 		}
+	},
+	"alien_hive_queen": {
+		"key": "alien_hive_queen",
+		"name": "Hive Queen",
+		"desc": "The massive, intelligent nexus of the local hive. Its psionic capabilities and armored carapace make it an extremely dangerous foe.",
+		"type": "mob",
+		"icon": "hive_queen_icon",
+		"tags": [
+			"beast_large",
+			"hvt"
+		],
+		"death_message": "The Hive Queen shrieks as its psionic link is severed, collapsing into a lifeless husk.",
+		"ai": "ranged",
+		"stats": {
+			"health": 400,
+			"attack": 25,
+			"defence": 10,
+			"range": 1,
+			"speed": 0.75,
+			"delay": 1,
+			"morale": 999
+		},
+		"slots": {
+			"ranged": "psionic_blast_weapon"
+		}
 	}
 }

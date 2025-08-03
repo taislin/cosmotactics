@@ -3,7 +3,11 @@ import { goToLostMenu, sleep, goToMainMenu } from "./controls.js";
 import { setSeed } from "../index.js";
 import pkg from "../../package.json" with { type: "json" };
 // Import from new utils file for shared logic
-import { isTilePassableForMovement, checkFire, areAllPlayersInEvacZone } from "./utils/gameUtils.js";
+import {
+	isTilePassableForMovement,
+	checkFire,
+	areAllPlayersInEvacZone,
+} from "./utils/gameUtils.js";
 // Import for player squad AI logic
 import { processPlayerSquadAI } from "./ai/mobAI.js";
 
@@ -55,12 +59,14 @@ const initial_vars = {
 	SELECTED: null,
 	LEVEL: null,
 	isAnimating: false,
-	missionChoices: [],      // Will hold the 3 generated mission options
-    currentMissionData: null, // Will hold the data for the mission the player deploys to
-    missionPhase: 'NONE', // 'NONE', 'MAIN', 'EVAC'
-    killCount: 0,
-    targetKillCount: 0,
-    shuttleCoords: null // Will store {x, y} of the shuttle's "door"
+	missionChoices: [], // Will hold the 3 generated mission options
+	currentMissionData: null, // Will hold the data for the mission the player deploys to
+	missionPhase: "NONE", // 'NONE', 'MAIN', 'EVAC'
+	killCount: 0,
+	targetKillCount: 0,
+	shuttleCoords: null, // Will store {x, y} of the shuttle's "door"
+	isArtifactSecured: false,
+	hvt_entity_id: null,
 };
 export let VARS = JSON.parse(JSON.stringify(initial_vars));
 const initial_stats = {
@@ -103,7 +109,7 @@ export function checkLight(x, y) {
 	// Check for out-of-bounds coordinates first
 	if (x < 0 || y < 0 || x >= VARS.MAP_X || y >= VARS.MAP_Y) {
 		return false;
-  }
+	}
 
 	const tile = world[x + "," + y];
 	if (!tile) {
@@ -115,7 +121,7 @@ export function checkLight(x, y) {
 	if (tile.icon && tile.icon.transparent === true) {
 		return true;
 	}
-	
+
 	// Fallback for all other tiles:
 	// A tile is transparent if it is passable for movement (e.g., floor, grass).
 	// This maintains the original behavior for walls and other obstacles.
@@ -143,15 +149,16 @@ export function processTurn() {
 	const activeEntities = [...entities]; // Create a shallow copy to iterate over
 
 	for (const e of activeEntities) {
-        if (e.mob && e.mob.ai === "dead") {
-            // --- NEW: INCREMENT KILL COUNT ---
-            if (e.owner !== 'player') { // Only count non-player deaths
-                VARS.killCount++;
-            }
-            // --- END ---
-            dead_entities_this_turn.push(e);
+		if (e.mob && e.mob.ai === "dead") {
+			// --- NEW: INCREMENT KILL COUNT ---
+			if (e.owner !== "player") {
+				// Only count non-player deaths
+				VARS.killCount++;
+			}
+			// --- END ---
+			dead_entities_this_turn.push(e);
 			continue;
-        }
+		}
 
 		// Update defence stats for player units at the start of their potential action
 		if (e.owner === "player") {
@@ -214,21 +221,54 @@ export function processTurn() {
 		}
 	}
 	// --- END REFACTOR ---
-    if (VARS.missionPhase === 'EVAC') {
-        if (areAllPlayersInEvacZone()) {
-            log({ type: "info", text: "%c{green}Mission Complete! Extracting squad." });
-            // Here you would transition to the "Mission Debriefing" screen
-            // For now, we'll just go back to the main menu as a placeholder.
-            // TODO: Implement Debriefing Screen
-            VARS.GAMEWINDOW = "MENU";
-            goToMainMenu(); // You'll need to import this from controls.js or move it.
-            return; // Stop further processing this turn
-        }
-    }
-    if (VARS.currentMissionData && VARS.currentMissionData.planet.needsOxygen) {
-        let newOxygen = parseFloat((STATS.OXYGEN - 0.1).toFixed(1));
-	    STATS.OXYGEN = Math.max(newOxygen, 0);
-    }
+	if (VARS.missionPhase === "EVAC") {
+		let canEvac = false;
+		const objectiveType = VARS.currentMissionData.objective.type;
+
+		if (objectiveType === "EXTERMINATE_AND_EVAC") {
+			canEvac = true; // For this mission, just being in the EVAC phase is enough
+		} else if (objectiveType === "RETRIEVE_AND_EVAC") {
+			canEvac = VARS.isArtifactSecured; // For this mission, you must have the artifact
+		}
+
+		if (canEvac && areAllPlayersInEvacZone()) {
+			log({
+				type: "info",
+				text: "%c{green}Mission Complete! Extracting squad.",
+			});
+			// TODO: Transition to Debriefing Screen
+			VARS.GAMEWINDOW = "MENU";
+			goToMainMenu(); // Placeholder
+			return;
+		}
+	} else if (
+		VARS.missionPhase === "MAIN" &&
+		VARS.currentMissionData.objective.type === "ASSASSINATE_AND_EVAC"
+	) {
+		// Check if the HVT entity exists and is dead
+		const hvt = entities[VARS.hvt_entity_id];
+		if (hvt && hvt.mob.ai === "dead") {
+			VARS.missionPhase = "EVAC";
+			log({
+				type: "info",
+				text: "%c{yellow}High-Value Target eliminated! Proceed to extraction.",
+			});
+			VARS.hvt_entity_id = null; // Clear the ID
+		} else if (!hvt && VARS.hvt_entity_id !== null) {
+			// This case handles if the entity was removed from the array for any reason
+			// We assume it's dead if the ID was set but the entity is gone
+			VARS.missionPhase = "EVAC";
+			log({
+				type: "info",
+				text: "%c{yellow}HVT signal lost, presumed eliminated. Proceed to extraction.",
+			});
+			VARS.hvt_entity_id = null;
+		}
+	}
+	if (VARS.currentMissionData && VARS.currentMissionData.planet.needsOxygen) {
+		let newOxygen = parseFloat((STATS.OXYGEN - 0.1).toFixed(1));
+		STATS.OXYGEN = Math.max(newOxygen, 0);
+	}
 
 	VARS.TURN++;
 	if (checkLose() === true) {
@@ -330,9 +370,9 @@ function log(event) {
 
 /**
  * Outputs a debug message to both the browser console and the in-game debug log when debugging is enabled.
- * 
+ *
  * Supports log types: "log", "error", "warn", "info", and "debug", each with distinct formatting and console output. Messages are timestamped and colour-coded in the in-game log.
- * 
+ *
  * @param {string|Object} text - The message or object to log.
  * @param {string} [type="log"] - The log type, affecting formatting and console method.
  */

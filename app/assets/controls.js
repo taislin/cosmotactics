@@ -370,6 +370,21 @@ export function setControls() {
 						STATS.OXYGEN + sel.stats.oxygen,
 						100
 					);
+					if (sel.itemtype === "mission_objective") {
+						VARS.isArtifactSecured = true;
+						VARS.missionPhase = "EVAC";
+						log({
+							type: "info",
+							text: `%c{yellow}Artifact secured! All units, fall back to the shuttle for immediate extraction.`,
+						});
+
+						// Remove the item from the world
+						sel.x = -1;
+						sel.y = -1;
+						const index = world_items.indexOf(sel);
+						if (index > -1) world_items.splice(index, 1);
+						return; // End interaction here
+					}
 				}
 				if (sel.itemtype === "healing") {
 					// Corrected from 'health' to 'healing' based on items.json

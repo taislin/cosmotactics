@@ -3,15 +3,19 @@
     "name": "Retrieve Artifact",
     "description": "An anomalous energy signature has been detected. Secure the source and return to the shuttle for analysis.",
     "type": "RETRIEVE_AND_EVAC",
-    "difficulty_modifier": 1.0,
-    "reward_gold_base": 100
+    "difficulty_modifier": 1.2,
+    "reward_gold_base": 150,
+    "item_key": "alien_artifact",
+    "spawn_level": 2
   },
   "assassinate_target": {
     "name": "Eliminate HVT",
-    "description": "A high-value alien bioform is commanding local forces. Neutralize it to disrupt their command structure.",
-    "type": "ASSASSINATE",
-    "difficulty_modifier": 1.2,
-    "reward_gold_base": 150
+    "description": "A high-value alien bioform is commanding local forces. Neutralize it to disrupt their command structure, then evac.",
+    "type": "ASSASSINATE_AND_EVAC",
+    "difficulty_modifier": 1.4,
+    "reward_gold_base": 200,
+    "hvt_tag": "hvt",
+    "spawn_level": 2
   },
   "exterminate_hive": {
     "name": "Clear and Secure",

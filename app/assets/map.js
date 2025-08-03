@@ -476,8 +476,20 @@ export function loadLevel(level, entryPoint = null) {
 	if (entryMessage != "") {
 		log({ type: "info", text: entryMessage });
 	}
+	const objectiveData = missionData.objective;
+	if (
+		objectiveData.type === "RETRIEVE_AND_EVAC" &&
+		objectiveData.spawn_level === level
+	) {
+		// This is the correct level to spawn the artifact.
+		// Place it far away from the player's entry point.
+		createItemRand(objectiveData.item_key, 1, 15); // Spawn 1, at least 15 tiles away
+		log({
+			type: "info",
+			text: "Long-range scanners detect an anomalous energy signature nearby.",
+		});
+	}
 }
-
 function findClearAreaForPlayer() {
 	let attempts = 0;
 	while (attempts < 100) {
@@ -647,22 +659,29 @@ function _placeUnitOnRandomTile(
 	minDistanceFromPlayer = 8
 ) {
 	let placedCount = 0;
+	let lastPlacedEntity = null; // Variable to hold the last created entity
+
 	for (let i = 0; i < count; i++) {
 		const emptyTile = _findEmptyTile(minDistanceFromPlayer);
 		if (emptyTile) {
-			if (_placeUnit(emptyTile[0], emptyTile[1], unitName, faction)) {
+			// _placeUnit should already return the entity, let's ensure it does.
+			const newEntity = _placeUnit(
+				emptyTile[0],
+				emptyTile[1],
+				unitName,
+				faction
+			);
+			if (newEntity) {
 				placedCount++;
+				lastPlacedEntity = newEntity;
 			}
 		} else {
-			debugLog(
-				`No free tiles to spawn ${unitName} (attempt ${
-					i + 1
-				}/${count})!`,
-				"warn"
-			);
+			debugLog(`No free tiles to spawn ${unitName}!`, "warn");
 			break;
 		}
 	}
+	// If we only placed one, return it. Useful for HVT tracking.
+	return count === 1 ? lastPlacedEntity : null;
 }
 
 function _findEmptyTile(minDistanceFromPlayer = 8) {

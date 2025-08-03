@@ -403,6 +403,14 @@ function drawMenu() {
 				// EVAC phase
 				objectiveText = `%c{#35b59b}RETURN TO SHUTTLE FOR EVAC`;
 			}
+		} else if (objectiveType === "RETRIEVE_AND_EVAC") {
+			const targetLevel = VARS.currentMissionData.objective.spawn_level;
+			if (VARS.missionPhase === "MAIN") {
+				objectiveText = `LOCATE ARTIFACT (LEVEL ${targetLevel + 1})`;
+			} else {
+				// EVAC phase
+				objectiveText = `%c{#35b59b}ARTIFACT SECURED. RETURN TO SHUTTLE.`;
+			}
 		}
 	}
 	msgDisplay.drawText(
