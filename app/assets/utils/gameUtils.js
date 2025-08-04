@@ -148,6 +148,7 @@ export function areAllPlayersInEvacZone() {
 
 	return true; // All players are within the zone
 }
+
 /**
  * Calculates all integer coordinates on a straight line between two points.
  * Implements Bresenham's line algorithm.
