@@ -148,3 +148,40 @@ export function areAllPlayersInEvacZone() {
 
 	return true; // All players are within the zone
 }
+
+/**
+ * Calculates all integer coordinates on a straight line between two points.
+ * Implements Bresenham's line algorithm.
+ * @param {number} x0 - The starting x-coordinate.
+ * @param {number} y0 - The starting y-coordinate.
+ * @param {number} x1 - The target x-coordinate.
+ * @param {number} y1 - The target y-coordinate.
+ * @returns {Array<Array<number>>} An array of [x, y] coordinates representing the line.
+ */
+export function getLinePoints(x0, y0, x1, y1) {
+	const points = [];
+	const dx = Math.abs(x1 - x0);
+	const dy = -Math.abs(y1 - y0);
+	const sx = x0 < x1 ? 1 : -1;
+	const sy = y0 < y1 ? 1 : -1;
+	let err = dx + dy;
+
+	let currentX = x0;
+	let currentY = y0;
+
+	while (true) {
+		points.push([currentX, currentY]);
+		if (currentX === x1 && currentY === y1) break;
+
+		const e2 = 2 * err;
+		if (e2 >= dy) {
+			err += dy;
+			currentX += sx;
+		}
+		if (e2 <= dx) {
+			err += dx;
+			currentY += sy;
+		}
+	}
+	return points;
+}

@@ -4,6 +4,7 @@ import {
 	msgDisplay,
 	menuDisplay,
 	menuDisplayConfig,
+	gameDisplayConfig,
 } from "../index.js";
 import {
 	entities,
@@ -17,6 +18,7 @@ import {
 } from "./engine.js";
 import { world, world_grid } from "./map.js";
 import { importedTerrains } from "./datasets/imports.js";
+import { getLinePoints } from "./utils/gameUtils.js";
 export var currentLoc = [0, 0];
 export var drawPaths = [];
 /**
@@ -47,10 +49,10 @@ function tintImage(image, color) {
 
 /**
  * Renders the current game state onto the main display, including the map, entities, items, effects, UI menu, and projectiles.
- * 
+ *
  * If a projectile overlay context is provided, projectiles are drawn with appropriate icons and colour tinting on the overlay canvas.
  * The function updates the field of view, draws visible and previously seen tiles, overlays targeting and selection indicators, and manages temporary visual effects.
- * 
+ *
  * @param {CanvasRenderingContext2D} projectileCtx - Optional. The rendering context for the projectile overlay canvas.
  */
 export function updateCanvas(projectileCtx) {
@@ -280,17 +282,63 @@ export function updateCanvas(projectileCtx) {
 			}
 		}
 	}
+	if (VARS.MODE === "targeting" && VARS.TARGET[0] !== -1) {
+		let pathIsClear = true;
 
+		// Get all points on the line using our new utility function
+		const linePoints = getLinePoints(
+			VARS.SELECTED.x,
+			VARS.SELECTED.y,
+			VARS.TARGET[0],
+			VARS.TARGET[1]
+		);
+
+		// Iterate over the points to draw the preview
+		for (const [index, point] of linePoints.entries()) {
+			const [x, y] = point;
+
+			// Don't draw over the shooter
+			if (index === 0) continue;
+
+			// Check if the current point on the line is a wall
+			if (pathIsClear && (!world_grid[y] || world_grid[y][x] === 0)) {
+				pathIsClear = false; // The path is now blocked
+			}
+
+			const color = pathIsClear ? "#35b59b" : "#b53535"; // Green for clear, red for blocked
+
+			// Calculate drawing coordinates relative to the display viewport
+			const drawX = x - drawInterval[0];
+			const drawY = y - drawInterval[1];
+
+			// Ensure we only draw within the display's boundaries
+			if (
+				drawX >= 0 &&
+				drawX < gameDisplay.getOptions().width &&
+				drawY >= 0 &&
+				drawY < gameDisplay.getOptions().height
+			) {
+				gameDisplay.draw(
+					drawX,
+					drawY,
+					icons["x"],
+					color,
+					"transparent"
+				);
+			}
+		}
+	}
 	if (VARS.MODE == "none") {
 		for (var dp of drawPaths) {
 			gameDisplay.draw(dp[0], dp[1], dp[2], dp[3], dp[4]);
 		}
 	}
+
 	drawEffects(drawInterval);
 
 	// --- NEW Projectile Drawing Loop with Color ---
 	if (projectileCtx) {
-		const options = menuDisplayConfig;
+		const options = gameDisplayConfig;
 		const tileWidth = options.tileWidth;
 		const tileHeight = options.tileHeight;
 

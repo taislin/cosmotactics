@@ -393,8 +393,8 @@
 		"tileset": "./icons/entities.png",
 		"tcoords": [
 			[
-				1,
-				8
+				3,
+				1
 			]
 		]
 	},

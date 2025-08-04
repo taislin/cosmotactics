@@ -151,6 +151,7 @@ export function setControls() {
 				break;
 			case "KeyR":
 				reload(selected);
+				VARS.playerCanAct = false;
 				processTurn();
 				break;
 			case "Digit1":
@@ -185,6 +186,7 @@ export function setControls() {
 				if (selected) selected.mob.autofire = !selected.mob.autofire;
 				break;
 			case "KeyT":
+				VARS.playerCanAct = false;
 				processTurn();
 				break;
 			default:
@@ -199,6 +201,7 @@ export function setControls() {
 	 * @param {KeyboardEvent} e - The keyboard event to process.
 	 */
 	function handleKeyDown(e) {
+		if (!VARS.playerCanAct) return;
 		if (VARS.isAnimating) {
 			return;
 		}
@@ -417,6 +420,7 @@ export function setControls() {
 	 * In the "LOST" state, initiates a delayed reset and returns to the main menu. In the "MENU" state, handles menu navigation and selection, updating the game state or redrawing the menu as appropriate. In the "GAME" state, interprets click positions to interact with GUI elements or map tiles, delegating valid map tile clicks to the `clicks` function if the tile is visible.
 	 */
 	function handleClick(e) {
+		if (!VARS.playerCanAct) return;
 		if (VARS.isAnimating) {
 			return; // Block input if an animation is in progress
 		}
@@ -601,6 +605,7 @@ function clicks(currentLoc, draw_interval) {
 					background: "transparent",
 				});
 				VARS.SELECTED.mob.slots.ranged.stats.ammo--;
+				VARS.playerCanAct = false;
 				processTurn();
 			} else {
 				log({ type: "info", text: "No ammo!" });
@@ -716,6 +721,7 @@ export function reload(unit) {
 			});
 		}
 	}
+	VARS.playerCanAct = false;
 	processTurn();
 }
 /**
@@ -798,6 +804,7 @@ function clickGUI(coords) {
 	// Bottom Control Bar - Secondary Actions (y=35)
 	else if (coords[1] == 35) {
 		if (coords[0] >= 1 && coords[0] <= 10) {
+			VARS.playerCanAct = false;
 			processTurn();
 		} else if (coords[0] >= 12 && coords[0] <= 23) {
 			if (VARS.SELECTED) {
@@ -813,6 +820,7 @@ function clickGUI(coords) {
 			}
 		} else if (coords[0] >= 37 && coords[0] <= 46) {
 			reload(VARS.SELECTED);
+			VARS.playerCanAct = false;
 			processTurn();
 		}
 	}
@@ -827,9 +835,9 @@ function clickGUI(coords) {
 }
 /**
  * Moves the selected unit along a specified path, updating its position step by step and processing a turn after each move.
- * 
+ *
  * Recursively advances the unit through each coordinate in the path, with a short delay between moves.
- * 
+ *
  * @param {number[][]} path - An array of [x, y] coordinates representing the movement path.
  */
 async function doMoves(path) {
@@ -843,8 +851,9 @@ async function doMoves(path) {
 	VARS.TARGET[1] = curr[1];
 	currentLoc[0] = curr[0];
 	currentLoc[1] = curr[1];
+	VARS.playerCanAct = false;
 	processTurn();
-	await sleep(200);
+	await sleep(100);
 	if (path.length > 0) {
 		doMoves(path);
 	}
@@ -988,6 +997,7 @@ function processMove(_x, _y) {
 		VARS.TARGET[1] = _y;
 		currentLoc[0] = _x;
 		currentLoc[1] = _y;
+		VARS.playerCanAct = false;
 		processTurn();
 	} else if (targetEntity) {
 		// There is a living entity at the target location
@@ -1007,6 +1017,7 @@ function processMove(_x, _y) {
 
 			targetEntity.x = o1x;
 			targetEntity.y = o1y;
+			VARS.playerCanAct = false;
 			processTurn();
 		} else {
 			// Attack an enemy unit
@@ -1017,6 +1028,7 @@ function processMove(_x, _y) {
 				dir: null,
 				entity: targetEntity,
 			});
+			VARS.playerCanAct = false;
 			processTurn();
 		}
 	} else {

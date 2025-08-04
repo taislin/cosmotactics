@@ -67,6 +67,7 @@ const initial_vars = {
 	shuttleCoords: null, // Will store {x, y} of the shuttle's "door"
 	isArtifactSecured: false,
 	hvt_entity_id: null,
+	playerCanAct: true,
 };
 export let VARS = JSON.parse(JSON.stringify(initial_vars));
 const initial_stats = {
@@ -137,7 +138,8 @@ export function checkLight(x, y) {
  *
  * Advances the game state by updating all entities, resolving player and AI actions, removing dead entities, and managing mission objectives such as evacuation and high-value target elimination. Handles oxygen consumption if required by the mission's planet and checks for loss conditions at the end of the turn.
  */
-export function processTurn() {
+export async function processTurn() {
+	VARS.playerCanAct = false;
 	// 1. Check for active projectiles and wait if any are still flying
 	if (projectiles.length > 0 || VARS.isAnimating) {
 		// If there are projectiles, don't process the turn yet.
@@ -273,13 +275,32 @@ export function processTurn() {
 		let newOxygen = parseFloat((STATS.OXYGEN - 0.1).toFixed(1));
 		STATS.OXYGEN = Math.max(newOxygen, 0);
 	}
-
+	await waitForAnimations();
 	VARS.TURN++;
 	if (checkLose() === true) {
 		goToLostMenu();
 	}
+	if (projectiles.length === 0) {
+        // If no animations were triggered this turn, the player can act immediately.
+        VARS.playerCanAct = true;
+        //debugLog("Turn processed. Player can act.", "info");
+    } else {
+        // If there are projectiles, the lock remains. 
+    }
+	
 }
-
+function waitForAnimations() {
+    return new Promise(resolve => {
+        const check = () => {
+            if (projectiles.length === 0) {
+                resolve();
+            } else {
+                setTimeout(check, 50); // Check again in 50ms
+            }
+        };
+        check();
+    });
+}
 /**
  * Checks if the player has lost the game.
  * @returns {boolean} True if the player has lost, false otherwise.
