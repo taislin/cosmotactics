@@ -72,7 +72,7 @@ export class WEntity {
 		this.typename = ""; // A more descriptive type name (e.g., "SEF Trooper")
 		this.visible = false; // Visibility for FOV
 		this.originalHealth = mob ? mob.stats.health : 0; // Store initial health for morale calcs
-
+		this.statusEffects = [];
 		// Apply random icon properties if applicable
 		if (this.icon.color && this.icon.color.length > 1) {
 			this.icon.color = getRandomElement(this.icon.color);
@@ -176,7 +176,35 @@ export class WEntity {
 	 */
 	process() {
 		if (!this.mob || this.mob.ai === "dead") return;
+		let canAct = true;
+		for (let i = this.statusEffects.length - 1; i >= 0; i--) {
+			const effect = this.statusEffects[i];
 
+			if (effect.effect === "stunned") {
+				canAct = false; // Stunned entities cannot act
+			}
+
+			effect.duration--;
+			if (effect.duration <= 0) {
+				log({
+					type: "info",
+					text: `%c{cyan}${this.name}%c{} is no longer ${effect.effect}.`,
+				});
+				this.statusEffects.splice(i, 1);
+			}
+		}
+
+		if (!canAct) {
+			this.nextMoveTurn = VARS.TURN + 1; // Skip this turn but can act next turn
+			effects.push({
+				x: this.x,
+				y: this.y,
+				icon: icons["overlay_idle"],
+				color: "#FFFF00",
+				background: "transparent",
+			});
+			return; // Exit processing for this entity
+		}
 		// Handle death
 		if (this.mob.stats.health <= 0) {
 			this.icon = JSON.parse(JSON.stringify(icons["dead"]));
@@ -417,7 +445,24 @@ export class WEntity {
 			return false; // No action taken
 		}
 	}
-
+	addStatusEffect(effect, duration) {
+		// Prevent stacking the same effect; refresh its duration instead
+		const existingEffect = this.statusEffects.find(
+			(e) => e.effect === effect
+		);
+		if (existingEffect) {
+			existingEffect.duration = Math.max(
+				existingEffect.duration,
+				duration
+			);
+		} else {
+			this.statusEffects.push({ effect, duration });
+			log({
+				type: "info",
+				text: `%c{orange}${this.name}%c{} is now ${effect}!`,
+			});
+		}
+	}
 	/**
 	 * Calculates a path from the entity's current position to a target location (tx, ty).
 	 * Uses Dijkstra's algorithm to find the shortest path, considering passable terrain and other entities.

@@ -59,6 +59,26 @@
 			]
 		]
 	},
+	"x": {
+		"name": "x",
+		"icon": [
+			"x"
+		],
+		"color": [
+			"#CCCCCC"
+		],
+		"background": [
+			"transparent"
+		],
+		"passable": true,
+		"tileset": "./icons/gui.png",
+		"tcoords": [
+			[
+				0,
+				7
+			]
+		]
+	},
 	"cursor": {
 		"name": "cursor",
 		"icon": [

@@ -797,8 +797,8 @@
 		"tileset": "./icons/terrain.png",
 		"tcoords": [
 			[
-				1,
-				3
+				3,
+				1
 			]
 		]
 	},
@@ -818,7 +818,7 @@
 		"tcoords": [
 			[
 				5,
-				3
+				5
 			]
 		]
 	}

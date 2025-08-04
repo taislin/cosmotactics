@@ -225,25 +225,86 @@ export class Projectile {
 			`Projectile hit ${target.name} at ${this.x},${this.y}`,
 			"info"
 		);
-		effects.push({
-			x: this.x,
-			y: this.y,
-			icon: icons["hit"],
-			color: "#FF0000",
-			background: "transparent",
-		});
-		const finalDamage = Math.max(0, this.dmg - target.mob.stats.defence);
-		target.mob.stats.health = Math.max(
-			0,
-			target.mob.stats.health - Math.round(finalDamage)
-		);
-		log({
-			type: "damage",
-			source: this.source,
-			target: target,
-			amount: Math.round(finalDamage),
-			weapon: this.modif,
-		});
+
+		// --- NEW AOE (Shotgun) Logic ---
+		if (this.modif.stats.aoe && this.modif.stats.aoe > 0) {
+			effects.push({
+				x: this.x,
+				y: this.y,
+				icon: icons["hit"],
+				color: "#FF8C00",
+				background: "transparent",
+			}); // Orange hit for AOE
+			const radius = this.modif.stats.aoe;
+
+			// Find all entities within the blast radius
+			for (const entity of entities) {
+				if (entity.mob && entity.mob.ai !== "dead") {
+					const distance = Math.hypot(
+						this.x - entity.x,
+						this.y - entity.y
+					);
+					if (distance <= radius) {
+						// All entities in the blast take damage
+						const aoeDamage = Math.max(
+							0,
+							this.dmg - entity.mob.stats.defence
+						);
+						if (aoeDamage > 0) {
+							entity.mob.stats.health = Math.max(
+								0,
+								entity.mob.stats.health - Math.round(aoeDamage)
+							);
+							log({
+								type: "damage",
+								source: this.source,
+								target: entity,
+								amount: Math.round(aoeDamage),
+								weapon: this.modif,
+							});
+						}
+					}
+				}
+			}
+		} else {
+			// --- Standard Single-Target Hit Logic ---
+			effects.push({
+				x: this.x,
+				y: this.y,
+				icon: icons["hit"],
+				color: "#FF0000",
+				background: "transparent",
+			});
+			const finalDamage = Math.max(
+				0,
+				this.dmg - target.mob.stats.defence
+			);
+
+			if (finalDamage > 0) {
+				target.mob.stats.health = Math.max(
+					0,
+					target.mob.stats.health - Math.round(finalDamage)
+				);
+				log({
+					type: "damage",
+					source: this.source,
+					target: target,
+					amount: Math.round(finalDamage),
+					weapon: this.modif,
+				});
+			} else {
+				log({ type: "block", source: this.source, target: target });
+			}
+
+			// --- NEW Status Effect (Stun) Logic ---
+			if (this.modif.effect === "stun_chance_10") {
+				if (ROT.RNG.getUniform() <= 0.1) {
+					// 10% chance
+					target.addStatusEffect("stunned", 2); // Stun for 2 turns
+				}
+			}
+		}
+
 		this.destroy();
 	}
 
@@ -255,6 +316,7 @@ export class Projectile {
 		// If this was the last projectile, release the animation lock
 		if (projectiles.length === 0) {
 			VARS.isAnimating = false;
+			VARS.playerCanAct = true;
 			debugLog(
 				"All projectiles finished, animation lock released.",
 				"info"

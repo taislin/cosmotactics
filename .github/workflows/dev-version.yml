@@ -46,7 +46,7 @@ jobs:
                   base_version=${latest_tag#v}
 
                   # Construct the new dev version string
-                  new_dev_version="${base_version}-dev.${short_hash}"
+                  new_dev_version="dev.${short_hash}"
 
                   echo "Base version from tag: $base_version"
                   echo "Commit hash: $short_hash"
